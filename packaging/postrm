@@ -1,0 +1,125 @@
+#!/bin/sh
+set -eu
+LC_ALL=C
+export LC_ALL
+case "${1:-}" in remove|purge) ;; *) exit 0 ;; esac
+
+# Package-manager removal always preserves user configurations, screenshots,
+# settings and Media backups, including when the manager requests purge.
+# Only the explicit in-app Clear Configuration action deletes those files.
+# These fixed paths are in the RootHide execution root. /var itself is an
+# OS-managed link; all descendants below it are checked before any deletion.
+task_check_directory() {
+    if [ -L "$1" ] || { [ -e "$1" ] && [ ! -d "$1" ]; }; then
+        echo "SkyTouch: refusing cleanup through a link or non-directory: $1" >&2
+        exit 1
+    fi
+}
+task_check_file() {
+    if [ -L "$1" ] || { [ -e "$1" ] && [ ! -f "$1" ]; }; then
+        echo "SkyTouch: refusing cleanup of a link or non-file: $1" >&2
+        exit 1
+    fi
+}
+
+# Framework storage uses the executable/bundle identity, not our business-data
+# directory. Only these exact, owned identities are eligible; shared databases
+# and similarly named apps must never be removed.
+task_framework_objects() {
+    task_callback=$1
+    for task_library in /var/mobile/Library /var/root/Library /rootfs/var/mobile/Library /rootfs/var/root/Library; do
+        for task_identity in com.lixinmo.skytouch.app SkyTouchMapping SkyTouchBLE com.lixinmo.skytouch.probe; do
+            "$task_callback" directory disposable "$task_library/Caches/$task_identity"
+            "$task_callback" directory disposable "$task_library/Saved Application State/$task_identity.savedState"
+            "$task_callback" directory disposable "$task_library/SplashBoard/Snapshots/$task_identity"
+            "$task_callback" directory persistent "$task_library/HTTPStorages/$task_identity"
+            "$task_callback" directory persistent "$task_library/WebKit/$task_identity"
+            "$task_callback" file persistent "$task_library/Cookies/$task_identity.binarycookies"
+            "$task_callback" file persistent "$task_library/Preferences/$task_identity.plist"
+            "$task_callback" file persistent "$task_library/Preferences/ByHost/$task_identity.plist"
+            for task_byhost in "$task_library/Preferences/ByHost/$task_identity".*.plist; do
+                # ByHost keys have a host UUID suffix. Do not use an unrestricted
+                # identity prefix that also matches another app's preferences.
+                task_filename=${task_byhost##*/}
+                task_host=${task_filename#"$task_identity".}
+                task_host=${task_host%.plist}
+                case "$task_host" in ????????-????-????-????-????????????) ;; *) continue ;; esac
+                task_hex=$(printf '%s' "$task_host" | tr -d '-')
+                [ "${#task_hex}" -eq 32 ] || continue
+                case "$task_hex" in *[!0123456789abcdefABCDEF]*) continue ;; esac
+                "$task_callback" file persistent "$task_byhost"
+            done
+        done
+    done
+}
+task_preflight_object() {
+    case "$1" in directory) task_check_directory "$3" ;; file) task_check_file "$3" ;; esac
+}
+task_remove_object() {
+    if [ "$2" = persistent ] && [ "$task_clear_sessions" != 1 ]; then return; fi
+    case "$1" in directory) rm -rf -- "$3" ;; file) rm -f -- "$3" ;; esac
+}
+for task_path in \
+    /var/mobile \
+    /var/mobile/Library \
+    /var/mobile/Library/Caches \
+    /var/mobile/Library/Caches/com.lixinmo.skytouch \
+    /var/mobile/Library/Caches/com.lixinmo.skytouch/Runtime \
+    '/var/mobile/Library/Application Support' \
+    '/var/mobile/Library/Application Support/com.lixinmo.skytouch' \
+    '/var/mobile/Library/Application Support/com.lixinmo.skytouch/Settings' \
+    '/var/mobile/Library/Application Support/com.lixinmo.skytouch/Profiles' \
+    '/var/mobile/Library/Application Support/com.lixinmo.skytouch/GlobalRevisions' \
+    '/var/mobile/Library/Application Support/com.lixinmo.skytouch/MigrationArchive' \
+    '/var/mobile/Library/Application Support/com.lixinmo.skytouch/MigrationArchive/Preferences' \
+    '/var/mobile/Library/Application Support/com.lixinmo.skytouch/MigrationArchive/LegacyData' \
+    '/rootfs/var/mobile/Library/Application Support'; do
+    task_check_directory "$task_path"
+done
+
+# Complete the entire preflight before changing even the runtime tree. /var
+# (and /rootfs/var for native paths) is the OS-managed boundary; every parent
+# beneath it is checked. rm -rf does not follow links within owned leaf trees.
+for task_user_root in /var/mobile /var/root /rootfs/var/mobile /rootfs/var/root; do
+    task_check_directory "$task_user_root"
+    task_check_directory "$task_user_root/Library"
+    for task_relative in Caches HTTPStorages WebKit 'Saved Application State' SplashBoard SplashBoard/Snapshots Cookies Preferences Preferences/ByHost; do
+        task_check_directory "$task_user_root/Library/$task_relative"
+    done
+done
+task_framework_objects task_preflight_object
+
+# Capture the absence BEFORE cleanup. An empty business root can belong to a
+# new login session, so ordinary uninstall must retain even that empty root.
+# Keeping it also makes repeated postrm calls preserve exactly the same data.
+task_clear_sessions=1
+for task_path in \
+    '/var/mobile/Library/Application Support/com.lixinmo.skytouch' \
+    '/rootfs/var/mobile/Library/Application Support/SkyTouchOriginal' \
+    '/var/mobile/Library/Application Support/.com.lixinmo.skytouch.migration-stage-v1' \
+    '/var/mobile/Library/Application Support/.com.lixinmo.skytouch.configuration-transaction-v1' \
+    '/var/mobile/Library/Application Support/.com.lixinmo.skytouch.pending-mobile-defaults-v1.plist'; do
+    if [ -e "$task_path" ] || [ -L "$task_path" ]; then task_clear_sessions=0; fi
+done
+
+# The maintenance executable has already been removed at this point. Finish
+# transient cleanup without touching any user data or migration receipts.
+rm -rf -- /var/mobile/Library/Caches/com.lixinmo.skytouch/Runtime
+
+# Remove an empty runtime cache parent, never a business-data scaffold. The
+# explicit Clear Configuration action removes the business root itself.
+# No marker or new data file is created during uninstall.
+for task_path in /var/mobile/Library/Caches/com.lixinmo.skytouch; do
+    if [ -d "$task_path" ]; then
+        rmdir -- "$task_path" 2>/dev/null || true
+    fi
+done
+
+if [ -d /Applications/SkyTouch.app ] && command -v uicache >/dev/null 2>&1; then
+    uicache -u /Applications/SkyTouch.app
+fi
+# App/framework shutdown can write snapshots after Clear Configuration returns.
+# This final uninstall pass runs after unregistering the bundle and never
+# creates storage or preferences merely to test whether they exist.
+task_framework_objects task_remove_object
+exit 0

@@ -1,0 +1,21 @@
+{
+  "repository": "https://github.com/facebook/fishhook",
+  "commit": "aadc161ac3b80db07a9908851839a17ba63a9eb1",
+  "license": "BSD-3-Clause",
+  "modifications": "none",
+  "entry_point_used": "rebind_symbols_image only",
+  "files": {
+    "fishhook.c": {
+      "url": "https://raw.githubusercontent.com/facebook/fishhook/aadc161ac3b80db07a9908851839a17ba63a9eb1/fishhook.c",
+      "sha256": "48f51e1a36d9013501381fdf31a3e9c838938ebf8bb39e0e3a7ac119aa59b61b"
+    },
+    "fishhook.h": {
+      "url": "https://raw.githubusercontent.com/facebook/fishhook/aadc161ac3b80db07a9908851839a17ba63a9eb1/fishhook.h",
+      "sha256": "5432b81bd302956adcbfc8836af74e47dd38748d5078495cbe1b5bea62180120"
+    },
+    "LICENSE": {
+      "url": "https://raw.githubusercontent.com/facebook/fishhook/aadc161ac3b80db07a9908851839a17ba63a9eb1/LICENSE",
+      "sha256": "0d6de56134ac05ffce391c697bb046c83cab012a4670114e1f0847ecf59b2c2e"
+    }
+  }
+}

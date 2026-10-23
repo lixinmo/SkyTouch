@@ -1,0 +1,167 @@
+{
+  "gamepad_list" : [
+    {
+      "joysticks" : [
+        {
+          "y" : "0.6886",
+          "key" : "JSLEFT",
+          "x" : "0.2298",
+          "type" : 1,
+          "radius" : 64
+        }
+      ],
+      "title" : "默认配置",
+      "keys" : [
+        {
+          "y" : "0.8191",
+          "key" : "A",
+          "show" : 1,
+          "type" : 1,
+          "x" : "0.7685",
+          "sub_type" : 0
+        },
+        {
+          "y" : "0.6859",
+          "key" : "B",
+          "show" : 1,
+          "type" : 1,
+          "x" : "0.8399",
+          "sub_type" : 0
+        },
+        {
+          "y" : "0.6869",
+          "key" : "X",
+          "show" : 1,
+          "type" : 1,
+          "x" : "0.7003",
+          "sub_type" : 0
+        },
+        {
+          "y" : "0.5530",
+          "key" : "Y",
+          "show" : 1,
+          "type" : 1,
+          "x" : "0.7696",
+          "sub_type" : 0
+        }
+      ],
+      "screen_edge_reset" : 0,
+      "desc" : ""
+    }
+  ],
+  "modify" : 0,
+  "keyboard_mouse_list" : [
+    {
+      "joysticks" : [
+        {
+          "y" : "0.7000",
+          "mapping_keys" : [
+            {
+              "key" : "W",
+              "sub_type" : 0
+            },
+            {
+              "key" : "A",
+              "sub_type" : 3
+            },
+            {
+              "key" : "S",
+              "sub_type" : 2
+            },
+            {
+              "key" : "D",
+              "sub_type" : 1
+            }
+          ],
+          "key" : "WASD",
+          "x" : "0.2000",
+          "type" : 1,
+          "radius" : 64
+        }
+      ],
+      "title" : "",
+      "keys" : [
+        {
+          "y" : "0.8191",
+          "key" : "Q",
+          "show" : 1,
+          "type" : 1,
+          "x" : "0.7685",
+          "sub_type" : 0
+        },
+        {
+          "y" : "0.6859",
+          "key" : "E",
+          "show" : 1,
+          "type" : 1,
+          "x" : "0.8399",
+          "sub_type" : 0
+        },
+        {
+          "y" : "0.6869",
+          "key" : "R",
+          "show" : 1,
+          "type" : 1,
+          "x" : "0.7003",
+          "sub_type" : 0
+        },
+        {
+          "y" : "0.5530",
+          "key" : "T",
+          "show" : 1,
+          "type" : 1,
+          "x" : "0.7696",
+          "sub_type" : 0
+        },
+        {
+          "y" : "0.2000",
+          "key" : "MOUSE",
+          "show" : 1,
+          "type" : 3,
+          "x" : "0.8000"
+        }
+      ],
+      "screen_edge_reset" : 0,
+      "desc" : ""
+    }],"v1_list": [{
+        "title": "映射测试半柄",
+        "desc": "",
+        "screen_edge_reset": 0,
+        "keys": [{
+            "key": "A",
+            "type": 1,
+            "x": "0.6516",
+            "y": "0.6611",
+            "show": 1,
+            "sub_type": 0
+        }, {
+            "key": "B",
+            "type": 1,
+            "x": "0.5023",
+            "y": "0.5694",
+            "show": 1,
+            "sub_type": 0
+        }, {
+            "key": "LB",
+            "type": 1,
+            "x": "0.2",
+            "y": "0.3472",
+            "show": 1,
+            "sub_type": 0
+        },{
+            "key": "LT",
+            "type": 1,
+            "x": "0.2",
+            "y": "0.2222",
+            "show": 1,
+            "sub_type": 0
+        }],
+        "joysticks": [{
+            "key": "JSLEFT",
+            "x": "0.1484",
+            "y": "0.5694",
+            "radius": 30,
+            "type": 1
+        }]
+    }]
+}

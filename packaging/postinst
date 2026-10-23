@@ -1,0 +1,26 @@
+#!/bin/sh
+set -eu
+if [ "${1:-}" = configure ] && command -v jbctl >/dev/null 2>&1; then
+    for task_binary in /Applications/SkyTouch.app/SkyTouch /Applications/SkyTouch.app/SkyTouchControl /Applications/SkyTouch.app/SkyTouchStorage /Applications/SkyTouch.app/SystemMapping.bundle/SkyTouchMapping /Applications/SkyTouch.app/SystemBluetooth.bundle/SkyTouchBLE /Applications/SkyTouch.app/Original/flydigi.dylib; do
+        jbctl trustcache add "$task_binary"
+    done
+fi
+if [ "${1:-}" = configure ]; then
+    # Resolve an interrupted transaction before the installer touches its data
+    # tree. Pending mobile preferences are acknowledged by the App on launch;
+    # never print that private binary response into package-manager logs.
+    if [ -e '/var/mobile/Library/Application Support/.com.lixinmo.skytouch.configuration-transaction-v1' ] ||
+       [ -e '/var/mobile/Library/Application Support/.com.lixinmo.skytouch.pending-mobile-defaults-v1.plist' ]; then
+        /Applications/SkyTouch.app/SkyTouchStorage manage recover >/dev/null
+    fi
+    if [ ! -e '/var/mobile/Library/Application Support/.com.lixinmo.skytouch.pending-mobile-defaults-v1.plist' ]; then
+        /Applications/SkyTouch.app/SkyTouchStorage migrate
+        /Applications/SkyTouch.app/SkyTouchStorage finalize-legacy
+    fi
+fi
+if [ "${1:-}" = configure ] && command -v uicache >/dev/null 2>&1; then
+    uicache -p /Applications/SkyTouch.app
+fi
+# Migration verifies all bytes before committing/removing the old sources.
+# No app launch, service start or respring.
+exit 0

@@ -1,0 +1,3974 @@
+{
+  "archive_members": {
+    "control.tar.zst": {
+      "sha256": "249d081eabfc25f55e60ee1e357822429ea72a561e687f6c33e628011f84f60e",
+      "size": 758
+    },
+    "data.tar.zst": {
+      "sha256": "108227ce8e553fa483230754b3ecb54277a2ee1b5f5a2c79041d5a370e46ab74",
+      "size": 25743343
+    },
+    "debian-binary": {
+      "sha256": "d526eb4e878a23ef26ae190031b4efd2d58ed66789ac049ea3dbaf74c9df7402",
+      "size": 4
+    }
+  },
+  "dylib": {
+    "macho": {
+      "header": {
+        "architecture": "arm64",
+        "cpu_subtype": 0,
+        "cpu_type": 16777228,
+        "file_type": 6,
+        "flags": 1048709,
+        "load_command_bytes": 4800,
+        "load_command_count": 36,
+        "magic": 4277009103,
+        "reserved": 0
+      },
+      "load_commands_sha256": "c3f47d7dab2f07686a4bbc7f80bb618b8e8b199c41b7d1460bb268faf86ffd25",
+      "section_coverage": {
+        "all_sections_recorded": true,
+        "file_backed_section_bytes": 8046854,
+        "file_backed_section_count": 30,
+        "section_count": 32,
+        "zero_fill_section_count": 2
+      },
+      "sections": [
+        {
+          "address": 23444,
+          "alignment_power": 2,
+          "file_offset": 23444,
+          "flags": 2147484672,
+          "name": "__text",
+          "ordinal": 1,
+          "relocation_count": 0,
+          "relocation_offset": 0,
+          "reserved1": 0,
+          "reserved2": 0,
+          "reserved3": 0,
+          "segment": "__TEXT",
+          "sha256": "551725a26d920fb13ea5f67d90dbdd88bccfdec55bedf0269df1be615297e1c9",
+          "size": 7359396,
+          "zero_fill": false
+        },
+        {
+          "address": 7382840,
+          "alignment_power": 2,
+          "file_offset": 7382840,
+          "flags": 2147484680,
+          "name": "__stubs",
+          "ordinal": 2,
+          "relocation_count": 0,
+          "relocation_offset": 0,
+          "reserved1": 0,
+          "reserved2": 12,
+          "reserved3": 0,
+          "segment": "__TEXT",
+          "sha256": "e21c0576d3341b98e5dcdcd1962d34492eb40dee3207f061a9ec1b9e3cacc8b5",
+          "size": 3084,
+          "zero_fill": false
+        },
+        {
+          "address": 7385924,
+          "alignment_power": 2,
+          "file_offset": 7385924,
+          "flags": 2147484672,
+          "name": "__stub_helper",
+          "ordinal": 3,
+          "relocation_count": 0,
+          "relocation_offset": 0,
+          "reserved1": 0,
+          "reserved2": 0,
+          "reserved3": 0,
+          "segment": "__TEXT",
+          "sha256": "78ed292a171b0a67ecdf4523998ef93b232f8f5e58369edc01fb7e28e00b860c",
+          "size": 3108,
+          "zero_fill": false
+        },
+        {
+          "address": 7389032,
+          "alignment_power": 0,
+          "file_offset": 7389032,
+          "flags": 2,
+          "name": "__objc_methname",
+          "ordinal": 4,
+          "relocation_count": 0,
+          "relocation_offset": 0,
+          "reserved1": 0,
+          "reserved2": 0,
+          "reserved3": 0,
+          "segment": "__TEXT",
+          "sha256": "0f99001a905b99f2ed5dd233e2f2dc8987579c8c67a115740c0e6c34212f6560",
+          "size": 97347,
+          "zero_fill": false
+        },
+        {
+          "address": 7486379,
+          "alignment_power": 0,
+          "file_offset": 7486379,
+          "flags": 2,
+          "name": "__objc_classname",
+          "ordinal": 5,
+          "relocation_count": 0,
+          "relocation_offset": 0,
+          "reserved1": 0,
+          "reserved2": 0,
+          "reserved3": 0,
+          "segment": "__TEXT",
+          "sha256": "c6a4e517855f888a4347495a9c4ceefcc0fe9abf901af629bd0ee2930cee732e",
+          "size": 4592,
+          "zero_fill": false
+        },
+        {
+          "address": 7490971,
+          "alignment_power": 0,
+          "file_offset": 7490971,
+          "flags": 2,
+          "name": "__objc_methtype",
+          "ordinal": 6,
+          "relocation_count": 0,
+          "relocation_offset": 0,
+          "reserved1": 0,
+          "reserved2": 0,
+          "reserved3": 0,
+          "segment": "__TEXT",
+          "sha256": "79e5d5a2d252a3ed389a6e1fc73dac63c6dc9521a37ee10d0539aea52b2971b1",
+          "size": 16010,
+          "zero_fill": false
+        },
+        {
+          "address": 7506981,
+          "alignment_power": 0,
+          "file_offset": 7506981,
+          "flags": 2,
+          "name": "__cstring",
+          "ordinal": 7,
+          "relocation_count": 0,
+          "relocation_offset": 0,
+          "reserved1": 0,
+          "reserved2": 0,
+          "reserved3": 0,
+          "segment": "__TEXT",
+          "sha256": "9931ac4a62dcfa6d970f389661931c990142c852c328d0e7bfab1e7070eff3f7",
+          "size": 75873,
+          "zero_fill": false
+        },
+        {
+          "address": 7582856,
+          "alignment_power": 2,
+          "file_offset": 7582856,
+          "flags": 0,
+          "name": "__gcc_except_tab",
+          "ordinal": 8,
+          "relocation_count": 0,
+          "relocation_offset": 0,
+          "reserved1": 0,
+          "reserved2": 0,
+          "reserved3": 0,
+          "segment": "__TEXT",
+          "sha256": "ab6351771b2da57c75f6ce2f5990ce6fc73bb8a82d4999755d5dffadf4ecd3e6",
+          "size": 2480,
+          "zero_fill": false
+        },
+        {
+          "address": 7585336,
+          "alignment_power": 3,
+          "file_offset": 7585336,
+          "flags": 0,
+          "name": "__const",
+          "ordinal": 9,
+          "relocation_count": 0,
+          "relocation_offset": 0,
+          "reserved1": 0,
+          "reserved2": 0,
+          "reserved3": 0,
+          "segment": "__TEXT",
+          "sha256": "f76e79008cd3037ee0c216ea69801d3fe80d1de38bb945883c9e71d206bb5a4c",
+          "size": 83352,
+          "zero_fill": false
+        },
+        {
+          "address": 7668688,
+          "alignment_power": 1,
+          "file_offset": 7668688,
+          "flags": 0,
+          "name": "__ustring",
+          "ordinal": 10,
+          "relocation_count": 0,
+          "relocation_offset": 0,
+          "reserved1": 0,
+          "reserved2": 0,
+          "reserved3": 0,
+          "segment": "__TEXT",
+          "sha256": "988f0c3ad9fbede22c3c18c518482d56c19d01f309a42f6af367b87f7ce5ea2c",
+          "size": 17088,
+          "zero_fill": false
+        },
+        {
+          "address": 7685776,
+          "alignment_power": 2,
+          "file_offset": 7685776,
+          "flags": 0,
+          "name": "__unwind_info",
+          "ordinal": 11,
+          "relocation_count": 0,
+          "relocation_offset": 0,
+          "reserved1": 0,
+          "reserved2": 0,
+          "reserved3": 0,
+          "segment": "__TEXT",
+          "sha256": "33bdfb45e760cd1b3fa54f3ff3c41b215794dfc194e4a85886bba6915ae6f781",
+          "size": 14368,
+          "zero_fill": false
+        },
+        {
+          "address": 7700144,
+          "alignment_power": 3,
+          "file_offset": 7700144,
+          "flags": 0,
+          "name": "__eh_frame",
+          "ordinal": 12,
+          "relocation_count": 0,
+          "relocation_offset": 0,
+          "reserved1": 0,
+          "reserved2": 0,
+          "reserved3": 0,
+          "segment": "__TEXT",
+          "sha256": "8fa61bf75d1f68004e9f555a2ac2620c4e4c765b1200fa0445ffb9362a12d941",
+          "size": 332,
+          "zero_fill": false
+        },
+        {
+          "address": 7700480,
+          "alignment_power": 3,
+          "file_offset": 7700480,
+          "flags": 6,
+          "name": "__got",
+          "ordinal": 13,
+          "relocation_count": 0,
+          "relocation_offset": 0,
+          "reserved1": 257,
+          "reserved2": 0,
+          "reserved3": 0,
+          "segment": "__DATA",
+          "sha256": "a8fe888f287d6d55df301aca05239c44f27e29d1ea4023657a641984de969026",
+          "size": 632,
+          "zero_fill": false
+        },
+        {
+          "address": 7701112,
+          "alignment_power": 3,
+          "file_offset": 7701112,
+          "flags": 7,
+          "name": "__la_symbol_ptr",
+          "ordinal": 14,
+          "relocation_count": 0,
+          "relocation_offset": 0,
+          "reserved1": 336,
+          "reserved2": 0,
+          "reserved3": 0,
+          "segment": "__DATA",
+          "sha256": "e498f1f72e9804b90dfa7016449ae72fa6fbcbd195734c0319a8231dda645140",
+          "size": 2056,
+          "zero_fill": false
+        },
+        {
+          "address": 7703168,
+          "alignment_power": 3,
+          "file_offset": 7703168,
+          "flags": 9,
+          "name": "__mod_init_func",
+          "ordinal": 15,
+          "relocation_count": 0,
+          "relocation_offset": 0,
+          "reserved1": 0,
+          "reserved2": 0,
+          "reserved3": 0,
+          "segment": "__DATA",
+          "sha256": "35ebf062f9ad3e29b56d304014b810e7e9cb69a1813d3803c301b087d544a10e",
+          "size": 8,
+          "zero_fill": false
+        },
+        {
+          "address": 7703176,
+          "alignment_power": 3,
+          "file_offset": 7703176,
+          "flags": 0,
+          "name": "__const",
+          "ordinal": 16,
+          "relocation_count": 0,
+          "relocation_offset": 0,
+          "reserved1": 0,
+          "reserved2": 0,
+          "reserved3": 0,
+          "segment": "__DATA",
+          "sha256": "1092b5f1275622d85a1728c08ba24637657223fcab0f247cc24eb5d34130bb22",
+          "size": 5832,
+          "zero_fill": false
+        },
+        {
+          "address": 7709008,
+          "alignment_power": 3,
+          "file_offset": 7709008,
+          "flags": 0,
+          "name": "__cfstring",
+          "ordinal": 17,
+          "relocation_count": 0,
+          "relocation_offset": 0,
+          "reserved1": 0,
+          "reserved2": 0,
+          "reserved3": 0,
+          "segment": "__DATA",
+          "sha256": "a392672e895e39956982752737e7d8e0b9bf3cb8c299200392444f7fbbba5f82",
+          "size": 60544,
+          "zero_fill": false
+        },
+        {
+          "address": 7769552,
+          "alignment_power": 3,
+          "file_offset": 7769552,
+          "flags": 268435456,
+          "name": "__objc_classlist",
+          "ordinal": 18,
+          "relocation_count": 0,
+          "relocation_offset": 0,
+          "reserved1": 0,
+          "reserved2": 0,
+          "reserved3": 0,
+          "segment": "__DATA",
+          "sha256": "2a8c143dad7c8bc4a643c53ca48a8776f2896e622326e1e852b4682a637dd348",
+          "size": 968,
+          "zero_fill": false
+        },
+        {
+          "address": 7770520,
+          "alignment_power": 3,
+          "file_offset": 7770520,
+          "flags": 268435456,
+          "name": "__objc_nlclslist",
+          "ordinal": 19,
+          "relocation_count": 0,
+          "relocation_offset": 0,
+          "reserved1": 0,
+          "reserved2": 0,
+          "reserved3": 0,
+          "segment": "__DATA",
+          "sha256": "cf9b16772c218f371f70811910952c1868d7af90bf541965df4f3b546a848a74",
+          "size": 16,
+          "zero_fill": false
+        },
+        {
+          "address": 7770536,
+          "alignment_power": 3,
+          "file_offset": 7770536,
+          "flags": 268435456,
+          "name": "__objc_catlist",
+          "ordinal": 20,
+          "relocation_count": 0,
+          "relocation_offset": 0,
+          "reserved1": 0,
+          "reserved2": 0,
+          "reserved3": 0,
+          "segment": "__DATA",
+          "sha256": "6047debb36706f29faec5718b4d2f1d9ae5fb426b80128bda8de98c183c029e6",
+          "size": 56,
+          "zero_fill": false
+        },
+        {
+          "address": 7770592,
+          "alignment_power": 3,
+          "file_offset": 7770592,
+          "flags": 0,
+          "name": "__objc_protolist",
+          "ordinal": 21,
+          "relocation_count": 0,
+          "relocation_offset": 0,
+          "reserved1": 0,
+          "reserved2": 0,
+          "reserved3": 0,
+          "segment": "__DATA",
+          "sha256": "3681e4f6b9d6d535c5e95d6aacd0d908dce3492bbeabbdb84e4f5633e4745b51",
+          "size": 472,
+          "zero_fill": false
+        },
+        {
+          "address": 7771064,
+          "alignment_power": 2,
+          "file_offset": 7771064,
+          "flags": 0,
+          "name": "__objc_imageinfo",
+          "ordinal": 22,
+          "relocation_count": 0,
+          "relocation_offset": 0,
+          "reserved1": 0,
+          "reserved2": 0,
+          "reserved3": 0,
+          "segment": "__DATA",
+          "sha256": "94039884329d3732c577860f40d0dfdf883ff89dac332f87216e692c08892fa2",
+          "size": 8,
+          "zero_fill": false
+        },
+        {
+          "address": 7771072,
+          "alignment_power": 3,
+          "file_offset": 7771072,
+          "flags": 0,
+          "name": "__objc_const",
+          "ordinal": 23,
+          "relocation_count": 0,
+          "relocation_offset": 0,
+          "reserved1": 0,
+          "reserved2": 0,
+          "reserved3": 0,
+          "segment": "__DATA",
+          "sha256": "7dbe87143d445d052cb02da7c1f111c9c5d8f0f3c0fe85f44ffca99e6d956445",
+          "size": 247840,
+          "zero_fill": false
+        },
+        {
+          "address": 8018912,
+          "alignment_power": 3,
+          "file_offset": 8018912,
+          "flags": 268435461,
+          "name": "__objc_selrefs",
+          "ordinal": 24,
+          "relocation_count": 0,
+          "relocation_offset": 0,
+          "reserved1": 0,
+          "reserved2": 0,
+          "reserved3": 0,
+          "segment": "__DATA",
+          "sha256": "79edf755669a2c12f9e29b220dde773027eef1578e7feabd85dccf53de5ff9ee",
+          "size": 25064,
+          "zero_fill": false
+        },
+        {
+          "address": 8043976,
+          "alignment_power": 3,
+          "file_offset": 8043976,
+          "flags": 0,
+          "name": "__objc_protorefs",
+          "ordinal": 25,
+          "relocation_count": 0,
+          "relocation_offset": 0,
+          "reserved1": 0,
+          "reserved2": 0,
+          "reserved3": 0,
+          "segment": "__DATA",
+          "sha256": "44775bfc4547e1cad0e672f09e8b701acb541956e27cf61eb4f88f2a160c11bd",
+          "size": 40,
+          "zero_fill": false
+        },
+        {
+          "address": 8044016,
+          "alignment_power": 3,
+          "file_offset": 8044016,
+          "flags": 268435456,
+          "name": "__objc_classrefs",
+          "ordinal": 26,
+          "relocation_count": 0,
+          "relocation_offset": 0,
+          "reserved1": 0,
+          "reserved2": 0,
+          "reserved3": 0,
+          "segment": "__DATA",
+          "sha256": "6393af003d0fb8ed2dbf0c626f0cec48495235a72e21390cf3fc4b4d6c7c8f6b",
+          "size": 1568,
+          "zero_fill": false
+        },
+        {
+          "address": 8045584,
+          "alignment_power": 3,
+          "file_offset": 8045584,
+          "flags": 268435456,
+          "name": "__objc_superrefs",
+          "ordinal": 27,
+          "relocation_count": 0,
+          "relocation_offset": 0,
+          "reserved1": 0,
+          "reserved2": 0,
+          "reserved3": 0,
+          "segment": "__DATA",
+          "sha256": "0817c9fa91d66e73850f90a5f127da6ad0bb247126087f95b554961c8daaf913",
+          "size": 840,
+          "zero_fill": false
+        },
+        {
+          "address": 8046424,
+          "alignment_power": 2,
+          "file_offset": 8046424,
+          "flags": 0,
+          "name": "__objc_ivar",
+          "ordinal": 28,
+          "relocation_count": 0,
+          "relocation_offset": 0,
+          "reserved1": 0,
+          "reserved2": 0,
+          "reserved3": 0,
+          "segment": "__DATA",
+          "sha256": "6568c949b8cf5944d4120b4abac5f2774d0822ede22ecf373004038f66e90d43",
+          "size": 5624,
+          "zero_fill": false
+        },
+        {
+          "address": 8052048,
+          "alignment_power": 3,
+          "file_offset": 8052048,
+          "flags": 0,
+          "name": "__objc_data",
+          "ordinal": 29,
+          "relocation_count": 0,
+          "relocation_offset": 0,
+          "reserved1": 0,
+          "reserved2": 0,
+          "reserved3": 0,
+          "segment": "__DATA",
+          "sha256": "c58a2472515b1eb14d74470186d1abb949d2e228080270a1982aadf861e39cad",
+          "size": 9760,
+          "zero_fill": false
+        },
+        {
+          "address": 8061808,
+          "alignment_power": 3,
+          "file_offset": 8061808,
+          "flags": 0,
+          "name": "__data",
+          "ordinal": 30,
+          "relocation_count": 0,
+          "relocation_offset": 0,
+          "reserved1": 0,
+          "reserved2": 0,
+          "reserved3": 0,
+          "segment": "__DATA",
+          "sha256": "e267cbf9a57677e01807fa621f7b3ae90fc1323cedc34cfabb4f45fde2a8841a",
+          "size": 8496,
+          "zero_fill": false
+        },
+        {
+          "address": 8070304,
+          "alignment_power": 3,
+          "file_offset": 0,
+          "flags": 1,
+          "name": "__bss",
+          "ordinal": 31,
+          "relocation_count": 0,
+          "relocation_offset": 0,
+          "reserved1": 0,
+          "reserved2": 0,
+          "reserved3": 0,
+          "segment": "__DATA",
+          "sha256": null,
+          "size": 880,
+          "zero_fill": true
+        },
+        {
+          "address": 8071184,
+          "alignment_power": 3,
+          "file_offset": 0,
+          "flags": 1,
+          "name": "__common",
+          "ordinal": 32,
+          "relocation_count": 0,
+          "relocation_offset": 0,
+          "reserved1": 0,
+          "reserved2": 0,
+          "reserved3": 0,
+          "segment": "__DATA",
+          "sha256": null,
+          "size": 504,
+          "zero_fill": true
+        }
+      ],
+      "segments": [
+        {
+          "address": 0,
+          "file_offset": 0,
+          "file_size": 7700480,
+          "flags": 0,
+          "initial_protection": 5,
+          "maximum_protection": 5,
+          "name": "__TEXT",
+          "section_count": 12,
+          "virtual_size": 7700480
+        },
+        {
+          "address": 7700480,
+          "file_offset": 7700480,
+          "file_size": 376832,
+          "flags": 0,
+          "initial_protection": 3,
+          "maximum_protection": 3,
+          "name": "__DATA",
+          "section_count": 20,
+          "virtual_size": 376832
+        },
+        {
+          "address": 8077312,
+          "file_offset": 8077312,
+          "file_size": 630000,
+          "flags": 0,
+          "initial_protection": 1,
+          "maximum_protection": 1,
+          "name": "__LINKEDIT",
+          "section_count": 0,
+          "virtual_size": 638976
+        }
+      ],
+      "text_section_sha256": "551725a26d920fb13ea5f67d90dbdd88bccfdec55bedf0269df1be615297e1c9"
+    },
+    "path": "flydigi.dylib",
+    "sha256": "d3a4482d37b12f833e153ded842bc86e4b814c5c68375fdb4159ce6bc42aca55",
+    "size": 8707312
+  },
+  "extraction": {
+    "dylib_archive_path": "Library/MobileSubstrate/DynamicLibraries/flydigi.dylib",
+    "install_scripts_executed": false,
+    "resource_archive_root": "smoba/FZKeymappingHelper.bundle",
+    "resource_file_count": 476
+  },
+  "format_version": 1,
+  "resource_directories": [
+    "FZKeymappingHelper.bundle"
+  ],
+  "resources": [
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/FZCloudConfigure_ipad.plist",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/FZCloudConfigure_ipad.plist",
+      "sha256": "61aef9f5eaf9bbac0d44a15ac275cacc2d33aef696b11c526b4f07c8376ef911",
+      "size": 16340
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/FZCloudConfigure_iphone.plist",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/FZCloudConfigure_iphone.plist",
+      "sha256": "61aef9f5eaf9bbac0d44a15ac275cacc2d33aef696b11c526b4f07c8376ef911",
+      "size": 16340
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/add.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/add.png",
+      "sha256": "d0585a3bc1c07d4f5df23925a4d15472d6664b30ad6da23eee7106b51e163aba",
+      "size": 2435
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/all_disable.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/all_disable.png",
+      "sha256": "33ceabc46949da30965ccb8e55b1d16332692c3f4cf797442419150ef6d8b1e2",
+      "size": 2979
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/back.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/back.png",
+      "sha256": "9a06f52700a71ea21107dd6e5e2f2c542aee1bd55f521f3230c902ce8656d75f",
+      "size": 3532
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/btn_setting_abandon.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/btn_setting_abandon.png",
+      "sha256": "ca3388b70e11bd74955280f517cced03f40d45977d4d60ea2d263a2bf15a5a8e",
+      "size": 5146
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/btn_setting_close.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/btn_setting_close.png",
+      "sha256": "e8793701fcd8fb8216de771032ccf58ca8b4279914fa55ae7c126a02b4397116",
+      "size": 4872
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/btn_setting_import.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/btn_setting_import.png",
+      "sha256": "35f583f28b09e49ebba4a4d06130b947f0b51ca447fbef56fd93100181ebca45",
+      "size": 4460
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/btn_setting_modify.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/btn_setting_modify.png",
+      "sha256": "fe6760144b04da6966863a068ba438f8088c3a0c372313e0590135779f704d7f",
+      "size": 4966
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/btn_setting_open.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/btn_setting_open.png",
+      "sha256": "9c3cacd3c2cfc38d87813bde18386a70bc37388f602f51855b5820454d8b7e94",
+      "size": 4924
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/btn_setting_save_as.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/btn_setting_save_as.png",
+      "sha256": "4831d8c4cbe1bed99e69cb475e2ac6edec1700aebaa1a9686e6dbf3610c9753b",
+      "size": 3398
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/cloud_sync_back.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/cloud_sync_back.png",
+      "sha256": "8640228b17001d8950e4237fe7ce8da3cf8bcbb389f4ead00e2f37968f4093c4",
+      "size": 3504
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/cloud_sync_banbing.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/cloud_sync_banbing.png",
+      "sha256": "5b2f20de2d21429d70aad273d76017be0b7241ca6d6c48886a6cf840a292456a",
+      "size": 1485
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/cloud_sync_cloud.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/cloud_sync_cloud.png",
+      "sha256": "2c461a0a5e00ae041be5ce0cf51106e11cee79f174f21c71955976198d878192",
+      "size": 2594
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/cloud_sync_cloud_blue.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/cloud_sync_cloud_blue.png",
+      "sha256": "2323f32b61c4ca7c80b7aa7f9db30e04274736fb28019e6855336fe1bfa1d320",
+      "size": 2596
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/cloud_sync_desc.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/cloud_sync_desc.png",
+      "sha256": "e9acf73c9ea081410d0d84f1cbfec6257373b62808b50e6edd4daf5d924edab4",
+      "size": 4390
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/cloud_sync_gamepad.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/cloud_sync_gamepad.png",
+      "sha256": "43012134653caee2591ea2a10892c6f99795d0f119154fa0f9e1d177b4c3f031",
+      "size": 1933
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/cloud_sync_keyboard.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/cloud_sync_keyboard.png",
+      "sha256": "49ec349fe1b2ba9d1c731636e3402fab87b7bf99a8b6a693a195dcaff63fefb8",
+      "size": 801
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/cloud_sync_loading.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/cloud_sync_loading.png",
+      "sha256": "f71aec346dd12e2a9e11b2281ea4ad493100e8df34283522602d0446b3a70dad",
+      "size": 5788
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/cloud_sync_local.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/cloud_sync_local.png",
+      "sha256": "a2c4e15a3def732ef66fba3f50f3385a4a11312de8f3add3c659770a16a58250",
+      "size": 1985
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/cloud_sync_local_blue.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/cloud_sync_local_blue.png",
+      "sha256": "100455707f2de7ba778b99f1ccdf34df349beedfe32fd61b32122660ce383187",
+      "size": 2011
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/cloud_sync_logout.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/cloud_sync_logout.png",
+      "sha256": "f2afd9a113a5a131a17beb0b8c7ce6eea0aef98bcaf40063b99b0754d8f6d75f",
+      "size": 3308
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/cloud_sync_reload.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/cloud_sync_reload.png",
+      "sha256": "a890cc6bbb0a57b4d355e18a6b2fbca0a132b49bead5da4c1df6a72cef2e9d18",
+      "size": 4026
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/cloud_sync_select_off.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/cloud_sync_select_off.png",
+      "sha256": "0c8279eb31407345a7105487249b7c71374f7b216059b22480ed2cc54e6a780a",
+      "size": 4713
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/cloud_sync_select_on.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/cloud_sync_select_on.png",
+      "sha256": "114dd54d874de2f5c28cc40efccdea83bddbcede5672da46cddc20550a1fc87c",
+      "size": 5307
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/default_config.fdg",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/default_config.fdg",
+      "sha256": "c598f9f286acdb9effe9b366a7270f3676b21f6ed24604a94df0b4d1b968e676",
+      "size": 3438
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/finish.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/finish.png",
+      "sha256": "1a86c1455d9998c735ec3ac7c02392c606e619ba73e2a81ec2f4c354fbc4cb3c",
+      "size": 962
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/floating_cursor.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/floating_cursor.png",
+      "sha256": "cda620646b13244fbae478bfb30d98dbe8482f5284a228f82e75363e3b75e85f",
+      "size": 7579
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/floating_cursor_click.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/floating_cursor_click.png",
+      "sha256": "250414efe1d32e9c382d41fa4d81ae93e18d5edd0bd97ffadbce9a7327f6f8e9",
+      "size": 7508
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/floatingsetting_checkbox_no.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/floatingsetting_checkbox_no.png",
+      "sha256": "59109b4b7ce46e8d9a8582a07f09e6efc8adf3270c701d0c7db1799c165daedb",
+      "size": 463
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/floatingsetting_checkbox_yes.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/floatingsetting_checkbox_yes.png",
+      "sha256": "87a11565b21defb541087f6d19989c3766dc3484414e4cbe8e773cf537cb24d7",
+      "size": 898
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/floatingsetting_delete_key.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/floatingsetting_delete_key.png",
+      "sha256": "0ccb9696be5c2d1ce267651010e673ba4ba31ba0d9f80f6331d6b377cb6490ca",
+      "size": 3718
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/floatingsetting_display.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/floatingsetting_display.png",
+      "sha256": "bae78831c0febd523786d42df3215280512c8fb9e6a312ccb55480297120df53",
+      "size": 2098
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/floatingsetting_icon_clear.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/floatingsetting_icon_clear.png",
+      "sha256": "68cfe12aec3788f2af66992e4f8e4803581aaae2e8ecf7f47c6276e59ae54a07",
+      "size": 1608
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/floatingsetting_icon_current.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/floatingsetting_icon_current.png",
+      "sha256": "5cbcd28c6e7e1f409114d89d98bd2fedd2a997adc31dfa5c76cd248be263b7e4",
+      "size": 928
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/floatingsetting_icon_question.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/floatingsetting_icon_question.png",
+      "sha256": "30adbd43e387d9fd3e7f4607cc08849fb07effcc82cad191a912b9f165b37aca",
+      "size": 1364
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/floatingsetting_icon_selected.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/floatingsetting_icon_selected.png",
+      "sha256": "8456822d750077222935f863e23f6241a6636f4440d86973e1bcd8d8cab437de",
+      "size": 1419
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/floatingsetting_icon_update.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/floatingsetting_icon_update.png",
+      "sha256": "bc8814c7d603eb184b2c9f3c4be71f8c9382f83d798455a414e68749eebf5dd6",
+      "size": 1211
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/floatingsetting_locking.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/floatingsetting_locking.png",
+      "sha256": "ac50609c72540f484e8c4c136a067d0bd6827f171f78a8c0d7557d519fd8d7cf",
+      "size": 1729
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/floatingsetting_notdisplay.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/floatingsetting_notdisplay.png",
+      "sha256": "1b04b40bfeb8ba6964e9542cda11d39fd9258559b2223239f830769691c1963f",
+      "size": 3948
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/floatingsetting_notlocking.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/floatingsetting_notlocking.png",
+      "sha256": "13240e41cd2a3e62f438ddf8be1aa86be5e1df497a68db5867d9ffe00419dd75",
+      "size": 1838
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/floatingsetting_wait_click.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/floatingsetting_wait_click.png",
+      "sha256": "ed8ddf486033b2c3b33107b50ce34a024fe56b659ed133ac0d576d6f2a20e2bc",
+      "size": 4662
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_btn_decrease.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_btn_decrease.png",
+      "sha256": "16e2fa2a11237cdd646fd07ebb33823bd3c8f43a3fb53c111fb2813c693ce850",
+      "size": 2161
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_btn_increase.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_btn_increase.png",
+      "sha256": "6a6b84736d6cd78b80f0bc01f775e833db77f1efdec9c4fc52bfc1bfe6189cf2",
+      "size": 2263
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_but_help.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_but_help.png",
+      "sha256": "0ebeea3f5d9aee8a486dec76f6fd0943b1f6b4e0cec62703f1d4426ea7986e90",
+      "size": 1780
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_front_def.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_front_def.png",
+      "sha256": "2a15e7622e0e8fc9dc2d5f36ffdc65a2b163aec7c8236c31d7a67057f6b613be",
+      "size": 2601
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_after_a.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_after_a.png",
+      "sha256": "52c43010060f099b7fe9f68bc075e4c950c8b20a24d04b3179403e4cd7ed8af8",
+      "size": 3908
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_after_b.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_after_b.png",
+      "sha256": "3d9cc1a8e3e0deaff1958b273b539cb1652ca913ecd4bc62fc6d6f143dca61a9",
+      "size": 3740
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_after_back.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_after_back.png",
+      "sha256": "9318bc617b935ff4da1abb769d70f425ad694922b4aead97a65bd073d734bff9",
+      "size": 4017
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_after_c.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_after_c.png",
+      "sha256": "20dff5bf7067b20b0b72c14f29fb51ea0087b45751902df7c7046f66ff6c6752",
+      "size": 3965
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_after_down.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_after_down.png",
+      "sha256": "e827aea3ce552c4d7117d7981bdecb072343bbc88de4b3a8cd434c2e18fb7309",
+      "size": 3153
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_after_home.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_after_home.png",
+      "sha256": "1a22c772c1333455e9b2416da190b2af7174fd6ef3f9f6547fd2cf50ddb559b7",
+      "size": 3557
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_after_l3.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_after_l3.png",
+      "sha256": "ffed5e574db6a77019b89ee976c751ae59d4d416318e1fd97b4c3b20fec55d40",
+      "size": 4038
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_after_lb.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_after_lb.png",
+      "sha256": "652fcaf7b55e6091b34970e1e87d5c27ee3d449548a9ad0fb3a7cc8d25379379",
+      "size": 1569
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_after_lba.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_after_lba.png",
+      "sha256": "44607a57f66c6c22c60cdad953191235d785e2e25c110e1fcef4ef12e18d59d5",
+      "size": 4060
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_after_lbb.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_after_lbb.png",
+      "sha256": "2ca62a602b8034dc0deab4c4f11eb45c838dda3fcdb61a73ae4d25524186a462",
+      "size": 4003
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_after_lbc.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_after_lbc.png",
+      "sha256": "f1f053b5bc2179ee0eeb73c4aea719f3cf8fee8b67495bb46c2ff2e581f96006",
+      "size": 4036
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_after_lbrb.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_after_lbrb.png",
+      "sha256": "81b65b9707ea6dfd57febdb165e2d2b28d7e0a1daf4cfb8dfdf16cddb9a2bb82",
+      "size": 4236
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_after_lbrt.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_after_lbrt.png",
+      "sha256": "bb5358d51f585990775a90d4d1a7f4d2d10644c0c4de3c07d364d9581f46f9d9",
+      "size": 4146
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_after_lbx.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_after_lbx.png",
+      "sha256": "a092eadf6c6fbc4c5b6429ed04759db483c5487a7c2a815988a09933fdff7c71",
+      "size": 4138
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_after_lby.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_after_lby.png",
+      "sha256": "f1281d7f9b3766add99b018b4eba4b2fbefd641bedb151d480a16695c829b9a2",
+      "size": 4018
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_after_lbz.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_after_lbz.png",
+      "sha256": "197594915c43c4e5a6ad7274fea4f0668076cb6d0d6829c51289c8735fc28075",
+      "size": 3969
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_after_left.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_after_left.png",
+      "sha256": "83abdd9c0780d689fc28e314386f23b48be253e19b10e9b789167d82df98d6bc",
+      "size": 2808
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_after_logo.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_after_logo.png",
+      "sha256": "1a7a06d8cb1febfed244049aea526b29eb20dbd5db4af11e6b155168122031a5",
+      "size": 3808
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_after_lt.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_after_lt.png",
+      "sha256": "1a5e391b930891badfc49c92b143d51d2f5bf3011e0f13d03a5a86a3687ef6c8",
+      "size": 1051
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_after_lta.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_after_lta.png",
+      "sha256": "3582a25afb59a124810434ac2f9b6f334e39371d96552d47d28b6b890237d6e4",
+      "size": 3894
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_after_ltb.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_after_ltb.png",
+      "sha256": "92c7ac6cb44b7f3ca07386c1480a97b38283431549cba2728b2585f35096114d",
+      "size": 3873
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_after_ltc.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_after_ltc.png",
+      "sha256": "b2abbd5eec887a81e3a20e817c8ec34136c34fa2ba5b8214cc53c97bd23d27ef",
+      "size": 3886
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_after_ltrb.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_after_ltrb.png",
+      "sha256": "244af084b4eac572834d1e51b6bfe1926346f57a8caab94bdcaf5c4243fd280b",
+      "size": 4094
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_after_ltrt.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_after_ltrt.png",
+      "sha256": "8b8204667d0f3f7c801b137157edb927be9ad83ced7d2ae21b2cd4d6d5b2b310",
+      "size": 3869
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_after_ltx.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_after_ltx.png",
+      "sha256": "949af8a7dfe2f9c5c733dafe4a82d50a2552654a781172e0cce656d814bb9c67",
+      "size": 3980
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_after_lty.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_after_lty.png",
+      "sha256": "bb5fbbab85486c8960eec8149f4ee19a337ef9e03c386f0ac433f697498c90d8",
+      "size": 3859
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_after_ltz.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_after_ltz.png",
+      "sha256": "9a32bdc2a2f2be3c408ddc62067f0cba7966e8616b43bfe4226fc1c9f5cbaee3",
+      "size": 3802
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_after_m.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_after_m.png",
+      "sha256": "98645e85d2bd78026efad51565e14b8766ae287a4c83b06aeaec9ef50c2e1a0f",
+      "size": 846
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_after_m1.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_after_m1.png",
+      "sha256": "56b49b1385a6126a1f4af80fbd216aa5a6bff2823ae9f12a5848879e30ab5ae2",
+      "size": 1739
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_after_m1a.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_after_m1a.png",
+      "sha256": "3d2114251cb513498e0eb258a8004f296354d03803e0bbc989521b4033f5a2bf",
+      "size": 4196
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_after_m1b.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_after_m1b.png",
+      "sha256": "7ae3430a256aa8ab622944006270a4e18cff6baf2db194443ee6988a2b7303a2",
+      "size": 4175
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_after_m1x.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_after_m1x.png",
+      "sha256": "9f7200321c9fbb17ad2c8713ee4c02e0c5b6e15c89c73492981dbcdc33fcc1fa",
+      "size": 4302
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_after_m1y.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_after_m1y.png",
+      "sha256": "216dd98e1ff16ec2b9f8e5dab5d8f6ea8bf6165a257bd7dd29a680810e5b4bf3",
+      "size": 4162
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_after_m2.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_after_m2.png",
+      "sha256": "d7a0597d299165f1f72ccf613f9580338da3951e7d07a6d0d14e8f33623e4c35",
+      "size": 2156
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_after_m2a.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_after_m2a.png",
+      "sha256": "89d5e551337a6c5a61b36c4780a513ee6cb4a2450008e7c93631e9059db4c7ee",
+      "size": 4413
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_after_m2b.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_after_m2b.png",
+      "sha256": "30b49aec1ac0a69c2334a5d24a5393924b6a127fc8bc64ae5334d63ca19f9c5d",
+      "size": 4399
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_after_m2x.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_after_m2x.png",
+      "sha256": "72a4d9230ca1e0f479fabcc8460d2ca5df38aeec9ee20f607bbf9551929c95e1",
+      "size": 4518
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_after_m2y.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_after_m2y.png",
+      "sha256": "2ee576e13936dc0735be949b6e55c0e39e86dc4eee39d955511d1995957ac402",
+      "size": 4404
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_after_m3.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_after_m3.png",
+      "sha256": "b3862b9b8dc91d823f3ea070c7a8863d8f2af941581043e17914db4fc8bff8a3",
+      "size": 2314
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_after_m4.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_after_m4.png",
+      "sha256": "080021053905b5474a4d28df7593e4e627a29f7d782b58ecf9ec3be70089dab4",
+      "size": 1987
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_after_m5.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_after_m5.png",
+      "sha256": "584cd3d6a321c21e245421b377df172de0a8c2a0b7e3b39459fe5d3bd0ae1986",
+      "size": 2254
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_after_m6.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_after_m6.png",
+      "sha256": "f6f03a19a35b3b723948f9860e275acd96b887bb3a7b0f0b47319f98eef0d302",
+      "size": 2349
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_after_menu.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_after_menu.png",
+      "sha256": "28174ec8d4e3ccf697eb247b3ae5634954bb52063153ebdc317f090db94e7c19",
+      "size": 2714
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_after_r3.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_after_r3.png",
+      "sha256": "30d8df98a04505f33c7144cbc45a5978a521284d7e4ac1f6459ad5dfb67eb274",
+      "size": 4472
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_after_rb.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_after_rb.png",
+      "sha256": "5dd0403fd8daa9181b2043f044ee7d318983c210cf2c61fda0046af70df16c40",
+      "size": 2005
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_after_right.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_after_right.png",
+      "sha256": "e34760651ec80a0943b13ed419bb15b1936cbda57eb97e70333b1d8dd28ddf51",
+      "size": 3149
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_after_rt.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_after_rt.png",
+      "sha256": "082813a0fe79e10621fa1687dc04ff572cd39e588eeb734c81df003614b17870",
+      "size": 1523
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_after_select.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_after_select.png",
+      "sha256": "2dc1ab1426a530efd78ce68475090a9672af1ab31000460eb706974082c48589",
+      "size": 4254
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_after_start.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_after_start.png",
+      "sha256": "b6b278dc88fe8b16591661a89442cd77d41705e4f5b524411c0c71db217c4f0f",
+      "size": 4486
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_after_up.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_after_up.png",
+      "sha256": "cb48cc7c1329ad8e34aef0f94013351f770723d508c8e6e3321f9d3005e44046",
+      "size": 3185
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_after_x.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_after_x.png",
+      "sha256": "2977e6360b76da365b148f6786dab7f63944b10ced756455cf57dc3d9b8f2fa1",
+      "size": 4630
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_after_y.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_after_y.png",
+      "sha256": "b5269c646b29e19571866dbce09d3a3609033af332881ef5acc4e9db85cb5980",
+      "size": 5385
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_after_z.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_after_z.png",
+      "sha256": "2f2484136bca8fd6afc46b29281c6f1f0503445dc675d07b203fd4eb9d75ae0a",
+      "size": 3668
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_front_a.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_front_a.png",
+      "sha256": "c5773eafaba015849ea5dd6afee14dd1c38e1563b2edfcefb564fd649bc2e4b3",
+      "size": 3731
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_front_b.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_front_b.png",
+      "sha256": "faa1b460a4a3cc54634c3a1b3ed0de3419f7a03a62f7ca4fb41cd0de6edb3c0b",
+      "size": 3427
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_front_back_disable.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_front_back_disable.png",
+      "sha256": "ac888a7143c381e4e0bc76084ad93752d43821ed572454bc3a38ed4c1f4b5c23",
+      "size": 3534
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_front_back_normal.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_front_back_normal.png",
+      "sha256": "050266f34ec6cfc805dbd1e22a8be8cce6377a282be1c8f854ee3ca714755bac",
+      "size": 3468
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_front_c_disable.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_front_c_disable.png",
+      "sha256": "371dfe4a6601489f410a8fb8b581780ca05ae1818f5f379d1198cab796eded43",
+      "size": 3750
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_front_c_normal.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_front_c_normal.png",
+      "sha256": "485e6ad1e4f49bfb0bfd76cf11bdb06c18fbccc9e00e72729edeb38c7eb72870",
+      "size": 3710
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_front_down.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_front_down.png",
+      "sha256": "bf926f91e12a26b8070dfe2ec3b666667f6532cde9fda9a3cade2f93b030a02d",
+      "size": 3954
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_front_home_disable.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_front_home_disable.png",
+      "sha256": "02d435369e5fea7c9b527fa8ae7dd78b8e1bd66f93e15c0eba46082ab7d46e3b",
+      "size": 3692
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_front_home_normal.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_front_home_normal.png",
+      "sha256": "2e68897842d3b68807324d725ff57d50be452e455ae281de258bd68e67794599",
+      "size": 3693
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_front_l3_normal.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_front_l3_normal.png",
+      "sha256": "e1bd675f1d1377433d6adb5b17bc3bcce7cddb5dd39f368e28e727be8da9fafa",
+      "size": 3574
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_front_lb.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_front_lb.png",
+      "sha256": "f9314b3872f091d7c8277bdcd8b26c1edcd91e77c400c5139c3c9fa3b1827965",
+      "size": 4109
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_front_lba_normal.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_front_lba_normal.png",
+      "sha256": "ad1c1f52237b8e60a03db56045961a83b7bc3cdb6bf56f16949e298d6f1fe783",
+      "size": 3970
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_front_lbb_normal.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_front_lbb_normal.png",
+      "sha256": "73cc15ff81ba93d4735e6763c78a664a86446d66083e1aba085fc50ae5a9064b",
+      "size": 3844
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_front_lbc_disable.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_front_lbc_disable.png",
+      "sha256": "3853b244c88c40717472ff47387ffaa5753fe8d25f646d96c490c4021e244743",
+      "size": 3932
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_front_lbc_normal.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_front_lbc_normal.png",
+      "sha256": "0922cb4843eb31c5dbf961a088c91884a9816da12fffcd0802afb6499ceeeed1",
+      "size": 3892
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_front_lbrb_normal.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_front_lbrb_normal.png",
+      "sha256": "c608a9d6c6d76304af43938bca4d105f1b9076e34eed7bc2989e2aa4f66f8ec3",
+      "size": 4132
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_front_lbrt_normal.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_front_lbrt_normal.png",
+      "sha256": "9b414ac984071bd19264635629b44ff637d4e919b096101a6f1d9af07a2606f8",
+      "size": 3910
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_front_lbx_normal.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_front_lbx_normal.png",
+      "sha256": "06d80e455a034de6f47c9479917854c62caa9b92932f013f318e5d6941ac91af",
+      "size": 4029
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_front_lby_normal.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_front_lby_normal.png",
+      "sha256": "545d314f5e57906337a82c4f9efb1b272ab7a0b9990d5dd2076cb5ad0136bcd5",
+      "size": 3861
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_front_lbz_disable.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_front_lbz_disable.png",
+      "sha256": "7abe8f8b8990232f6abee9cbbff237631f105954e3059c88207120ab519c5f98",
+      "size": 3831
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_front_lbz_normal.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_front_lbz_normal.png",
+      "sha256": "12095c97de79a0cf8c1a19720fd5a7d8a164ed0ab5d832bacfeb8d8a1718bced",
+      "size": 4546
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_front_left.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_front_left.png",
+      "sha256": "4556069177f4dccfba1ff66d9ec76126e6258c08d6cf60324215e62896348678",
+      "size": 3054
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_front_leftstick.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_front_leftstick.png",
+      "sha256": "d51d9d4fa3ce479e2543e99be2fb50b6afd26faefa588dd19fe2834f912f8edb",
+      "size": 14685
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_front_logo_disable.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_front_logo_disable.png",
+      "sha256": "8a87377292b373ee0579dc99e9890cd403cb2f4bd0fc455a5f38ed9d0c659227",
+      "size": 9823
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_front_logo_normal.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_front_logo_normal.png",
+      "sha256": "2500c1e26bd177c7e0c240363f90b0771681e3f0b382c8671f77d5c5e85534d8",
+      "size": 4844
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_front_lt.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_front_lt.png",
+      "sha256": "ed0de8b88a033dc182cd80b9466b40b565f52951a6cc184ff7b5b69f1887d033",
+      "size": 2873
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_front_lta_normal.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_front_lta_normal.png",
+      "sha256": "db9fd9524b79891ed4d9bd6625beba148c17df7a23de625e1fa7a6c7ef1d3183",
+      "size": 3704
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_front_ltb_normal.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_front_ltb_normal.png",
+      "sha256": "401151fc8917046094845df1715ac3c2ddea967d1d6dac162f8e7445066b93e1",
+      "size": 3548
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_front_ltc_disable.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_front_ltc_disable.png",
+      "sha256": "6c6a4793826e813395ef79113154d9938a5b7f4b0091425812d8a91ee55b82af",
+      "size": 3692
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_front_ltc_normal.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_front_ltc_normal.png",
+      "sha256": "93990725a5de071bf43ac8ef7ccc1908dff4ee6e59456820773aff1e3d93b2a9",
+      "size": 3637
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_front_ltrb_normal.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_front_ltrb_normal.png",
+      "sha256": "0112babd6b24ee80d8e113159919c1397425dc4413b8d287b4b699dda04694a2",
+      "size": 3930
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_front_ltrt_normal.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_front_ltrt_normal.png",
+      "sha256": "c77eb6302123dcd8f80666192cd05e59aa3eb333795692dfe5ecf48c44f76a91",
+      "size": 3687
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_front_ltx_normal.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_front_ltx_normal.png",
+      "sha256": "dc975f4b648fbe98f3609844b3ccd1b730025740424cb49450acc68413c7fc3b",
+      "size": 3760
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_front_lty_normal.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_front_lty_normal.png",
+      "sha256": "fb8d42d1188272a1a326ef0a11e279d8df14dcf72cdc961851d7bac8d8258719",
+      "size": 3580
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_front_ltz_disable.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_front_ltz_disable.png",
+      "sha256": "5762ed5d0e0e9429ef3b82194973b95d655647a6d34de71ff829ef4988718f99",
+      "size": 3575
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_front_ltz_normal.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_front_ltz_normal.png",
+      "sha256": "6d4af016bac1d77ac5254bd73f8e295df67377946842b38ce1925e62679bd835",
+      "size": 3530
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_front_m1_disable.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_front_m1_disable.png",
+      "sha256": "e8d34164ea1dec15a3d01fb27605ce51d2b38a8ae6788de309ec12200befd600",
+      "size": 3757
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_front_m1_normal.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_front_m1_normal.png",
+      "sha256": "01394efa240605bbf32d7a8aebaf9cc9406be3500fe333975db81a23b7ee2527",
+      "size": 3710
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_front_m1a_disable.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_front_m1a_disable.png",
+      "sha256": "4f7924eed04d06ea5f1ba879cc098124f762ebc152e770a4f2bbf2e3fc0a1ce4",
+      "size": 4168
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_front_m1a_normal.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_front_m1a_normal.png",
+      "sha256": "9fe4a851acb6f888375d01a87f347013af0c41501a3f4f7786de10a1a2aad9ff",
+      "size": 4110
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_front_m1b_disable.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_front_m1b_disable.png",
+      "sha256": "ada8840657e6316d0591f8747c227918dddd5cabf7e798eb5a6fd36b2e5c39a0",
+      "size": 4080
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_front_m1b_normal.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_front_m1b_normal.png",
+      "sha256": "dd19de1f20eca9b2303e0350878a02335460b5e64ef543adcfcaee84a6ac8257",
+      "size": 4026
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_front_m1x_disable.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_front_m1x_disable.png",
+      "sha256": "071d614d1eea0991d2cdccabab5604cf660df8980bbc1b76dbb41ebed18a7499",
+      "size": 4241
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_front_m1x_normal.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_front_m1x_normal.png",
+      "sha256": "887b70ae987d193297d247ac013e7de4cfce9213314a7eba6277750c12191d0d",
+      "size": 4211
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_front_m1y_disable.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_front_m1y_disable.png",
+      "sha256": "788d8646eea938360be148e9747c8774ba5d43aba9993e1abdb30eb861cd4172",
+      "size": 4098
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_front_m1y_normal.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_front_m1y_normal.png",
+      "sha256": "2533f530719ef185a1f7d29548569ba092cc106392fb83d58c8ebadc730e0fde",
+      "size": 4041
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_front_m2_disable.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_front_m2_disable.png",
+      "sha256": "68bb173309e40f7b80f5fa3e7426bde3db90d284fb5db4b235e6b6674b74ea4d",
+      "size": 4277
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_front_m2_normal.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_front_m2_normal.png",
+      "sha256": "d9e4a165a932f7e2d98b1f92f23a39e6487e132e5233d5948c6cb512042181d3",
+      "size": 4255
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_front_m2a_disable.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_front_m2a_disable.png",
+      "sha256": "538981cef59d27fab2ed7c826239d87ac0ae9f469d23bd315426160736c8013a",
+      "size": 4513
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_front_m2a_normal.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_front_m2a_normal.png",
+      "sha256": "ecfa298301ac23eeccf3fef1d4b8fd49f31ae629aec9781a9efe8f073befe166",
+      "size": 4475
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_front_m2b_disable.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_front_m2b_disable.png",
+      "sha256": "2c389314fbcdd6c814a83f390c188a1cf478b5f2fdeaa27be0589a4f322ae14a",
+      "size": 4434
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_front_m2b_normal.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_front_m2b_normal.png",
+      "sha256": "fe415a80d91af88bc2583e95f08ffb113a92e9344f7649226475ecdbccb2c3b5",
+      "size": 4401
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_front_m2x_disable.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_front_m2x_disable.png",
+      "sha256": "97663753ee7f0aebb57550106628f346e30a4895d51290c376018628392ebb66",
+      "size": 4583
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_front_m2x_normal.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_front_m2x_normal.png",
+      "sha256": "7a452b1ff5c1e65fc2f5018b5fdc2c4e3ee80b3e3b0555316bea97c1c77a146a",
+      "size": 4579
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_front_m2y_disable.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_front_m2y_disable.png",
+      "sha256": "237f16aed093df4df206e13616338f9c01d3d52a70af60f207e3ab97a059b758",
+      "size": 4455
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_front_m2y_normal.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_front_m2y_normal.png",
+      "sha256": "34bf73f3122c51b30e1de94a98e4ce5edfa34554313aa88f6c642f101e9db17c",
+      "size": 4410
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_front_m3_disable.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_front_m3_disable.png",
+      "sha256": "0a1106e261460c5f76289b674231951a99840739093a6773041aa41200e66602",
+      "size": 4390
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_front_m3_normal.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_front_m3_normal.png",
+      "sha256": "b2248b4c52d7044f803c2d973514abd39ddb494209753c9a18247a796dc87506",
+      "size": 4371
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_front_m4_disable.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_front_m4_disable.png",
+      "sha256": "522ccff7d59d4948da981597642f9eabadac5c5d8cda96be7c868367374b1ba1",
+      "size": 4055
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_front_m4_normal.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_front_m4_normal.png",
+      "sha256": "ee691f0ecb85f4b2d7b49a157f3196665b69d98d11bbdd655b1cb71a3e5e38fa",
+      "size": 3966
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_front_m5_disable.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_front_m5_disable.png",
+      "sha256": "acb2d0f28e04f1aedb805e0a47867dde2eb06ff1a7d73cebb422435573512e7a",
+      "size": 2768
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_front_m5_normal.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_front_m5_normal.png",
+      "sha256": "3a371b4d80c7674ae8298f1d1a41bd0fd3e92397387cc85685640f502762f1cc",
+      "size": 4142
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_front_m6_disable.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_front_m6_disable.png",
+      "sha256": "0f83d3b318f76cdf3c1600820742ec748e3ede8fc19172e2386827942e009262",
+      "size": 2842
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_front_m6_normal.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_front_m6_normal.png",
+      "sha256": "c005027c76504ed8eea5d28eed0772b16bf812d74c116b462a90b34978341c39",
+      "size": 4303
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_front_m_disable.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_front_m_disable.png",
+      "sha256": "7a847b705e772c19ab4167346cd69c47afd1f2a34f20ec03412322fa40ff8a60",
+      "size": 8455
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_front_m_normal.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_front_m_normal.png",
+      "sha256": "0ff38e6c8c743b36f8cd859388be3a4a1fd0f002f46d2611830342bf1e2826e4",
+      "size": 5729
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_front_menu_disable.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_front_menu_disable.png",
+      "sha256": "1f850e35b0dfd04ba23365aa1ac7123dec4360572b9a4e957093ab5bcb773463",
+      "size": 2999
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_front_menu_normal.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_front_menu_normal.png",
+      "sha256": "d6ac0ca5802490a51c4236f6a94cb1f0101d9bda07812a5ca6eaac4a4c707df8",
+      "size": 2886
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_front_r3_disable.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_front_r3_disable.png",
+      "sha256": "1c6b4b066f4d162e6f7080d17652f7f6d611e009189bae8f13cf0e99c2f42ecd",
+      "size": 4099
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_front_r3_normal.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_front_r3_normal.png",
+      "sha256": "53b47541fdc51ba470acdfbb4485bf5d201d5b880cc3e3c27e2cc96e0bf885a0",
+      "size": 4088
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_front_rb.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_front_rb.png",
+      "sha256": "2a4b13d83c3f015c0f136391bc9c992b8229b89339a771b6638c8d23425795f8",
+      "size": 3944
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_front_right.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_front_right.png",
+      "sha256": "1019e656d2fa461860925f4a10247e0135d2e71fbe00a271e10cd4da0dd68bac",
+      "size": 3063
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_front_rightstick.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_front_rightstick.png",
+      "sha256": "972c4670df2437e7e8eee00215ff62d349c1cf40f206c72c657dcfd97a496597",
+      "size": 15005
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_front_rt.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_front_rt.png",
+      "sha256": "bb97f11748b1725b1bced5eb99ce9ae3bcd16e5f49cbc1b1e0089a4f756bc1e6",
+      "size": 3155
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_front_select_normal.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_front_select_normal.png",
+      "sha256": "234cf53ccfd8adb7e53a727749d4cae7ba1dca6ff1210c9265cbee9c00ed89fb",
+      "size": 4170
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_front_start_normal.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_front_start_normal.png",
+      "sha256": "cb20a632d7339fcd724f3c193bafa0ccb585da6077721f1ea6508fe769dcecac",
+      "size": 4249
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_front_up.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_front_up.png",
+      "sha256": "c10fd67fcb539cd64d2272669ba16892aa6e56c464522726c9d5f819cdefe6aa",
+      "size": 3968
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_front_x.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_front_x.png",
+      "sha256": "bddc9b7655fb21074a1697c16c0f86786be542a520594c8792cddd974b13f3a7",
+      "size": 4638
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_front_y.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_front_y.png",
+      "sha256": "1adba96918e5bf99cd02da181587b96a7161f2c5bee0ee3d580ef837f6dc936f",
+      "size": 4317
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_front_z_disable.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_front_z_disable.png",
+      "sha256": "402d99bed6b201ccab9603be0d6110f159af880e54b76d245742b82a0f7593c1",
+      "size": 3433
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_gp_front_z_normal.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_gp_front_z_normal.png",
+      "sha256": "8028b4b898321f3b8c39b0ce49907d89a10b5b7c1620b1dab71a78251c373037",
+      "size": 3331
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_icon_cloud.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_icon_cloud.png",
+      "sha256": "64b840da8d8bcc993578e3a46989ab6903263aba9b440cc72f1d8103e5d5c153",
+      "size": 2104
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_after_.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_after_.png",
+      "sha256": "72dc8b106d4c236e89ec41f993de91ae444b01760ab58c27fbb5a6d247c878be",
+      "size": 4205
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_after_0.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_after_0.png",
+      "sha256": "ef90bf77e982a02e9309744086203136f4086b384f12c4adae9b1a5621dea9c9",
+      "size": 2784
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_after_1.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_after_1.png",
+      "sha256": "25addfe8f8f0de88c8892f8caa35ace9edfa637bcbec763693da3cb168be46de",
+      "size": 2473
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_after_2.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_after_2.png",
+      "sha256": "ed8dca59f475ea5c00dd1d2b57c6b62afd7047d61bcd59ed49e5a357f24f40f2",
+      "size": 2890
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_after_3.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_after_3.png",
+      "sha256": "a92657bf169b6b15251a06945ece7e6c2ba421ba7fc111233545aff32e9e59b1",
+      "size": 3005
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_after_4.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_after_4.png",
+      "sha256": "50a5e175147e09eaed82b5337085de07080ef6dbdc2004830e8616bbe45b781d",
+      "size": 2733
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_after_5.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_after_5.png",
+      "sha256": "954806405216afce302625c6e70284033ecefd426bd38d3378c152743ec80064",
+      "size": 2939
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_after_6.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_after_6.png",
+      "sha256": "fed223a17ef2bbde77199816dec3aacdc6264a82f56ea1995dd43c3eb9e2c7ce",
+      "size": 2932
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_after_7.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_after_7.png",
+      "sha256": "001444978b723dad8ccf20499648c528acad7d01e6b0bad3b4a543642321a9ee",
+      "size": 2723
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_after_8.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_after_8.png",
+      "sha256": "e647a64ef6fd228d364837a64303e17a552b11d8df39141e174ac6ce5ab297fb",
+      "size": 3057
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_after_9.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_after_9.png",
+      "sha256": "cba1075fb95903d21258bba047aea8a2950fd3b8a96788559083b2cdcd174ce7",
+      "size": 3036
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_after_a.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_after_a.png",
+      "sha256": "bdfaba31840b4c25e0d96a528bdb5aca3eae89ab57d62ba34a48ee555229c7d7",
+      "size": 2781
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_after_alt.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_after_alt.png",
+      "sha256": "f4206d381273944d16684cc4846e49d5ed25f4bcd5ea2483f5bb028afd8100d9",
+      "size": 2985
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_after_b.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_after_b.png",
+      "sha256": "19d72533adc3bf8e309ab1cd89d03a1afc8311333b49c5b08a85700cc8007d74",
+      "size": 2909
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_after_backslash.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_after_backslash.png",
+      "sha256": "595502a58c0f1ce4ee59ac8a944fefe871842a04822f86cb83f92b172760625a",
+      "size": 2797
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_after_c.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_after_c.png",
+      "sha256": "0d7087d60e495823b9ba63a75909d1a5c3007c2b1a804b7ccfe57d3a346f8780",
+      "size": 2998
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_after_capslock.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_after_capslock.png",
+      "sha256": "47bfbcd523119aa50408ac5afdcef5ed49e214d35242b19f0e7d082b8012029d",
+      "size": 3804
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_after_comma.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_after_comma.png",
+      "sha256": "4728eff3c1b9baa98f69db7f863add85bfdf5b07f972031f7da13a64caa19529",
+      "size": 2811
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_after_ctrl.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_after_ctrl.png",
+      "sha256": "422d1cadc38e9b81f1d375e26969cad8a8a6d50e0d55c25b4c83a6edab33d4a7",
+      "size": 3111
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_after_d.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_after_d.png",
+      "sha256": "d44f73a0c01ac93b907c2a9e8094f04dbad6efa733a3526de17fb38247635e29",
+      "size": 2779
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_after_delete.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_after_delete.png",
+      "sha256": "bfa6d1aaa14b246884780d39d173c9e0175d53adc2d7e59105283f01c77bcbee",
+      "size": 3167
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_after_down.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_after_down.png",
+      "sha256": "e827aea3ce552c4d7117d7981bdecb072343bbc88de4b3a8cd434c2e18fb7309",
+      "size": 3153
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_after_e.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_after_e.png",
+      "sha256": "7d7153a9af7f58a6a42f4ea0f56a392f2fc2f7cb2082dbfc761291565225443e",
+      "size": 2566
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_after_end.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_after_end.png",
+      "sha256": "a5d6a4554fba73bce09ae576f584f91b555be55bed2cd85bcf323512b515d9fb",
+      "size": 2863
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_after_enter.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_after_enter.png",
+      "sha256": "5d1f96801f6df92035bfdec4a6ec7395654b708c210f997cb023db90b0c9f1b1",
+      "size": 3034
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_after_esc.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_after_esc.png",
+      "sha256": "718149f13847cca5c866e1220d946490ad5b7a9f399233c685f0ea95fe988102",
+      "size": 3241
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_after_f.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_after_f.png",
+      "sha256": "b5ea525a1e2e322fe21d817966a8b8891e5af24306d6d0c3406370e5c8ff6c90",
+      "size": 2535
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_after_f1.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_after_f1.png",
+      "sha256": "cddd3a8f2342ce184ea758e6f854b416108012ed9f76dc70a8a9f51061924f54",
+      "size": 2579
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_after_f10.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_after_f10.png",
+      "sha256": "fb165ca325b6492c4ccd97659695d328dcebffe6be08231ea8120f3010972d76",
+      "size": 2911
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_after_f11.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_after_f11.png",
+      "sha256": "cce0ae9d131feaa8f3ce319d5583b5af5c410cb4ec05cb22de80ebf5328cde18",
+      "size": 2676
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_after_f12.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_after_f12.png",
+      "sha256": "1f3c8b88510c13cf912e25cfb718ee1b94a06eec01fc67547b0df53a0896b20f",
+      "size": 2940
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_after_f2.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_after_f2.png",
+      "sha256": "bc2c9d2940eb09b777dcc835813a56fa073683a6edeeb822f901caa164021f66",
+      "size": 2882
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_after_f3.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_after_f3.png",
+      "sha256": "6138207c817d187c32d9374fe19992b2fccf618c082a48c30ab4f566d84dcb13",
+      "size": 2984
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_after_f4.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_after_f4.png",
+      "sha256": "733f71230d1b05a579e9738f7dabc664855ab34402072f765f2e9f17dddff877",
+      "size": 2777
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_after_f5.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_after_f5.png",
+      "sha256": "62af0fe23026136c0202527a14612953325d92e71b00cc0a7bcb327589298e15",
+      "size": 2926
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_after_f6.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_after_f6.png",
+      "sha256": "0d44a7f8eafcb9528affe1b2ee35bbe384ed46acd2e2db6d9568ef05b00adbc3",
+      "size": 2984
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_after_f7.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_after_f7.png",
+      "sha256": "06aec31979571e91739114e80f302f7f963c7910b0915717f573727baf1c3e2e",
+      "size": 2729
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_after_f8.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_after_f8.png",
+      "sha256": "f1240ad374692be4b155b7e522b6b0233677202a9bf2c0ee4ca8e6cdade7b53a",
+      "size": 3066
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_after_f9.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_after_f9.png",
+      "sha256": "0e3000dd5bbe2624a7bb95c1a02a23b41886820ad8b4bb57fd580db5ae6aa39b",
+      "size": 3020
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_after_fullstop.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_after_fullstop.png",
+      "sha256": "60177ea65a07f18e28977144b89fbd41ff1943f6eddf360bb05ab9153aa0d5d6",
+      "size": 2813
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_after_g.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_after_g.png",
+      "sha256": "1ff1f391316ec5bc287544ceefa006fe4f5110956b3092b9cf93d0e361d07d7c",
+      "size": 2942
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_after_graveaccent.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_after_graveaccent.png",
+      "sha256": "04aee8ffb850ec29e44cb54fd10b0da09d0173a71e0234a50789b48b9a05a323",
+      "size": 2787
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_after_h.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_after_h.png",
+      "sha256": "2cee3909da3ed16a14eaf83cf8896460b5729bde1a26a06763dd7e4e988a6d22",
+      "size": 2517
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_after_home.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_after_home.png",
+      "sha256": "e7c302c083cab044be8610042c26a32b3010298bd3c2ff06a4dee44045101dfe",
+      "size": 3119
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_after_i.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_after_i.png",
+      "sha256": "75596bbc16619bcc19d3372fa2af6f43d376c46c5114337f32f19518372b3c8a",
+      "size": 2432
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_after_insert.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_after_insert.png",
+      "sha256": "8adc3a79865551757175bd5ee7a100bacc08e9debc93ecafab073ed19da1acaa",
+      "size": 3093
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_after_j.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_after_j.png",
+      "sha256": "79b9fabaf59b43fac1204bc16947818ca59182ba8f9fe3a191d02dfe46d3835f",
+      "size": 2686
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_after_k.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_after_k.png",
+      "sha256": "2135a406e1a80ccbac91487bfa9fa864958e53233c5e893e45d20b670334187d",
+      "size": 2825
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_after_l.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_after_l.png",
+      "sha256": "667a0d4728aeb969c2846427b4245c00afe75e920779a89f2e1dad19a81fc8a7",
+      "size": 3172
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_after_left.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_after_left.png",
+      "sha256": "83abdd9c0780d689fc28e314386f23b48be253e19b10e9b789167d82df98d6bc",
+      "size": 2808
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_after_leftbrackets.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_after_leftbrackets.png",
+      "sha256": "3982bd97a6fb1fc9cdc87a5d0d802622f889938868a2af25dcbc85b698a62bdf",
+      "size": 2433
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_after_leftmouse.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_after_leftmouse.png",
+      "sha256": "cae74c8eafbd96b4f92e44ce9e3b45baef53b57ee42d4820fd7b49da47e48f34",
+      "size": 3259
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_after_m.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_after_m.png",
+      "sha256": "a71514fd337e0abe3f949d74890380f039460ff24e7eac86ed8f11c6dd4d89af",
+      "size": 2862
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_after_middledownmouse.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_after_middledownmouse.png",
+      "sha256": "48a5a8f562eefec002f6234ab97c5236c977c398d8ae10b4ea5c86926cd3ed7d",
+      "size": 3459
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_after_middlemouse.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_after_middlemouse.png",
+      "sha256": "1a7386f8b9de513dd211b97c70bc1fb6253266167c54aba9f5c985b4f2402ac4",
+      "size": 3454
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_after_middleupmouse.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_after_middleupmouse.png",
+      "sha256": "28468edf9c6e0deb6e79c21f92240d7e95c823dd62e5f1613912afd24a4977f0",
+      "size": 3317
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_after_minussign.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_after_minussign.png",
+      "sha256": "2ee6bcfec69f3cfb07b2b17511a2cc8715a7dd0be2ba85c5ec8b80256be1dbcd",
+      "size": 2446
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_after_mousebackward.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_after_mousebackward.png",
+      "sha256": "dbb7f512b902b16d70bfd0baaafcbb3a004e54faa06aa2e0855c185d00eba3c4",
+      "size": 3238
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_after_mouseforward.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_after_mouseforward.png",
+      "sha256": "942336d4549f1d49c7a46237f2cb3fa47f1c06f4dff38301c8617adc53b9072b",
+      "size": 3351
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_after_n.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_after_n.png",
+      "sha256": "f6ec04b67595b11ffe2060a33a1f7694fad3e8ccb5bbfadc4b212145d72c478c",
+      "size": 2737
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_after_num0.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_after_num0.png",
+      "sha256": "0e5bbaaaad157137f5a9a7221ee42cdd4e2318800b8a1d94ff0fa27806c0384a",
+      "size": 3088
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_after_num1.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_after_num1.png",
+      "sha256": "15caccd0e8f6a29cb289c3b38d3490f71ea176f2326e37e2af29c447f37371cd",
+      "size": 2977
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_after_num2.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_after_num2.png",
+      "sha256": "0072c4c0b8d6e2167cba638a42cd9f63c561c30006520502135fd90e6a2a01cf",
+      "size": 3153
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_after_num3.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_after_num3.png",
+      "sha256": "e4f8f1f5e460c9c021467dc757d2b1a4aa40522d23d8a8f03dba32506cd81de0",
+      "size": 3198
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_after_num4.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_after_num4.png",
+      "sha256": "ab3755f8916829e5ffee1237a52f35f430101048f610292ee21dfa50617aa65e",
+      "size": 3088
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_after_num5.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_after_num5.png",
+      "sha256": "57178ec194d2b45493e538311e9682b127cdb3c27a8ebac9c5bb8e07ab01253d",
+      "size": 3193
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_after_num6.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_after_num6.png",
+      "sha256": "5fc24dca3c0bf5b9d7426b267dca30f0cca8168fd2bc1264a5f22260f91d3813",
+      "size": 3141
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_after_num7.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_after_num7.png",
+      "sha256": "0792c4411667a30c2dfcfd592346a37297ebc99e59f32a2bac6cf99baa0c02dd",
+      "size": 3085
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_after_num8.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_after_num8.png",
+      "sha256": "13eb22e258982b3a999f751cb9708e07aa185ed0ea02f417493223e09ba3af78",
+      "size": 3203
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_after_num9.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_after_num9.png",
+      "sha256": "6585c906a7e0945c9c7d5a920bd5b809fbabd83d04ce991268a7265db6bc5a7c",
+      "size": 3155
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_after_numasterisk.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_after_numasterisk.png",
+      "sha256": "b1bad5c3dc212de1408282f5ff6529b3dd9dab1299f9204db1f2773316ffcf15",
+      "size": 3079
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_after_numdel.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_after_numdel.png",
+      "sha256": "17399eb281c0846940b97943f614ccf5fb202aa43d2a876da346e01c22b5a9f4",
+      "size": 3364
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_after_numenter.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_after_numenter.png",
+      "sha256": "4f867587e9b553f53060461960a6545d82939c4ad0b5a6a8534a3b1b4d66c6fb",
+      "size": 3533
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_after_numforwardslash.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_after_numforwardslash.png",
+      "sha256": "511fd7ddf867b381d7b005dbea4915c157efee91603307e86f3378f1a4c12f8e",
+      "size": 3597
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_after_numlock.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_after_numlock.png",
+      "sha256": "76cb308924374c9e6f7a1c66489fe428d6a950fd9cf6b461d0b4112daf5873ed",
+      "size": 3451
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_after_numminussign.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_after_numminussign.png",
+      "sha256": "7ee2ebafe113d329170b8fb9d8e12ba871a6428776b7be712760c8c33a4644ad",
+      "size": 3003
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_after_numplus.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_after_numplus.png",
+      "sha256": "426dc7f0495105bb4edd27349048c42e4e11cdbe89e90e3e8396cd8b2951c91c",
+      "size": 3053
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_after_o.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_after_o.png",
+      "sha256": "e1bae2aeff2a28ad225a15b5a5ad92c59236c23d3a3ee6df101cce529277810d",
+      "size": 2969
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_after_p.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_after_p.png",
+      "sha256": "bdf08c89eeb2f791278cf1be0eaa218a96a2f23ef295eae22241f5d092dbaf34",
+      "size": 2763
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_after_pagedown.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_after_pagedown.png",
+      "sha256": "284b3197b72d36c5319c049b5af1fb5e8c9948f439c4081fa7ca541daabdf8a8",
+      "size": 3812
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_after_pageup.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_after_pageup.png",
+      "sha256": "32d3641afaf4ff4fd4b304c6da83701bb5392f2e276832cb541e84146002321d",
+      "size": 3554
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_after_pausebreak.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_after_pausebreak.png",
+      "sha256": "4f5c3f1a6c5672307fe6a0fdb641183f911081dd759b89546ad5e96bfe8f5b0b",
+      "size": 4088
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_after_plus.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_after_plus.png",
+      "sha256": "2359c8175f988564cf1601859b7d9e7429242995763c768fc79de2c06fe64507",
+      "size": 2517
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_after_prtscrsysrq.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_after_prtscrsysrq.png",
+      "sha256": "d542b698c05db5cd99a5cef16e91e1b759fd0947ed9996a8d68abcddabb18592",
+      "size": 4105
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_after_q.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_after_q.png",
+      "sha256": "ce1467a89f13ada4aefc34e9c2a831052eb5585b782b216828634ba5c3209496",
+      "size": 3007
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_after_questionmark.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_after_questionmark.png",
+      "sha256": "3f6b7bc55f7ba200d300c5f8a0b9889071372d61757d98b7bdfc9594c15c582d",
+      "size": 2846
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_after_quotationmarks.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_after_quotationmarks.png",
+      "sha256": "1e88b7f0365153a4c0620353cb6717dab7182e8d67a76f0f1ea06664b63c9e35",
+      "size": 2543
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_after_r.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_after_r.png",
+      "sha256": "7b0f113a36a69d1466161f2ec80022cf8e5cc8eb8a05497de39cf32653e2ef16",
+      "size": 2848
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_after_right.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_after_right.png",
+      "sha256": "e34760651ec80a0943b13ed419bb15b1936cbda57eb97e70333b1d8dd28ddf51",
+      "size": 3149
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_after_rightbrackets.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_after_rightbrackets.png",
+      "sha256": "af17e34d75930585088083ca73150c7e8e14b74fec91ff63455925bb03866d5c",
+      "size": 2433
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_after_rightmouse.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_after_rightmouse.png",
+      "sha256": "d8d103b6713cc20d30f0e34ba682ba53facbe22e73977ed83eb6ca730a25aa34",
+      "size": 3250
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_after_s.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_after_s.png",
+      "sha256": "3c23c34cbb5b0a9fcb471ce655cf21d3bea1efe6c0eef33e1c5f2bc54bae82f0",
+      "size": 3159
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_after_scrolllock.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_after_scrolllock.png",
+      "sha256": "0c746824b1121ab41918afa42073379659efe2216161b137a1fd635ba6f31ab4",
+      "size": 3745
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_after_semicolon.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_after_semicolon.png",
+      "sha256": "3cd2e18c3d60e8108554e426fa8d5333f000271a4149a768c754f32cafc96ce4",
+      "size": 2529
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_after_shift.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_after_shift.png",
+      "sha256": "b285af74b6a1b10768063565f6af2d9a05a06a291837b4ad0d1e58e050e283d6",
+      "size": 3330
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_after_space.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_after_space.png",
+      "sha256": "f6dd6dffae0c6358e29d265134ae88a4e6405d67f92cb751d81163cec8732ca5",
+      "size": 3444
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_after_t.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_after_t.png",
+      "sha256": "388db3cb3d404532553ce330276d56a37f13b047db658ee4a6b183bbd75a39f6",
+      "size": 2520
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_after_tab.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_after_tab.png",
+      "sha256": "8486fe810772750c1efebd77f7c716f5d70cc7cbbaf6e199bf6d266bd596795e",
+      "size": 3066
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_after_u.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_after_u.png",
+      "sha256": "fc1f0f9589cb5a382b74c67bb86a321e2a8f0fd0b8bc4343bd0abd07c5bc08fb",
+      "size": 2776
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_after_up.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_after_up.png",
+      "sha256": "cb48cc7c1329ad8e34aef0f94013351f770723d508c8e6e3321f9d3005e44046",
+      "size": 3185
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_after_v.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_after_v.png",
+      "sha256": "2da166e26087b90c3fb7478816944e3003b0a7decae0dfc31f350f92bcd4d38f",
+      "size": 2841
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_after_w.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_after_w.png",
+      "sha256": "4495d2695c902400e1ed611f92e576f6ef75f10b513bba3f55d69775d8801dc0",
+      "size": 3091
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_after_win.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_after_win.png",
+      "sha256": "5ae9820efbc7fb3e061557e6582490dd58071a993ed2551c58e2034ca95cd4d1",
+      "size": 2680
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_after_x.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_after_x.png",
+      "sha256": "f905739bc2560fae17edf592a3fc2a516c3934e110ad83b68eff3b18f978cc36",
+      "size": 2973
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_after_y.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_after_y.png",
+      "sha256": "a03d0ae16b687613e22c65436dd43c133314372f61581428de2551e22bfbc4dd",
+      "size": 2772
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_after_z.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_after_z.png",
+      "sha256": "5ce3b51f537aaea0578af5590f628134222ea163fbd21b1f7fb598255d712fdc",
+      "size": 2800
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_front_.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_front_.png",
+      "sha256": "56d8fd691bc55dd899cf02b63638ab5b1ba9db0d5ed7bb144f3184f770fc8cb7",
+      "size": 5222
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_front_0.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_front_0.png",
+      "sha256": "36ad7e14cfa0574a55559fd0191b18eaf641d8dc3a7ad036292def78369040fd",
+      "size": 3396
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_front_1.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_front_1.png",
+      "sha256": "e645c4b3aee8be112de7b4bc746605f74882d558ced1a8639ec9e69445847f67",
+      "size": 2777
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_front_2.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_front_2.png",
+      "sha256": "1e3805ee1f05fca5f63c4ae739b77af827f452c021293e7b34373580b59acb6b",
+      "size": 3361
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_front_3.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_front_3.png",
+      "sha256": "343157c1ec3b79d8fe7905426687a0ebc4700757ad3253947c8a86083f491182",
+      "size": 3552
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_front_4.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_front_4.png",
+      "sha256": "26d01b1916950fc07bcf1580c5aa9a93fda3ab2f685c5b2867973661566709cb",
+      "size": 3137
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_front_5.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_front_5.png",
+      "sha256": "0048ff562dc9b7a28cc3ff118716281fb4a1ce89f36f06cd5da9fa3fe523899d",
+      "size": 3492
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_front_6.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_front_6.png",
+      "sha256": "3f68ca873c17a2c6342b091b6e26033691ee492bf4fd0ca980714bdf56a349cf",
+      "size": 3647
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_front_7.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_front_7.png",
+      "sha256": "4225a31fdc32fe2e46f9031b94ff6b5d75fed2c96141aa0e44fe1fed8e32c9e7",
+      "size": 3161
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_front_8.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_front_8.png",
+      "sha256": "7efba74fa0471ed9ac453effb94660a758f406966066b01fe5b98b13471ca552",
+      "size": 3736
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_front_9.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_front_9.png",
+      "sha256": "6cd8de7ee9255a1251b7f994278ebb6d09055e948ef5f95ae47930246f99b6b7",
+      "size": 3505
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_front_a.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_front_a.png",
+      "sha256": "8771e31c2bc0ecf666797e77335f32af1f247b57682bebfe89301ae11529149f",
+      "size": 3525
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_front_alt.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_front_alt.png",
+      "sha256": "1871a2feda250aeb2e2e77a710c2bb3552caed0840b4dc943d6b9c385c52dafe",
+      "size": 3542
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_front_asdw.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_front_asdw.png",
+      "sha256": "a36d774e50da6b0abd95eedfeb44d2eae3d4eb4014b127fa2df3395af34445e4",
+      "size": 18362
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_front_b.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_front_b.png",
+      "sha256": "d4f026210079ef4282751fc82480ae46a6191dd5d703ff1b7777fa8fb8a869ef",
+      "size": 3344
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_front_backslash.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_front_backslash.png",
+      "sha256": "459f6079df91a3e1336ce7e9179f3928fb0a9407bb2c188c59b2018d5eef1276",
+      "size": 3318
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_front_c.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_front_c.png",
+      "sha256": "175bf5a83fa6e5210ee6dce4afe8d1bcbad45029268215b11d712c4da2849bd8",
+      "size": 3401
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_front_capslock.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_front_capslock.png",
+      "sha256": "6ff09d9028ebccf82dc3309512532ddddc672f972b3e17f642fd446f274ede5e",
+      "size": 4927
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_front_comma.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_front_comma.png",
+      "sha256": "3562781ab5b53b77c2e1d2f129b7b69456ba246665135ce5d52c2bde93fb01c3",
+      "size": 3091
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_front_ctrl.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_front_ctrl.png",
+      "sha256": "2802b343a6bd2d536e94c07a944b3ca7b3843da385a6dc5f66521ce1166510a6",
+      "size": 3692
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_front_d.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_front_d.png",
+      "sha256": "20a71471cf443f446ecb74281296a45cdded42b28b6f57a0eca8e23d8890c778",
+      "size": 3214
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_front_delete.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_front_delete.png",
+      "sha256": "fec5ffdf7db031a969ee7918074ed60da209310e54923d861c560140c064e49d",
+      "size": 4062
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_front_downarrow.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_front_downarrow.png",
+      "sha256": "afeefcc2bbc4d89f5394881372a6999502a30d237aad3e0f733e609d2f3b42b0",
+      "size": 3293
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_front_e.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_front_e.png",
+      "sha256": "d24d1300825bc3ed1acbffb9770426ab80c33b42053cd087a6a2b227797e8935",
+      "size": 2838
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_front_end.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_front_end.png",
+      "sha256": "0eb6d79152999a4ce97aa097f0274b6e7322cf88c3f57546810958ceba557bba",
+      "size": 3299
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_front_enter.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_front_enter.png",
+      "sha256": "0b0afd42314f669f8656f41ae0009c7c398d0cc02f5babe7d31a6acf8a57dcb0",
+      "size": 3720
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_front_esc.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_front_esc.png",
+      "sha256": "3464734387d5c716b33464b3eb7fe38f82d0b0f98f1354fa8da84fe827900f21",
+      "size": 3961
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_front_f.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_front_f.png",
+      "sha256": "adbcb7dccc46e7bd0aee32acce65e4fbd649dae4d6dbe386e1e5e462b59188a8",
+      "size": 2807
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_front_f1.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_front_f1.png",
+      "sha256": "94c2557efffd36acc8ad51a6b7a18dd1af0e2c32c1eba03565d5e5e13f1dd66d",
+      "size": 2914
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_front_f10.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_front_f10.png",
+      "sha256": "f9c900ded76558b2287f65692962bad31bb931e4dfd0098693df2b8d9333ce01",
+      "size": 3586
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_front_f11.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_front_f11.png",
+      "sha256": "59da0cf6d304ee0459e8f0889080e08dfc795d0e7cae8d8805f00714011c9fe0",
+      "size": 3044
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_front_f12.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_front_f12.png",
+      "sha256": "e265339cd2f99364a018c205a5b6ed1849a14c80ef7a64f4e5145d48de480bbd",
+      "size": 3622
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_front_f2.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_front_f2.png",
+      "sha256": "1410d0c4fd1d9a08307f8756bba1ba0a8d3575e69c99cb6b64ccac3040222ea1",
+      "size": 3472
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_front_f3.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_front_f3.png",
+      "sha256": "a21ea4d8b0359a7d8d283a293376e1a4218823223fd8869bc7e4fabc4ebfd0c8",
+      "size": 3578
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_front_f4.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_front_f4.png",
+      "sha256": "8e734901c76cfd7eab7054eec881963e63f8ae8a2a8fe6cf8ecfba18d5d71f0f",
+      "size": 3260
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_front_f5.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_front_f5.png",
+      "sha256": "b135ccb0d5246b33dbf0daa28fd2fa295ef5094ec2ce21cb319cf5fc2c753e44",
+      "size": 3554
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_front_f6.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_front_f6.png",
+      "sha256": "e857ed9d3cf112ae78e9e38a37ef211cbd6258dbba4c19a2205a9bd8b2f41f68",
+      "size": 3580
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_front_f7.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_front_f7.png",
+      "sha256": "d23cce1944561dc50625b77e710aa5aa35e71ffaa6ef86ecb3b020fc7b94d62d",
+      "size": 2692
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_front_f8.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_front_f8.png",
+      "sha256": "8df7980ce42be7299e897b278d1fb94af5a6d7709cd09c8fd6f608cb13175f0b",
+      "size": 3698
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_front_f9.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_front_f9.png",
+      "sha256": "e55e252a682aca70bcdd85a4e8c957ea473f5eef54e7bb73f8602cd046bac254",
+      "size": 3568
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_front_fullstop.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_front_fullstop.png",
+      "sha256": "fb2554db55cd7a17ae26cb6d75ba85cef3b2598245861e7111d8b3b9fa0b0f8f",
+      "size": 3143
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_front_g.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_front_g.png",
+      "sha256": "9fa24c1e364221563c41a88df89785a8ea927ae10e8cf582986eabd4cd6362ee",
+      "size": 3417
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_front_graveaccent.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_front_graveaccent.png",
+      "sha256": "417c1f8f7137da38b2597c389f5af42e49507474bc503bd8ef70156c2b8c18b1",
+      "size": 3147
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_front_h.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_front_h.png",
+      "sha256": "ffeffb7ccee32bf734b1ad1fec60319ec6abb8d936781c89de4d2dfeef7a6344",
+      "size": 2780
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_front_home.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_front_home.png",
+      "sha256": "cf362edd75090b2f7a987728623e8ac9c82f6bf7b7ecf4835529ea4f14514ad5",
+      "size": 3676
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_front_i.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_front_i.png",
+      "sha256": "8ad14eb9f978ccb567099aff22da694b6b3524a9041e6ba486ec1f3d6765b656",
+      "size": 2628
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_front_insert.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_front_insert.png",
+      "sha256": "19c08d110628ee86661195fc2d4ffce4438e05ed85cbd4b1700fd00370d1cb29",
+      "size": 3701
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_front_j.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_front_j.png",
+      "sha256": "76e805a38f83246f7bbc7a1d5ad2111bdac6f23dcb23fe7e408168530a0da744",
+      "size": 3056
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_front_k.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_front_k.png",
+      "sha256": "eb6ac70a74f5acfedf06f953d6db106cd96c35938704c210aa63e0d0a8fac9e6",
+      "size": 3400
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_front_l.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_front_l.png",
+      "sha256": "7b00fd7bd4aff495672fc46e863c65e65c7de6300e570aa0a53d219fe5a3ccbf",
+      "size": 2706
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_front_leftarrow.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_front_leftarrow.png",
+      "sha256": "9d553591c5f65217a0faf6583b561e8751029be387892662813afdc34cb3ae55",
+      "size": 3067
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_front_leftbrackets.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_front_leftbrackets.png",
+      "sha256": "742bc39d573043196cb6e1976cc3e31b1307317f0ef97d7a74befe706f417a90",
+      "size": 2727
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_front_leftmouse.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_front_leftmouse.png",
+      "sha256": "2e64ab23388f74ae0de08fd9cc603014f6259743b33a63ca05c3f1e783507cee",
+      "size": 3849
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_front_leftmouse_end_backImg.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_front_leftmouse_end_backImg.png",
+      "sha256": "730c95b8467392409a479be35bc14a0bd50d82e2c4c085a410bd3fe0bfd50523",
+      "size": 8693
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_front_m.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_front_m.png",
+      "sha256": "6cc076a80707aa8835452491d393ad732c677a495a238a6b949db9c274320b85",
+      "size": 3637
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_front_middledownmouse.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_front_middledownmouse.png",
+      "sha256": "9b63009a2c61585d5543fb1071aeeb412289931030a6c308601f8f665fb236b3",
+      "size": 4057
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_front_middlemouse.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_front_middlemouse.png",
+      "sha256": "f5dd5573f0cb03bad4ab927d151313f07b2f37b2ba2cfc78f0e3e211a8ac1679",
+      "size": 3996
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_front_middleupmouse.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_front_middleupmouse.png",
+      "sha256": "af53649612b3adbb4dba34182ff12e1afd0aa7e7210488ee848ef24b52d23e06",
+      "size": 4045
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_front_minussign.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_front_minussign.png",
+      "sha256": "5b397228891a955c8f55b78c85a484fdb10aaff81f0c511e8c7af63c6b471115",
+      "size": 2642
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_front_mouse.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_front_mouse.png",
+      "sha256": "0f673e7f147a00f21115d8fd7b4ca7cd6e2c7fb0ee786e6ee7cf14cd65d54e39",
+      "size": 19871
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_front_mousebackward.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_front_mousebackward.png",
+      "sha256": "3a5578d169af5983eab41d4baa0444718e9b18b0403689629c7e2ceac04d2ed0",
+      "size": 3671
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_front_mouseforward.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_front_mouseforward.png",
+      "sha256": "b9b486216ca094101506705f2fac20906933f33e1e844f1cebfb2f6d0999660f",
+      "size": 3687
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_front_n.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_front_n.png",
+      "sha256": "10112be330f799cc80cec889b3e95f6ef9b49a3929d907cfd7cf877939984b0b",
+      "size": 3246
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_front_num0.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_front_num0.png",
+      "sha256": "8c725dad7f667869dc46db129ca3f4bfb0ac34ba449177c47c7f3981a1a6fabd",
+      "size": 3722
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_front_num1.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_front_num1.png",
+      "sha256": "f4b1a16504547a2ebeba2c6b2f7460e9cfe7f8be8c8b98a7f2fd59ffebb1e6b4",
+      "size": 3487
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_front_num2.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_front_num2.png",
+      "sha256": "18d6248c7b450e5662a762e604d1de54e9de29b8160d35b0bf4546a352cc3abd",
+      "size": 3893
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_front_num3.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_front_num3.png",
+      "sha256": "02c6553c8c480c7d49c0387117980ceec5c0320b9ea86065df742eb417871002",
+      "size": 3826
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_front_num4.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_front_num4.png",
+      "sha256": "8efa3665edc8225ef37d6ddf3d4d5c534427f6e3c14e9b68b3586a3e1d09ea77",
+      "size": 3697
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_front_num5.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_front_num5.png",
+      "sha256": "e589aa6c5ffe4069403cd5db744314a12ae55b853022ee17276c343576282ba4",
+      "size": 3785
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_front_num6.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_front_num6.png",
+      "sha256": "914e203c835966bceff1db4008c0ea4aa3a1d4d235e9fe600cf39418f428887c",
+      "size": 3959
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_front_num7.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_front_num7.png",
+      "sha256": "9b0b3ffc5101184991544798d2fa2811c1f6d5ddd4a28d56c29e87d030fb1220",
+      "size": 3682
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_front_num8.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_front_num8.png",
+      "sha256": "2b14f56f7d4886fe874bc59413f645713f76241f8e644878be9b1a77acc1f222",
+      "size": 3845
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_front_num9.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_front_num9.png",
+      "sha256": "62acc80016e0387f859f414aaaeef1669fe95acd2dbd8cf078cf10dcb920a43f",
+      "size": 3808
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_front_numasterisk.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_front_numasterisk.png",
+      "sha256": "4d08ef4ea4a098880c33f00a54133826227182be42c9c63454a2dca6cc7f1cc2",
+      "size": 3554
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_front_numdel.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_front_numdel.png",
+      "sha256": "834f9fcdeb375b6560628a2e595e4a5d2880179c2208e619e806e1c7eb1e1fe3",
+      "size": 3170
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_front_numenter.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_front_numenter.png",
+      "sha256": "49b6997656e15d1c2c4fb105370db1c46b05317b341877b4ec0191829eda4d04",
+      "size": 4356
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_front_numforwardslash.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_front_numforwardslash.png",
+      "sha256": "ec3a469bce05d26fa6a3f6137768e7b0af2b852f3fff92cd7f2e3f0b093d89e5",
+      "size": 3646
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_front_numlock.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_front_numlock.png",
+      "sha256": "a55354af80929972cfd840e65c0f1bd489a518772e86a26ec3781a4bf5df5414",
+      "size": 4392
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_front_numminussign.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_front_numminussign.png",
+      "sha256": "618a79a416888106167a3d85937bc78219cb284f45bf4e2053da18fc0745bdf4",
+      "size": 3434
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_front_numplus.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_front_numplus.png",
+      "sha256": "3fda54275e99d02e8b2db3b640981ddf75e3e3969bf9206f0c34f2a696c153ff",
+      "size": 3700
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_front_o.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_front_o.png",
+      "sha256": "1afde444e18a3651d91638c7b79a7bc32717d72b16cdec04e6c1cda4fe3798be",
+      "size": 3565
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_front_p.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_front_p.png",
+      "sha256": "ca64652a5cb2d73e847794c695e853331a88b3b8d48079233a21adffd12bc0b0",
+      "size": 3143
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_front_pagedown.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_front_pagedown.png",
+      "sha256": "c746f7865e6a9877b9a49df2a67ac0f27fe10761d614ec915b48b912ebc5ea08",
+      "size": 5081
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_front_pageup.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_front_pageup.png",
+      "sha256": "fe6adf36d10a3a8b407d53782346e8b176d7f6a955fdc28c3f6e68b1ef00b889",
+      "size": 4486
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_front_pausebreak.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_front_pausebreak.png",
+      "sha256": "dec49f44be3949a1a8a52ba62911e213bede2f09ba4ce6f4e4a048500a028c0e",
+      "size": 5306
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_front_plus.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_front_plus.png",
+      "sha256": "924ea46d8ae59356e3d176717dc1db323077b3e86fb180d8cda1a2cea3979580",
+      "size": 2789
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_front_prtscrsysrq.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_front_prtscrsysrq.png",
+      "sha256": "ae0063e43033de17691a06273328c6cbf12b647244929a6fc169bbff666c92ab",
+      "size": 5444
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_front_q.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_front_q.png",
+      "sha256": "705ba9eaa8acd460293166978e23284ceaa03a3726ec2e8c423be094ad71056d",
+      "size": 3720
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_front_questionmark.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_front_questionmark.png",
+      "sha256": "4a688eff90af2dd365c0058dd5ccc0061e3e306670961b8f7e81686f7e8325d7",
+      "size": 3260
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_front_quotationmarks.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_front_quotationmarks.png",
+      "sha256": "7cb79f9bb98a269a5819788eb51aa716aecde75a732c3315ebd522f7df1d3e86",
+      "size": 2781
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_front_r.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_front_r.png",
+      "sha256": "3d54151d214cc8b1966f3a62d396ff1c16c5548657c9dd6d3b686ef46731e4f0",
+      "size": 3258
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_front_rightarrow.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_front_rightarrow.png",
+      "sha256": "49471a1f0dae6732417ac4ce787012ae0e4d7786b44ab6cd9584ce33d49eada6",
+      "size": 3120
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_front_rightbrackets.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_front_rightbrackets.png",
+      "sha256": "2a67c0bf19359b4435b7bbbfd4a513dee7c037603ca4a8943aee086db7354eb8",
+      "size": 2740
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_front_rightmouse.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_front_rightmouse.png",
+      "sha256": "70c18ade3dc5851213814bd01e8892ac9f4d03f9f5d2a9f5713a10ca9cf87677",
+      "size": 3837
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_front_s.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_front_s.png",
+      "sha256": "a8c4480f9defe15c81579727a1f923e03f4dcfc3103b28ba65f12519e98f76b4",
+      "size": 3678
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_front_scrolllock.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_front_scrolllock.png",
+      "sha256": "c3705da51df7fff7b14fd719f8f0a94fcfce933e10c4040663c7c749630d952a",
+      "size": 4865
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_front_semicolon.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_front_semicolon.png",
+      "sha256": "0728ec633fab2f3890cde9889775c6284d677645fea7591a82ba08d28220fbf6",
+      "size": 2841
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_front_shift.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_front_shift.png",
+      "sha256": "3851e75d93d3937f41cab3301f64ed0717d781c0150424e335e475b19eaa5c7d",
+      "size": 4138
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_front_space.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_front_space.png",
+      "sha256": "7b7f1a3bde0c13cf788425a9253bdbeede3fe5b2a6ccb35090c8c31126ddbd3d",
+      "size": 4615
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_front_t.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_front_t.png",
+      "sha256": "51ffd28a77750b89a30ed79b0a9f1cbf76301e5b07a9a2c84c338a420188c212",
+      "size": 2694
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_front_tab.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_front_tab.png",
+      "sha256": "da084d5bb6ddc9ebf39b6223a469516a9fb45c1ef05ddd95d22da0717ef443b2",
+      "size": 3765
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_front_u.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_front_u.png",
+      "sha256": "f460d4a85751f58b6a547d0600be5c9d3197800ddf631ccdfc9b84c9c770d4b3",
+      "size": 3113
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_front_uparrow.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_front_uparrow.png",
+      "sha256": "a850305815f795a94f78415e0d40d9ab46b4bf9838c61b104a3cf5ec6572f0d6",
+      "size": 3286
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_front_v.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_front_v.png",
+      "sha256": "739e59625efe1eb5cbeea07d9684365776ef68ccfc9a275fa791920b3feda2d0",
+      "size": 3716
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_front_w.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_front_w.png",
+      "sha256": "05defc7961fbac88b62eba00756213ffbeb6b347ac5315f0ddd76ffdef2e72f2",
+      "size": 4399
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_front_win.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_front_win.png",
+      "sha256": "8faf1ce59c3fe32846f6fde7c39792fc280b796cb6112d17b3189665c797e0ec",
+      "size": 2867
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_front_x.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_front_x.png",
+      "sha256": "f36d307f270f10507ff476fb80237f0b9d2ae8125bff9ea4afd00bcd630334d1",
+      "size": 3662
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_front_y.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_front_y.png",
+      "sha256": "f6c81de3fa88ba23b82a6f3b04b9b0e7c809bbe9366fb222ec84e5d439f8753c",
+      "size": 3391
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_km_front_z.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_km_front_z.png",
+      "sha256": "228b2211c39d8b63d0e30cb74567c0d9177699a378f7afd5554994f5fc76a6c9",
+      "size": 3280
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/flymapping_setting.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/flymapping_setting.png",
+      "sha256": "d766faa8e6701d535d327af500cb1ecff1116f9753d66666da8351e2c1239108",
+      "size": 3941
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/fz_btn_off.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/fz_btn_off.png",
+      "sha256": "c4e2e629e55359ca06f2112dee98128ee9f6353d412f2f1dc13100d2028db8cc",
+      "size": 2381
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/fz_btn_on.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/fz_btn_on.png",
+      "sha256": "5f06d56ed19ac7e33a8a1c34a63196d15c97e2b58726ce64a85f604ee77db152",
+      "size": 1952
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/fz_close.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/fz_close.png",
+      "sha256": "649c630d5704843f2bf0753acb2f468945d9e375deb6a704f427a124c1d23a38",
+      "size": 5054
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/fz_icon_fake_connection.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/fz_icon_fake_connection.png",
+      "sha256": "1d4ef0d6a71ab6f4fb48aa6498bc726c810b06a6beab441a18aeac68af7ea7e5",
+      "size": 38079
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/fz_icon_logo.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/fz_icon_logo.png",
+      "sha256": "2d1f1e77616131448a72a51697da857ce6532d35700018e27997a1d1daaea53e",
+      "size": 12959
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/fz_icon_touch.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/fz_icon_touch.png",
+      "sha256": "fa4ad743a576e3b5eb30e45ce3dc5e501eff06c7f811ca095c8bd357fe6ba303",
+      "size": 7244
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/fz_km_logo_off.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/fz_km_logo_off.png",
+      "sha256": "f7119b00961b7e653c0d0485e32fe6ec9fa3648bc35ae391ecb297a6f2de8b86",
+      "size": 10467
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/fz_km_logo_on.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/fz_km_logo_on.png",
+      "sha256": "3120772ca5f5777a57715aec5c8c8ff553afd466201caa611cd31b98754986b1",
+      "size": 9702
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/fz_smoba_logo.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/fz_smoba_logo.png",
+      "sha256": "e76d45ea0482f1ac273f3718dd7e8a4de69e8096777e527b6fde0badd571def2",
+      "size": 117991
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/fz_tutorial_arrow.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/fz_tutorial_arrow.png",
+      "sha256": "c06eb78257b97d34d6a3cfda4f9031061da22687fbb972ae44789fc7c041c3e4",
+      "size": 1496
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/fz_webview_close_n.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/fz_webview_close_n.png",
+      "sha256": "8063c4935599cc0469ff5af0d906bdaf5da3c743464974ec32e60a4fb2cee1d2",
+      "size": 1307
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/fz_webview_close_s.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/fz_webview_close_s.png",
+      "sha256": "0a3aa7f6a772a60d6a99ac7e5c71e812941a647582a73cb510fe67a0d3102715",
+      "size": 1365
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/fz_webview_left_d.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/fz_webview_left_d.png",
+      "sha256": "7d4c39af0e9b0a2ca99512863ddd1a1748fd7ca407c31923bb2387e59ebdc880",
+      "size": 1603
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/fz_webview_left_n.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/fz_webview_left_n.png",
+      "sha256": "7beb9d11fd02dcdca6de833491330a9805bfa20977d833fc6e1b3140def0af2b",
+      "size": 1580
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/fz_webview_left_s.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/fz_webview_left_s.png",
+      "sha256": "7d4c39af0e9b0a2ca99512863ddd1a1748fd7ca407c31923bb2387e59ebdc880",
+      "size": 1603
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/fz_webview_out_n.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/fz_webview_out_n.png",
+      "sha256": "2f3263179037df6a28311ee54950b5d4c51f9b0fd426ef61af145f44588c4d36",
+      "size": 1892
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/fz_webview_out_s.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/fz_webview_out_s.png",
+      "sha256": "76a941202adf26aa6347aae47ca0a24f01f2fc0fff372dc82cd270a76bc431b4",
+      "size": 1970
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/fz_webview_refresh_n.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/fz_webview_refresh_n.png",
+      "sha256": "b196e914eab35ebf6736c162dbbad4698e88fa67c245b34f19c59cb2dd7aeceb",
+      "size": 1929
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/fz_webview_refresh_s.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/fz_webview_refresh_s.png",
+      "sha256": "b090b188ff3e5dc0b90a48673f5c90812fcd563894b3cdb6bbf13a60ff5a28a1",
+      "size": 1981
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/fz_webview_right_d.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/fz_webview_right_d.png",
+      "sha256": "ab344e8e613b888ff9131d0fc66d64809ce45cb560dc8d93a715daa8db41cc32",
+      "size": 1642
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/fz_webview_right_n.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/fz_webview_right_n.png",
+      "sha256": "826b54ec172e63bc7f5aeef1e1af344231359a823b421e67a28a236999c27122",
+      "size": 1441
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/fz_webview_right_s.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/fz_webview_right_s.png",
+      "sha256": "ab344e8e613b888ff9131d0fc66d64809ce45cb560dc8d93a715daa8db41cc32",
+      "size": 1642
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/icon_btn_close.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/icon_btn_close.png",
+      "sha256": "0ce6449131f976fd85c99e9b45525f31e446cf2891244ae650f24b076f0ab30d",
+      "size": 528
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/import_configuration_left_btn_light.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/import_configuration_left_btn_light.png",
+      "sha256": "63bc950e5bef9dd91b2a49690c9082b30042cd9b6dc866c71dea31d5969cade5",
+      "size": 1936
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/import_configuration_left_btn_normal.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/import_configuration_left_btn_normal.png",
+      "sha256": "e4dee1bd1e6962c04c9c30af35091b4582b126c41918abcd434484659c5b0322",
+      "size": 2471
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/import_configuration_line.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/import_configuration_line.png",
+      "sha256": "ca440bb5a4a2da5f08ea4c0f5dfc6af54d9cdf6b88572b187a325b74b0497acd",
+      "size": 1060
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/import_configuration_mouse_left_light.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/import_configuration_mouse_left_light.png",
+      "sha256": "4edc411c30ea0ae547edd763ae4e4401a766c8526e8753c34a61416676745a3c",
+      "size": 3318
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/import_configuration_mouse_left_normal.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/import_configuration_mouse_left_normal.png",
+      "sha256": "a351ed2c2f7833ed32a487f11ae064a581c4b88be894b5bc86698cec1a910476",
+      "size": 3526
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/import_configuration_mouse_right_light.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/import_configuration_mouse_right_light.png",
+      "sha256": "6f602d446f54c0419f63046347d36fa453467b5875ad9d2f034d0a553a43b282",
+      "size": 3277
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/import_configuration_mouse_right_normal.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/import_configuration_mouse_right_normal.png",
+      "sha256": "0b2a22177f96e1fc669401119c5be810c8576c93c65220a425312c7df32e47fc",
+      "size": 3484
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/import_configuration_right_btn_light.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/import_configuration_right_btn_light.png",
+      "sha256": "77003cbb1d08a384fecd6739be2c32be0e73fd6db7fa5abca7397ad945ab8dac",
+      "size": 2275
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/import_configuration_right_btn_normal.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/import_configuration_right_btn_normal.png",
+      "sha256": "4b5c31eec0329b829a53082bd623412998a148dc1764cc8afa791b0ca6558b0b",
+      "size": 2940
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/loading.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/loading.png",
+      "sha256": "f71aec346dd12e2a9e11b2281ea4ad493100e8df34283522602d0446b3a70dad",
+      "size": 5788
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/login_btn_close.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/login_btn_close.png",
+      "sha256": "fa45cf1407d6f7c8a9196baab3e0af03ab931ff450a424bcaa699aabfcfabf14",
+      "size": 4104
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/login_btn_eye_off.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/login_btn_eye_off.png",
+      "sha256": "95292a2dbf614715842a0fafc88d156af6b40edabd775055f40b573e0675e3ed",
+      "size": 4500
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/login_btn_eye_on.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/login_btn_eye_on.png",
+      "sha256": "2c8616fe2aa8d63965cfdd2f9f9b6116e6018c82f47a5ae25f3d0d4544fbc5e7",
+      "size": 4438
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/login_icon_account_off.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/login_icon_account_off.png",
+      "sha256": "b5f8369b7904e8b79c07c50cf6500e85a234e176e7cf3350ccf55a70859145e5",
+      "size": 3612
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/login_icon_account_on.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/login_icon_account_on.png",
+      "sha256": "f6139338718e312630d13a1200cde2bded78cdd2d5a635fbf298c7779f37edca",
+      "size": 3487
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/login_icon_lock_off.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/login_icon_lock_off.png",
+      "sha256": "b3dafd9d39c0ea5212788516e84157e70541c45b18c09537fdcad842a9094e8c",
+      "size": 3227
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/login_icon_lock_on.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/login_icon_lock_on.png",
+      "sha256": "877ddfa5f9ad56ff77e71bb8feb6ffd00f2c45b321f85382522342e012a0625e",
+      "size": 3115
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/menu_background.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/menu_background.png",
+      "sha256": "e93dc96efe239d6ca708ea786f314a2bb0406d7d8216c5b017ffa828074daa70",
+      "size": 9048
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/menu_bg.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/menu_bg.png",
+      "sha256": "7b75d2ea23ee70079fa2012bebbad0f2396c548e43e4b0e5df06db1ceafb5788",
+      "size": 7220
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/menu_config.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/menu_config.png",
+      "sha256": "135ffb09dd71ca78d480b64351f2367fa2ac0f59942170daf8586f6b11043d9b",
+      "size": 2284
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/menu_gamepad.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/menu_gamepad.png",
+      "sha256": "e5bc8805a9133a14ac5c951c973605fc085063b554eb8386a81e8a6de7fa81c5",
+      "size": 2348
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/menu_import.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/menu_import.png",
+      "sha256": "01d3b53ca47bf630e670508892236fb3eaf3b3633aec83c38bb70741229949ec",
+      "size": 2092
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/menu_import_smoba.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/menu_import_smoba.png",
+      "sha256": "f82026fab660ad38040cf714838f8489d739b9abdf4ecdf23c8f2a1c8f46ff03",
+      "size": 2825
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/menu_show.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/menu_show.png",
+      "sha256": "e4212cc3418bb66b6114774cfa394f4f777b0818469cf35b733a273bfaacf05d",
+      "size": 2363
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/menu_strategy.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/menu_strategy.png",
+      "sha256": "4d94963367e640862d59b11795a2f06a88845c2ed16003d0893cd2accee546c6",
+      "size": 4941
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/menu_strategy_smoba.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/menu_strategy_smoba.png",
+      "sha256": "bb9c17ba2b0d9fdda0f9f9f5ff39af37f85b6ef92b0399e50e54b8c8ad9e3640",
+      "size": 3816
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/notice_guid_btn_first.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/notice_guid_btn_first.png",
+      "sha256": "b65a72a0a380c038ce4ea1468a8b8dc9350320d39537cd93fd01ab6506f0ebb8",
+      "size": 15791
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/novice_guidabce4_line.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/novice_guidabce4_line.png",
+      "sha256": "7d44dd1bb8c82df34c7711d4e3f9cd588662999d00f0d15cc84c3e0f0bd24187",
+      "size": 49027
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/novice_guidabce_bingshen_backImg.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/novice_guidabce_bingshen_backImg.png",
+      "sha256": "23038b4ad129aa6c844c0cc91351d37f4801193a23ef6a92232466146a70246b",
+      "size": 169862
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/novice_guidabce_cancel_ok_backImg.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/novice_guidabce_cancel_ok_backImg.png",
+      "sha256": "e0e63b76dcb67a26e120ccc35c214bc45fc69bf5116883268261d02b11e7b424",
+      "size": 4504
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/novice_guidabce_circle_backImg.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/novice_guidabce_circle_backImg.png",
+      "sha256": "12b1c057124ef9c740c52a20546891fc96e343d94722313ef55beb2e353ad96c",
+      "size": 80136
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/novice_guidabce_destination_backImg.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/novice_guidabce_destination_backImg.png",
+      "sha256": "84f4706eee9bad07d43ad93316a25d20962c26b14bb811962101ecd9d659311c",
+      "size": 8719
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/novice_guidabce_double_circle_backImg.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/novice_guidabce_double_circle_backImg.png",
+      "sha256": "cd97d4ce83264913e0ca56b0c93f05815304896d0f663ad1a34f5864aee43e11",
+      "size": 106827
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/novice_guidabce_finish_backImg.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/novice_guidabce_finish_backImg.png",
+      "sha256": "188bba431cb400f3043277390d299f93712adaa5c81a7b7bd5c6a07159a4215d",
+      "size": 5639
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/novice_guidabce_finish_unuseful_backImg.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/novice_guidabce_finish_unuseful_backImg.png",
+      "sha256": "9bfcd5ade1de5cb58d0550758eb1bc8fa99ced73b2e441909388b9bc19358871",
+      "size": 14459
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/novice_guidabce_finish_useful_backImg.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/novice_guidabce_finish_useful_backImg.png",
+      "sha256": "961328068c2601326c4f4fae7d94e53a429a852d338e88f0e9b4a5b8010894e8",
+      "size": 13006
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/novice_guidabce_hand1_backImg.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/novice_guidabce_hand1_backImg.png",
+      "sha256": "351e13755cf3e1d08d07189384735845d13e50a117ad1d1cb841f16935d4c2f0",
+      "size": 10578
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/novice_guidabce_hand2_backImg.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/novice_guidabce_hand2_backImg.png",
+      "sha256": "ba09054e6521e7897b3ab4d0d11b7ad4b8fb292fd9c99914e6ad4daf58548466",
+      "size": 8918
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/novice_guidabce_hand3_backImg.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/novice_guidabce_hand3_backImg.png",
+      "sha256": "971ad0edb78ab745f041bd57dd4d0258c0521208e7a70292f2c62325b3f6544a",
+      "size": 7412
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/novice_guidabce_left3_backImg.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/novice_guidabce_left3_backImg.png",
+      "sha256": "ce0a371c730d4cfac5ff02fa98dcbbcf47335faf9379deae311b3d3918556272",
+      "size": 19782
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/novice_guidabce_line.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/novice_guidabce_line.png",
+      "sha256": "9aef8f4ff27b4f94a74cfae37407a8c8a89b86a1e6d358bab8f399240762b5f5",
+      "size": 13531
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/novice_guidabce_red_circle_backImg.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/novice_guidabce_red_circle_backImg.png",
+      "sha256": "661e92c27c8bace6f2565e752fc078d8051a2a3f9a61c036775e10f5fdaa4ac2",
+      "size": 73435
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/novice_guidabce_red_dashed_backImg.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/novice_guidabce_red_dashed_backImg.png",
+      "sha256": "87ec1c8893b9a931daa6c22945483cd49e04192dfd27d6eb11773b8ceefffadd",
+      "size": 7348
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/novice_guidabce_skip_backImg.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/novice_guidabce_skip_backImg.png",
+      "sha256": "92b347278cc837c3b66a47a036746cea13aad7d85a6fd5fc41a444fac0df037c",
+      "size": 7637
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/novice_guidabce_square_backImg.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/novice_guidabce_square_backImg.png",
+      "sha256": "2bb8436e8b21236df9e3a29b02f91f48b6d8ce51799b565a52fe552d9196414b",
+      "size": 10452
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/recovery.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/recovery.png",
+      "sha256": "61e409603291e5a7acc6e6924ab79c97e558c3eed7ffaad6cca3927048115cfe",
+      "size": 4827
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/reduce.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/reduce.png",
+      "sha256": "52ea24aa28caab37211bc9bb025c95ff801d028aeaad83b967f7947ee10ab51d",
+      "size": 575
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/reduce_disable.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/reduce_disable.png",
+      "sha256": "721d8d75c7413a9a887e0cd1ec70d2f7f77816558f32f9dfdbfb6638f299e281",
+      "size": 252
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/select.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/select.png",
+      "sha256": "8701dc4ba43dd8079ee20a3507083c2698cc748108f810723ac81eadc732508b",
+      "size": 1680
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/tabbase.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/tabbase.png",
+      "sha256": "c813fae71e40f852fc8d2e1ef9be95e7e74267430292cf684a360ff8bd62b64c",
+      "size": 2790
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/tabexpand.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/tabexpand.png",
+      "sha256": "c813fae71e40f852fc8d2e1ef9be95e7e74267430292cf684a360ff8bd62b64c",
+      "size": 2790
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/tips_bluetooth_4ios11.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/tips_bluetooth_4ios11.png",
+      "sha256": "30e0d4495ee331a4518e1eb6806d6b18ea784559c9136de2dcc5e7e45ee9c111",
+      "size": 89708
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/trash.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/trash.png",
+      "sha256": "1bee9b4704218d7414370f2a117a2309064bab1df4770d90e8d561d9368505e9",
+      "size": 5973
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/trashOn.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/trashOn.png",
+      "sha256": "0d36eab9ba689f9a833a655a5b59fca2b3d2199aa917c2d26ea9f52e1256ff8b",
+      "size": 5977
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/tutorial_OS11_ble_connect_error.gif",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/tutorial_OS11_ble_connect_error.gif",
+      "sha256": "352ee17473e7489911bfd8678d2be2d5338dc83671ceb1b681714eb91fe2567a",
+      "size": 3405713
+    },
+    {
+      "archive_path": "smoba/FZKeymappingHelper.bundle/unselect.png",
+      "mode": 436,
+      "path": "FZKeymappingHelper.bundle/unselect.png",
+      "sha256": "06111693f62a0bc3d45fb6d4989ddd3d218be04a1324064b0b11277a247f2758",
+      "size": 607
+    }
+  ],
+  "resources_index_sha256": "f50423d098d1d10d8b965c0a18d240be0c8f3ac2a07381c314f9e40cf9371210",
+  "source_deb": {
+    "filename": "com.flydigi_1.6.6_iphoneos-arm64e.deb",
+    "sha256": "c1a189d607a72d60d9a0d410a3b50f6c78e41b8a2ff6396cb053b7536b663386",
+    "size": 25744294
+  }
+}

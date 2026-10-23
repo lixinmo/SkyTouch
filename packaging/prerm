@@ -1,0 +1,65 @@
+#!/bin/sh
+set -eu
+LC_ALL=C
+export LC_ALL
+case "${1:-}" in install|upgrade|remove|deconfigure) ;; *) exit 0 ;; esac
+# Only SkyTouch's own executable/notifications are involved. No forced exit:
+# a configuration editor must export and close through its normal lifecycle.
+if [ ! -x /usr/bin/killall ]; then
+    echo 'SkyTouch candidate: signal-0 process inspection is unavailable; refusing to change running files.' >&2
+    exit 1
+fi
+# Device-verified BSD killall semantics. Signal 0 never stops a process.
+# Unknown failures are not treated as proof that our application has exited.
+if task_probe_output=$(/usr/bin/killall -0 SkyTouchPackageProbeNotRunning 2>&1); then
+    echo 'SkyTouch candidate: controlled process probe unexpectedly matched; refusing maintenance.' >&2
+    exit 1
+else
+    task_probe_status=$?
+    if [ "$task_probe_status" -ne 1 ] || [ "$task_probe_output" != 'No matching processes were found' ]; then
+        echo 'SkyTouch candidate: process-inspection error semantics are unknown; refusing maintenance.' >&2
+        exit 1
+    fi
+fi
+if command -v notifyutil >/dev/null 2>&1; then
+    notifyutil -p com.lixinmo.skytouch.floating.stop || true
+    notifyutil -p com.lixinmo.skytouch.original.supervisor.stop || true
+    notifyutil -p com.lixinmo.skytouch.original.ui-only.stop || true
+    notifyutil -p com.lixinmo.skytouch.original.stop || true
+    notifyutil -p com.lixinmo.skytouch.stop || true
+fi
+if [ -x /Applications/SkyTouch.app/SkyTouchControl ]; then
+    /Applications/SkyTouch.app/SkyTouchControl || true
+fi
+task_attempt=0
+while [ "$task_attempt" -lt 10 ]; do
+    task_running=0
+    for task_program in SkyTouch SkyTouchMapping SkyTouchBLE; do
+        if task_output=$(/usr/bin/killall -0 "$task_program" 2>&1); then
+            task_running=1
+        else
+            task_result=$?
+            if [ "$task_result" -ne 1 ] || [ "$task_output" != "$task_probe_output" ]; then
+                echo 'SkyTouch candidate: process inspection failed; refusing to change running files.' >&2
+                exit 1
+            fi
+        fi
+    done
+    if [ "$task_running" -eq 0 ]; then
+        # The helper is still installed during prerm. Only removal cleans
+        # transient state; upgrades preserve it until migration can inspect it.
+        if [ "${1:-}" = remove ] && [ -x /Applications/SkyTouch.app/SkyTouchStorage ]; then
+            /Applications/SkyTouch.app/SkyTouchStorage clean-runtime
+        fi
+        # Unregister while the bundle still exists; postrm normally runs after
+        # dpkg has already removed the files needed by uicache -u.
+        if [ "${1:-}" = remove ] && [ -d /Applications/SkyTouch.app ] && command -v uicache >/dev/null 2>&1; then
+            uicache -u /Applications/SkyTouch.app
+        fi
+        exit 0
+    fi
+    task_attempt=$((task_attempt + 1))
+    sleep 1
+done
+echo 'SkyTouch is still running. Save your configuration, stop its service, and close SkyTouch normally before retrying.' >&2
+exit 1

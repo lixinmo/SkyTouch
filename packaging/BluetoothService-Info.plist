@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0"><dict>
+<key>CFBundleIdentifier</key><string>SkyTouchBLE</string>
+<key>CFBundleName</key><string>SkyTouchBluetooth</string>
+<key>CFBundleDisplayName</key><string>凌触蓝牙服务</string>
+<key>CFBundleExecutable</key><string>SkyTouchBLE</string>
+<key>CFBundlePackageType</key><string>BNDL</string>
+<key>CFBundleShortVersionString</key><string>0.1.0</string>
+<key>CFBundleVersion</key><string>1</string>
+<key>NSBluetoothAlwaysUsageDescription</key><string>系统后台连接您选择的飞智手柄，为触屏映射提供输入。</string>
+<key>NSBluetoothPeripheralUsageDescription</key><string>系统后台连接您选择的飞智手柄。</string>
+<key>UIBackgroundModes</key><array><string>bluetooth-central</string></array>
+</dict></plist>
