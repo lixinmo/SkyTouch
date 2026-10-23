@@ -45,7 +45,7 @@ bash scripts/build_candidate.sh
 
 ## GitHub Actions 构建
 
-推送到 `main` 或 `codex/**` 开发分支、创建面向 `main` 的 PR 后自动运行，也可在 **Actions → Build SkyTouch → Run workflow** 手动启动。成功后，在该次运行底部的 **Artifacts** 下载 `SkyTouch-运行编号`，解压得到 `.deb` 和 `SHA256SUMS`。构建产物保留 7 天，不自动创建 Release。
+推送到 `main` 或 `skytouch-2.0` 开发分支、创建面向 `main` 的 PR 后自动运行，也可在 **Actions → Build SkyTouch → Run workflow** 手动启动。成功后，在该次运行底部的 **Artifacts** 下载 `SkyTouch-运行编号`，解压得到 `.deb` 和 `SHA256SUMS`。构建产物保留 7 天，不自动创建 Release。
 
 工作流使用标准 `macos-15` runner 和 Xcode 16.4，先检查待提交文件，再编译、签名、打包和校验。仅上传最终安装包及校验和，不上传中间文件或日志归档；不需要配置 Secrets。
 

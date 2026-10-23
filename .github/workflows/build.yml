@@ -2,7 +2,7 @@ name: Build SkyTouch
 
 on:
   push:
-    branches: [main, 'codex/**']
+    branches: [main, skytouch-2.0]
   pull_request:
     branches: [main]
   workflow_dispatch:
