@@ -14,6 +14,25 @@ DerivedData/
 __pycache__/
 *.py[cod]
 
+# Local development material is not part of the release-source repository.
+tests/
+fixtures/
+validation/
+diagnostics/
+output/
+outputs/
+backup/
+backups/
+logs/
+screenshots/
+*.jsonl
+*.ndjson
+*.tar
+*.tar.gz
+*.tar.xz
+*.tgz
+*.zip
+
 # Device data, user configurations, screenshots, and backups.
 Profiles/
 GlobalRevisions/
