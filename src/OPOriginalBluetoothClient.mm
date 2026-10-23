@@ -2,6 +2,7 @@
 #import "OPBluetoothBroker.h"
 #import "OPOriginalBridge.h"
 #import "OPControllerIdentity.h"
+#import "OPInputSettings.h"
 #import <CoreBluetooth/CoreBluetooth.h>
 #import <objc/message.h>
 #import <objc/runtime.h>
@@ -31,6 +32,8 @@ static NSString *epoch,*deviceID=@"",*deviceName=@"",*stage=@"not-installed";
 static uint64_t localGeneration=0,brokerGeneration=0,cursor=0,lastResponseNs=0,delivered=0,cancelled=0;
 static uint64_t lastReportNs=0,nextEnsureNs=0;
 static int dataNotificationToken=-1;
+static int inputSettingsToken=-1;
+static std::atomic<bool> phoneMode{false};
 static uint64_t wakeups=0,requestCount=0,requestFailures=0,packetAgeSamples=0,maxPacketAgeNs=0,maxRoundTripNs=0;
 static double meanPacketAgeNs=0,meanRoundTripNs=0;
 static std::array<uint64_t,9> packetAgeBuckets{};
@@ -47,6 +50,8 @@ static BOOL processingRealReport=NO;
 static NSInteger knownPeripheralType=-1;
 static uint64_t existingConnectionSyncs=0,suppressedConnectionToasts=0;
 static NSTimer *timer;
+static OPOriginalInputFilter inputFilter;
+static dispatch_block_t inputInvalidated;
 static dispatch_queue_t requests;
 static uint64_t nowNs() {
     static mach_timebase_info_data_t scale=[] {mach_timebase_info_data_t s{};mach_timebase_info(&s);return s;}();
@@ -132,10 +137,12 @@ static void invalidate(NSString *reason,BOOL detach) {
     ++localGeneration;baseline=NO;lastResponseNs=0;
     if(detach)attached=NO;
     ++cancelled;stage=reason;OPStopOriginalTouches();
+    if(inputInvalidated)inputInvalidated();
 }
 static void attach(void);
 static void poll(void);
 static void operation(NSDictionary *request);
+static void refreshInputMode(void);
 }
 
 // Only selectors recovered from the original's scan/retrieve/connect and raw
@@ -172,7 +179,7 @@ static void operation(NSDictionary *request);
 - (BOOL)isScanning {return op_original_ble::brokerScanning;}
 - (void)scanForPeripheralsWithServices:(id)services options:(id)options {
     (void)services;(void)options;
-    if(!NSThread.isMainThread || op_original_ble::stopped)return;
+    if(!NSThread.isMainThread || op_original_ble::stopped || op_original_ble::phoneMode.load())return;
     ++op_original_ble::commandGeneration;
     op_original_ble::wantsScan=YES;[op_original_ble::announced removeAllObjects];
     [op_original_ble::retrievalAttemptedDeviceIDs removeAllObjects];
@@ -186,7 +193,7 @@ static void operation(NSDictionary *request);
     op_original_ble::wantsScan=NO;
 }
 - (NSArray *)retrieveConnectedPeripheralsWithServices:(id)services {
-    if(!NSThread.isMainThread || op_original_ble::stopped || ![services isKindOfClass:NSArray.class])return @[];
+    if(!NSThread.isMainThread || op_original_ble::stopped || op_original_ble::phoneMode.load() || ![services isKindOfClass:NSArray.class])return @[];
     // The original asks for Generic Access (1800); the broker verifies its
     // candidates with the controller UART service. Do not claim arbitrary
     // services for these facades or turn advertisement/cache rows into links.
@@ -205,7 +212,7 @@ static void operation(NSDictionary *request);
     return result;
 }
 - (NSArray *)retrievePeripheralsWithIdentifiers:(NSArray *)identifiers {
-    if(!NSThread.isMainThread || op_original_ble::stopped || ![identifiers isKindOfClass:NSArray.class])return @[];
+    if(!NSThread.isMainThread || op_original_ble::stopped || op_original_ble::phoneMode.load() || ![identifiers isKindOfClass:NSArray.class])return @[];
     op_original_ble::attach();NSMutableArray *result=[NSMutableArray array];
     for(id identifier in identifiers)if([identifier isKindOfClass:NSUUID.class]) {
         id peripheral=op_original_ble::devices[((NSUUID *)identifier).UUIDString];if(peripheral)[result addObject:peripheral];
@@ -214,7 +221,7 @@ static void operation(NSDictionary *request);
 }
 - (void)connectPeripheral:(id)peripheral options:(id)options {
     (void)options;
-    if(!NSThread.isMainThread || op_original_ble::stopped || ![peripheral isKindOfClass:OPBrokerPeripheralFacade.class])return;
+    if(!NSThread.isMainThread || op_original_ble::stopped || op_original_ble::phoneMode.load() || ![peripheral isKindOfClass:OPBrokerPeripheralFacade.class])return;
     NSString *identifier=((OPBrokerPeripheralFacade *)peripheral).identifier.UUIDString;
     if(op_original_ble::devices[identifier]!=peripheral)return;
     if(peripheral==op_original_ble::selected && OPOriginalBluetoothClientReady())return;
@@ -231,8 +238,16 @@ static void operation(NSDictionary *request);
 
 namespace op_original_ble {
 static void attach(void) {
-    if(stopped || !owner)return;
+    if(stopped || !owner || phoneMode.load())return;
     if(!attached){attached=YES;invalidate(@"waiting-for-new-subscription-baseline",NO);}
+}
+static void refreshInputMode(void) {
+    const bool next=OPPhoneModeSelected();
+    if(phoneMode.exchange(next)==next)return;
+    ++commandGeneration;
+    if(next) {
+        wantsScan=NO;pendingPoll=NO;invalidate(@"phone-mode-broker-detached",YES);
+    } else {attach();poll();}
 }
 static OPBrokerPeripheralFacade *device(NSString *identifier,NSString *name) {
     NSUUID *uuid=[[NSUUID alloc] initWithUUIDString:identifier];if(!uuid)return nil;
@@ -324,7 +339,7 @@ static void announceDevices(NSDictionary *reply,uint64_t token) {
     }
 }
 static void applyReply(NSDictionary *reply,uint64_t expectedLocal,BOOL includesDeviceList=YES) {
-    if(stopped || !attached || localGeneration!=expectedLocal || !owner)return;
+    if(stopped || phoneMode.load() || !attached || localGeneration!=expectedLocal || !owner)return;
     uint64_t generation=0,sequence=0,pid=0,time=0;
     if(![reply isKindOfClass:NSDictionary.class]){invalidate(@"invalid-broker-reply",NO);return;}
     NSString *responseEpoch=reply[@"epoch"];
@@ -385,7 +400,9 @@ static void applyReply(NSDictionary *reply,uint64_t expectedLocal,BOOL includesD
         const BOOL previousReportScope=processingRealReport;
         @try {
             processingRealReport=YES;
-            ((void(*)(id,SEL,id,id,id))implementation)(controller,selector,selected,characteristic,nil);++delivered;
+            if(!inputFilter || !inputFilter(retained,uuid))
+                ((void(*)(id,SEL,id,id,id))implementation)(controller,selector,selected,characteristic,nil);
+            ++delivered;
         }
         @catch(__unused NSException *exception){invalidate(@"original-raw-callback-exception",NO);return;}
         @finally {processingRealReport=previousReportScope;}
@@ -398,7 +415,7 @@ static void applyReply(NSDictionary *reply,uint64_t expectedLocal,BOOL includesD
     }
 }
 static void poll(void) {
-    if(stopped || !attached || !owner)return;
+    if(stopped || phoneMode.load() || !attached || !owner)return;
     if(lastResponseNs && nowNs()-lastResponseNs>250000000ULL)invalidate(@"broker-heartbeat-expired",NO);
     if(inFlight){pendingPoll=YES;return;}
     pendingPoll=NO;inFlight=YES;
@@ -410,8 +427,8 @@ static void poll(void) {
         const uint64_t began=nowNs();
         NSString *error=nil;NSDictionary *reply=nil;
         NSDictionary *request=@{@"op":needsDiscovery ? @"status" : @"input",@"cursor":@(requestedCursor)};
-        if(commandGeneration.load()==commandToken)reply=OPBluetoothBrokerRequest(request,.1,&error);
-        if(commandGeneration.load()==commandToken && !reply && mayEnsure && nowNs()>=nextEnsureNs) {
+        if(!phoneMode.load() && commandGeneration.load()==commandToken)reply=OPBluetoothBrokerRequest(request,.1,&error);
+        if(!phoneMode.load() && commandGeneration.load()==commandToken && !reply && mayEnsure && nowNs()>=nextEnsureNs) {
             nextEnsureNs=nowNs()+3*NSEC_PER_SEC;
             if(OPEnsureBluetoothBrokerRunning(&error) && commandGeneration.load()==commandToken)
                 reply=OPBluetoothBrokerRequest(request,.1,&error);
@@ -441,10 +458,10 @@ static void poll(void) {
 }
 
 static void operation(NSDictionary *request) {
-    if(stopped)return;
+    if(stopped || phoneMode.load())return;
     const uint64_t token=commandGeneration.load();
     dispatch_async(requests,^{
-        if(commandGeneration.load()!=token)return;
+        if(phoneMode.load() || commandGeneration.load()!=token)return;
         NSString *error=nil;NSDictionary *reply=nil;
         if(OPEnsureBluetoothBrokerRunning(&error) && commandGeneration.load()==token)reply=OPBluetoothBrokerRequest(request,.1,&error);
         dispatch_async(dispatch_get_main_queue(),^{
@@ -516,6 +533,16 @@ BOOL OPInstallOriginalBluetoothClient(NSString **error) {
         method_setImplementation(typeMethod,(IMP)originalUpdatePeripheralType);originalUpdatePeripheralType=nullptr;
         if(error)*error=@"无法注册蓝牙输入唤醒通知";return NO;
     }
+    if(notify_register_dispatch(OPInputSettingsChangedNotification,&inputSettingsToken,dispatch_get_main_queue(),^(__unused int value){
+        if(!stopped)refreshInputMode();
+    })!=NOTIFY_STATUS_OK) {
+        notify_cancel(dataNotificationToken);dataNotificationToken=-1;
+        method_setImplementation(method,previous);
+        method_setImplementation(toastMethod,(IMP)originalShowToast);originalShowToast=nullptr;
+        method_setImplementation(typeMethod,(IMP)originalUpdatePeripheralType);originalUpdatePeripheralType=nullptr;
+        if(error)*error=@"无法观察输入模式变化";return NO;
+    }
+    phoneMode.store(OPPhoneModeSelected());
     op_original_ble::installed=YES;stage=@"installed-no-hardware-central";return YES;
 }
 void OPStopOriginalBluetoothClient(void) {
@@ -523,11 +550,16 @@ void OPStopOriginalBluetoothClient(void) {
     if(!NSThread.isMainThread){dispatch_async(dispatch_get_main_queue(),^{OPStopOriginalBluetoothClient();});return;}
     stopped=YES;++commandGeneration;invalidate(@"consumer-stopped-broker-retained",YES);[timer invalidate];timer=nil;
     pendingPoll=NO;if(dataNotificationToken>=0){notify_cancel(dataNotificationToken);dataNotificationToken=-1;}
+    if(inputSettingsToken>=0){notify_cancel(inputSettingsToken);inputSettingsToken=-1;}
     manager.delegate=nil;selected.delegate=nil;
 }
 BOOL OPOriginalBluetoothClientReady(void) {
     using namespace op_original_ble;
-    return NSThread.isMainThread && op_original_ble::installed && !stopped && attached && brokerReady && lastResponseNs && op_original_ble::nowNs()-lastResponseNs<=250000000ULL;
+    return NSThread.isMainThread && op_original_ble::installed && !stopped && !phoneMode.load() && attached && brokerReady && lastResponseNs && op_original_ble::nowNs()-lastResponseNs<=250000000ULL;
+}
+void OPSetOriginalBluetoothInputFilter(OPOriginalInputFilter filter,dispatch_block_t invalidated) {
+    if(!NSThread.isMainThread)return;
+    op_original_ble::inputFilter=[filter copy];op_original_ble::inputInvalidated=[invalidated copy];
 }
 BOOL OPOriginalBluetoothClientWrapsPeripheralType(IMP implementation) {
     using namespace op_original_ble;

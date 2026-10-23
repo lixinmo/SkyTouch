@@ -8,6 +8,9 @@
 #import "OPOriginalMotionPersistence.h"
 #import "OPOriginalMOBAEditor.h"
 #import "OPOriginalBluetoothClient.h"
+#import "OPInputSettings.h"
+#import "OPPhoneInput.h"
+#import "OPPhoneProfile.h"
 #import "OPGlobalProfile.h"
 #import "OPSystemTouch.h"
 #import "OPOriginalContext.h"
@@ -100,6 +103,17 @@ static void OPFloatingObserveSystemGesture(NSDictionary *snapshot);
 static void OPFloatingFinishIconContact(BOOL cancelled);
 static BOOL OPEngineConfigurationLoaded=NO;
 static NSDictionary *OPActiveGlobalProfile;
+static NSDictionary *OPSessionInputSettings;
+static BOOL OPInputRevisionAccepted=YES;
+static BOOL OPUsesPhoneControls(void) { return [OPSessionInputSettings[@"mode"] isEqual:@"phone"]; }
+static BOOL OPUsesPhoneMotion(void) {
+    return OPUsesPhoneControls() || [OPSessionInputSettings[@"controllerMotion"] isEqual:@"phone"];
+}
+static BOOL OPCurrentInputReady(void) {
+    // Both modes using phone motion share its source/worker readiness. A live
+    // BLE lease alone must not reopen output after the motion worker failed.
+    return OPUsesPhoneMotion() ? OPPhoneInputReady() : OPOriginalBluetoothClientReady();
+}
 static BOOL OPImportedProfileDefaults=NO, OPExportedProfileDefaults=NO;
 static NSString *OPForcedTargetBundle;
 static NSString *OPManagedSessionID;
@@ -196,6 +210,8 @@ static void OPStatus(NSString *stage) {
         @"mode":OPVerifyUIOnly ? @"verify-ui-only" : OPEngineSession ? @"engine-session" : @"original-hud", @"outputDisabled":@(OPVerifyUIOnly),
         @"engineSession":@(OPEngineSession),@"globalWindowHostingEnabled":@(!OPEngineSession),
         @"engineConfigurationLoaded":@(selectedReady),@"originalConfiguration":configuration,
+        @"inputMode":OPSessionInputSettings[@"mode"] ?: @"controller",@"inputReady":@(OPCurrentInputReady()),
+        @"inputRevision":OPSessionInputSettings[@"revision"] ?: @"",@"phoneInput":OPPhoneInputStatus(),
         @"globalRevision":OPActiveGlobalProfile[@"revision"] ?: @"",@"globalPlanName":OPActiveGlobalProfile[@"planName"] ?: @"",
         @"configurationError":OPEngineConfigurationLoaded && !selectedReady ? @"当前方案与手柄类型不匹配，或当前方案没有有效映射。" : @"",
         @"outputTiming":@{@"sinkCalls":@(OPFrameSinkCalls),@"sinkMeanUs":@(OPFrameSinkCalls ? OPFrameSinkTotalNs/OPFrameSinkCalls/1000.0 : 0),
@@ -429,6 +445,10 @@ static void OPApplyOrientation(UIInterfaceOrientation orientation) {
     if (OPEngineSession) {
         if (orientation==UIInterfaceOrientationUnknown) return;
         if (OPDisplayOrientation==orientation && OPOrientation==UIInterfaceOrientationLandscapeLeft) return;
+        if(OPUsesPhoneMotion()) {
+            OPSetPhoneInputActive(NO);
+            OPSetPhoneInputOrientation((UIInterfaceOrientation)op::mapping::canonicalLandscapeOrientation((int)orientation));
+        }
         OPStopOriginalTouches(); OPCancelOwnedPhysicalInput(); [OPOutput reset];
         OPDisplayOrientation=orientation;
         OPOrientation=UIInterfaceOrientationLandscapeLeft;
@@ -455,6 +475,7 @@ static BOOL OPContextMatchesSession(NSDictionary *snapshot) {
 }
 static void OPRejectSessionContext(void) {
     OPContextAllowed=NO;
+    if(OPUsesPhoneMotion())OPSetPhoneInputActive(NO);
     if (OPCancellingContext) return;
     OPCancellingContext=YES;
     OPStopOriginalTouches();
@@ -489,6 +510,11 @@ static void OPHandleForegroundContext(NSDictionary *snapshot) {
     }
     if (OPEngineSession) {
         OPLatestForeground=[snapshot copy];
+        if(OPSessionInputSettings && ![OPSessionInputSettings[@"revision"] isEqual:OPInputSettingsRevision()]) {
+            // Parent drains this process before creating the new binding/mode.
+            // Never route the up half of an old press with a new binding table.
+            OPRejectSessionContext();return;
+        }
         const BOOL allowed=OPGlobalOutputContextAllowed(snapshot,nil) && OPConfigurationSessionAvailable(nil);
         OPContextCheckedNs=[snapshot[@"readStartedMonotonicNs"] unsignedLongLongValue];
         const uint64_t now=OPHostNowNs();
@@ -509,7 +535,12 @@ static void OPHandleForegroundContext(NSDictionary *snapshot) {
                 OPStatus(@"当前方案已恢复全局系统触屏；触点需重新按下");
             }
         }
-        OPStartSessionForFrontmost(); return;
+        OPStartSessionForFrontmost();
+        if(OPUsesPhoneMotion()) {
+            OPSetPhoneInputOrientation((UIInterfaceOrientation)op::mapping::canonicalLandscapeOrientation((int)OPDisplayOrientation));
+            OPSetPhoneInputActive(OPContextAllowed && OPEngineConfigurationLoaded && OPOutput.ready && !OPStopping);
+        }
+        return;
     }
     NSString *previousBundle=OPContextBundle(OPLatestForeground);
     const BOOL previouslyValid=[OPLatestForeground[@"valid"] boolValue];
@@ -536,7 +567,7 @@ static void OPHandleForegroundContext(NSDictionary *snapshot) {
     OPStartSessionForFrontmost();
 }
 static void OPStartSessionForFrontmost(void) {
-    if (OPSessionAttempted || OPStopping || !UIInterfaceOrientationIsLandscape(OPOrientation)) return;
+    if (OPSessionAttempted || OPStopping || !OPInputRevisionAccepted || !UIInterfaceOrientationIsLandscape(OPOrientation)) return;
     if (OPManagedSessionID && getppid()!=OPManagedParentPID) {
         OPBeginShutdown(@"监督器已退出；取消原宿主触点后退出",YES,0); return;
     }
@@ -583,7 +614,10 @@ static void OPStartSessionForFrontmost(void) {
     if (!OPInstallOriginalMotionPersistenceFix(&error)) { OPBeginShutdown(error,YES,69);return; }
     OPStatus(@"原库会话：原始二进制已加载");
     NSString *documents=OPOriginalDocumentsForTarget(target);
-    if (!OPConfigureOriginalContext(library,target,documents,&error)) { OPBeginShutdown(error,YES,69);return; }
+    const BOOL contextReady=OPEngineSession && OPUsesPhoneControls() ?
+        OPConfigureOriginalPhoneContext(library,target,OPManagedSessionID,&error) :
+        OPConfigureOriginalContext(library,target,documents,&error);
+    if (!contextReady) { OPBeginShutdown(error,YES,69);return; }
     if (!OPInstallOriginalMotionConfigurationFix(&error)) { OPBeginShutdown(error,YES,69);return; }
     if (!OPInstallOriginalMOBAEditor(&error)) { OPBeginShutdown(error,YES,69);return; }
     OPStatus(@"原库会话：固定配置上下文已设置");
@@ -602,11 +636,11 @@ static void OPStartSessionForFrontmost(void) {
             OPStatus(@"UI-only：已拦截原引擎触点，未发送任何系统出站 HID");
             return NO;
         }
-        if (OPStopping || (OPEngineSession && (!OPEngineConfigurationLoaded || !OPOriginalBluetoothClientReady()))) return NO;
+        if (OPStopping || (OPEngineSession && (!OPEngineConfigurationLoaded || !OPCurrentInputReady()))) return NO;
         if(OPEngineSession) {
             NSDictionary *selection=OPOriginalCurrentConfigurationState();
             if(![selection[@"valid"] boolValue] || ![selection[@"deviceType"] isEqual:OPActiveGlobalProfile[@"deviceType"]]) {
-                OPStopOriginalTouches();OPStatus(@"当前手柄类型与全局方案不符，请重新应用对应方案。");return NO;
+                OPStopOriginalTouches();OPStatus(@"当前映射布局与全局方案不符，请重新应用对应方案。");return NO;
             }
         }
         // The profile stays fixed in this process while its output applies to
@@ -638,7 +672,8 @@ static void OPStartSessionForFrontmost(void) {
         if (!sent) OPStatus(OPOutput.status ?: @"系统触点提交失败");
         return sent;
     }, ^{ [OPOutput reset]; }, &error)) { OPBeginShutdown(error,YES,69);return; }
-    if(!OPInstallOriginalBluetoothClient(&error)) {OPBeginShutdown(error,YES,69);return;}
+    const BOOL inputInstalled=OPUsesPhoneControls() ? OPInstallPhoneInput(&error) : OPInstallOriginalBluetoothClient(&error);
+    if(!inputInstalled) {OPBeginShutdown(error,YES,69);return;}
     if(OPEngineSession && !OPDisableOriginalAutomaticCloudLoading(&error)) {
         OPBeginShutdown(error,YES,69);return;
     }
@@ -650,12 +685,18 @@ static void OPStartSessionForFrontmost(void) {
         std::strcmp(ivar_getTypeEncoding(OPOriginalWindowIvar),"@\"FZUIWindow\"")) {
         OPBeginShutdown(@"原窗口所属实例或 _explorerWindow ABI 不符",YES,69); return;
     }
-    if (!OPStartOriginalUI(&error)) { OPBeginShutdown(error,YES,69);return; }
+    if (!OPStartOriginalUIWithInput(!OPUsesPhoneControls(),&error)) { OPBeginShutdown(error,YES,69);return; }
     if (OPEngineSession) {
-        if (!OPApplyOriginalConfigurationSnapshotData(OPActiveGlobalProfile[@"snapshotData"],[OPActiveGlobalProfile[@"deviceType"] integerValue],&error)) {
+        NSInteger type=[OPActiveGlobalProfile[@"deviceType"] integerValue];
+        NSData *snapshot=OPActiveGlobalProfile[@"snapshotData"];
+        if(OPUsesPhoneControls())snapshot=OPPhoneRuntimeProfile(snapshot,type,&error);
+        if (!snapshot || !OPApplyOriginalConfigurationSnapshotData(snapshot,type,&error)) {
             OPBeginShutdown(error,YES,69);return;
         }
         OPEngineConfigurationLoaded=YES;
+        if(OPUsesPhoneMotion() && !OPStartPhoneInput(OPOriginalController(),type,OPSessionInputSettings,&error)) {
+            OPBeginShutdown(error,YES,69);return;
+        }
     }
     UIApplication.sharedApplication.delegate.window=object_getIvar(OPOriginalWindowOwner,OPOriginalWindowIvar);
     OPStatus(@"原库会话：原界面控制器已创建");
@@ -1298,6 +1339,12 @@ static void OPFloatingRefreshOriginalIcon(void) {
     NSDictionary *bluetooth=OPBluetoothBrokerStatus();
     NSTimeInterval age=NSDate.date.timeIntervalSince1970-[bluetooth[@"time"] doubleValue];
     BOOL connected=[bluetooth[@"connected"] boolValue] && std::isfinite(age) && age>=0 && age<4;
+    if(OPPhoneModeSelected()) {
+        NSDictionary *engine=[NSDictionary dictionaryWithContentsOfFile:OPStatusFile];
+        NSTimeInterval inputAge=NSDate.date.timeIntervalSince1970-[engine[@"time"] doubleValue];
+        connected=[engine[@"inputMode"] isEqual:@"phone"] && [engine[@"inputReady"] boolValue] &&
+            [engine[@"running"] boolValue] && inputAge>=0 && inputAge<3;
+    }
     OPFloatingIcon.image=connected ? OPFloatingConnectedIcon : OPFloatingDisconnectedIcon;
     OPFloatingIcon.layer.contentsRect=CGRectMake(16.0/96.0,16.0/96.0,64.0/96.0,64.0/96.0);
 }
@@ -1648,6 +1695,7 @@ static void OPBeginShutdown(NSString *reason,BOOL mayExit,int exitCode) {
         OPStopping=YES; OPContextAllowed=NO; OPShutdownNotBefore=OPShutdownClock()+0.3;
         OPHUDDelegate *delegate=(OPHUDDelegate *)UIApplication.sharedApplication.delegate;
         [delegate.contextTimer invalidate];[delegate.hostTimer invalidate];
+        OPStopPhoneInput();
         OPStopOriginalBluetoothClient();
         OPStopInboundMonitor(); OPCancelOwnedPhysicalInput();
         OPSetForegroundContextChangeHandler(nil); OPStopForegroundContext();
@@ -1663,6 +1711,13 @@ static void OPBeginShutdown(NSString *reason,BOOL mayExit,int exitCode) {
 
 static int OPRunHUDInternal(BOOL verifyUIOnly,NSString *targetBundle) {
     OPVerifyUIOnly=verifyUIOnly; OPForcedTargetBundle=[targetBundle copy];
+    OPSessionInputSettings=OPReadInputSettings();
+    NSString *expectedInput=NSProcessInfo.processInfo.environment[@"SKYTOUCH_INPUT_REVISION"];
+    if(OPEngineSession && expectedInput && ![expectedInput isEqual:OPSessionInputSettings[@"revision"]]) {
+        // The settings changed between parent spawn and exec. Start paused;
+        // parent receives the revision notification and drains this generation.
+        OPContextAllowed=NO;OPInputRevisionAccepted=NO;
+    }
     if (geteuid()!=0) { OPStatus(@"HUD 需要专用特权宿主；没有启动原映射"); return 77; }
     // This process consumes authenticated packets. Only the separate broker
     // owns a CBCentralManager and evaluates its actual Bluetooth permissions.

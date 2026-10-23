@@ -52,8 +52,9 @@ def write_deb(path, control, payload):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--candidate", type=Path, default=ROOT / "build/Candidate/SkyTouch.app")
+    parser.add_argument("--tweaks", type=Path, help="Reviewed button-tweak directory; defaults beside the candidate App")
     args = parser.parse_args()
-    files = verifier.candidate_files(args.candidate.absolute())
+    files = verifier.candidate_files(args.candidate.absolute(), args.tweaks.absolute() if args.tweaks else None)
     manifest, originals = verifier.source_resources()
     info = verifier.verify_payload(files, manifest, originals)
     control = {"control": (verifier.control_for(info), 0o644)}

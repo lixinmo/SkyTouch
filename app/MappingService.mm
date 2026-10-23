@@ -3,6 +3,7 @@
 #import "../src/OPHUDHost.h"
 #import "../src/OPSessionSupervisor.h"
 #import "../src/OPServicePaths.h"
+#import "../src/OPPhoneMotionWorker.h"
 #include <unistd.h>
 #include <cstdio>
 #include <cstring>
@@ -34,6 +35,10 @@ static BOOL OPMappingServiceIdentityAllowed(uid_t effectiveUID,NSString *bundleI
 }
 
 int main(int argc,char **argv) { @autoreleasepool {
+    // Private child role, before storage or root HID initialization. Its helper
+    // validates the inherited socket and same-executable root parent first.
+    if(argc==3&&!std::strcmp(argv[1],"--phone-motion-fd")&&!std::strcmp(argv[2],"3"))
+        return OPRunPhoneMotionWorker(3);
     NSString *storageError=nil;
     if(!OPStorageDirectoriesReady(&storageError)) {
         NSLog(@"[SkyTouch] Storage unavailable: %@",storageError);return 74;

@@ -6,6 +6,7 @@
 <key>CFBundleDisplayName</key><string>凌触映射服务</string>
 <key>CFBundleExecutable</key><string>SkyTouchMapping</string>
 <key>CFBundlePackageType</key><string>BNDL</string>
+<key>NSMotionUsageDescription</key><string>使用手机陀螺仪控制映射方案中的体感视野。</string>
 <key>CFBundleShortVersionString</key><string>0.1.0</string>
 <key>CFBundleVersion</key><string>1</string>
 </dict></plist>

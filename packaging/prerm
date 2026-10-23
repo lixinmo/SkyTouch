@@ -22,6 +22,7 @@ else
     fi
 fi
 if command -v notifyutil >/dev/null 2>&1; then
+    notifyutil -p com.lixinmo.skytouch.buttons.maintenance || true
     notifyutil -p com.lixinmo.skytouch.floating.stop || true
     notifyutil -p com.lixinmo.skytouch.original.supervisor.stop || true
     notifyutil -p com.lixinmo.skytouch.original.ui-only.stop || true
@@ -29,7 +30,11 @@ if command -v notifyutil >/dev/null 2>&1; then
     notifyutil -p com.lixinmo.skytouch.stop || true
 fi
 if [ -x /Applications/SkyTouch.app/SkyTouchControl ]; then
-    /Applications/SkyTouch.app/SkyTouchControl || true
+    # Older 1.0 helpers reject arguments and have no button-capture library.
+    # New helpers permanently release capture until SpringBoard reloads.
+    if ! /Applications/SkyTouch.app/SkyTouchControl --package-maintenance; then
+        /Applications/SkyTouch.app/SkyTouchControl || true
+    fi
 fi
 task_attempt=0
 while [ "$task_attempt" -lt 10 ]; do

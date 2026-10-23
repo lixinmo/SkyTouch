@@ -1,5 +1,6 @@
 #import "OPBluetoothLifetime.h"
 #import "OPRuntimeControl.h"
+#import "OPInputSettings.h"
 #import "OPStoragePaths.h"
 #include <cerrno>
 #include <fcntl.h>
@@ -82,6 +83,9 @@ static NSDictionary *state(BOOL enabled, Probe configuration, Probe host) {
 
 NSDictionary *OPBluetoothLifetimeState(void) {
     using namespace op_bluetooth_lifetime;
+    // The shared editor/host leases also exist in phone mode. They must not
+    // keep an old radio session alive after the control source was switched.
+    if(OPPhoneModeSelected())return state(NO,{Lease::Idle,@"phone-mode"},{Lease::Idle,@"phone-mode"});
     const BOOL enabled = OPMappingRuntimeEnabled();
     NSString *path = OPRuntimeDirectory();
     if (!path.isAbsolutePath) return state(enabled, unknown(@"invalid-directory"), unknown(@"invalid-directory"));

@@ -27,6 +27,7 @@ static IMP recordedBundleMethod = nullptr;
 static IMP recordedHTTPBundleMethod = nullptr;
 static NSString *fixedTarget;
 static NSString *fixedDocuments;
+static NSString *isolatedEngineDocuments;
 static NSString *fixedDefaultsTarget;
 static const mach_header *configuredImage = nullptr;
 static BOOL configured = NO;
@@ -403,7 +404,8 @@ BOOL OPConfigureOriginalContext(void *handle, NSString *targetBundleID,
         return fail(error, @"原配置目录必须是明确的绝对路径");
     NSString *documents = documentsDirectory.stringByStandardizingPath;
     if ([documents isEqual:@"/"]) return fail(error, @"不能把根目录作为原配置 Documents");
-    if (![documents isEqualToString:OPOriginalDocumentsForTarget(targetBundleID)])
+    if (![documents isEqualToString:OPOriginalDocumentsForTarget(targetBundleID)] &&
+        ![documents isEqualToString:isolatedEngineDocuments])
         return fail(error,@"原配置 Documents 必须是本项目对应目标的专属目录");
 
     void *classSymbol = dlsym(handle, "OBJC_CLASS_$_FLEXUtility");
@@ -525,4 +527,40 @@ BOOL OPConfigureOriginalContext(void *handle, NSString *targetBundleID,
         fixedTarget, fixedDocuments, imageInfo.dli_fname ?: "(unknown)", static_cast<unsigned long>(slots.size()),
         recordedImport, hasPriorImage ? priorInfo.dli_fname : "(executable trampoline)", reinterpret_cast<void *>(recordedBundleMethod));
     return YES;
+}
+
+static NSString *OPPhoneSessionDirectory(NSString *session) {
+    if(![session isKindOfClass:NSString.class] || session.length!=36 ||
+       ![[[NSUUID alloc]initWithUUIDString:session].UUIDString isEqual:session])return nil;
+    return OPRuntimePath([@"phone-session-" stringByAppendingString:session]);
+}
+BOOL OPConfigureOriginalPhoneContext(void *handle,NSString *target,NSString *session,NSString **error) {
+    if(error)*error=nil;
+    NSString *path=OPPhoneSessionDirectory(session);
+    if(geteuid()!=0 || !NSThread.isMainThread || !path ||
+       ![NSBundle.mainBundle.bundleIdentifier isEqual:@"SkyTouchMapping"] || isolatedEngineDocuments)
+        return fail(error,@"手机映射隔离会话身份无效");
+    OwnedFD parent(OPStorageOpenDirectory(OPRuntimeDirectory()));
+    if(!OPStorageDirectoryIsOwned(parent.value))return fail(error,@"手机映射运行目录不可用");
+    if(mkdirat(parent.value,path.lastPathComponent.fileSystemRepresentation,0700))
+        return profileError(error,@"创建手机映射独立会话");
+    OwnedFD directory(openat(parent.value,path.lastPathComponent.fileSystemRepresentation,
+        O_RDONLY|O_DIRECTORY|O_NOFOLLOW|O_CLOEXEC));
+    struct stat st{};
+    if(directory.value<0 || fstat(directory.value,&st) || st.st_uid!=0 || !S_ISDIR(st.st_mode))
+        return fail(error,@"手机映射独立会话目录不合法");
+    if(mkdirat(directory.value,"Documents",0700))return profileError(error,@"创建手机映射 Documents");
+    OwnedFD documents(openat(directory.value,"Documents",O_RDONLY|O_DIRECTORY|O_NOFOLLOW|O_CLOEXEC));
+    if(documents.value<0 || mkdirat(documents.value,"cfg",0700) || mkdirat(documents.value,"tmp",0700))
+        return profileError(error,@"创建手机映射临时配置目录");
+    isolatedEngineDocuments=[path stringByAppendingPathComponent:@"Documents"];
+    return OPConfigureOriginalContext(handle,target,isolatedEngineDocuments,error);
+}
+void OPRemoveOriginalPhoneContext(NSString *session) {
+    NSString *path=OPPhoneSessionDirectory(session);if(geteuid()!=0 || !path)return;
+    struct stat st{};
+    if(lstat(path.fileSystemRepresentation,&st) || !S_ISDIR(st.st_mode) || st.st_uid!=0 || (st.st_mode&0077))return;
+    // Only the exact retired UUID tree is removed. No source Profiles path is
+    // ever accepted; removeItem removes symlinks themselves, not their targets.
+    [NSFileManager.defaultManager removeItemAtPath:path error:nil];
 }

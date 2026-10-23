@@ -6,6 +6,7 @@
 #import "OPOriginalMotionPersistence.h"
 #import "OPOriginalMOBAEditor.h"
 #import "OPOriginalBluetoothClient.h"
+#import "OPInputSettings.h"
 #import "OPBluetoothBroker.h"
 #import "OPControllerIdentity.h"
 #import "OPOriginalOfflineEditor.h"
@@ -123,6 +124,13 @@ UIWindow *controlsWindow;
 NSString *const localTarget=@"com.lixinmo.skytouch.local";
 NSString *const editorSelectionPath=OPSettingPath(@"com.lixinmo.skytouch.editor-selection.plist");
 NSDictionary *editorControllerIdentity(void) {
+    if(OPPhoneModeSelected()) {
+        NSDictionary *profile=OPReadGlobalProfile(nil);
+        NSNumber *type=profile[@"deviceType"];
+        if(!type)type=OPLastKnownControllerIdentity()[@"peripheralType"] ?: @2;
+        // This is a scheme layout, not a claimed connected phone peripheral.
+        return @{@"peripheralType":type,@"name":@"",@"source":@"phone-scheme-layout"};
+    }
     NSDictionary *known=OPLastKnownControllerIdentity();
     NSDictionary *broker=OPBluetoothBrokerStatus();
     id current=broker[@"currentPeripheralType"];
@@ -553,7 +561,7 @@ void markFloatingWindowClass(Class cls) {
         else {
             if(!bridgeInstalled)bridgeInstalled=OPInstallOriginalBridge(^BOOL(const fsm::TouchFrame &,UIInterfaceOrientation){return YES;},^{},&error);
             if(bridgeInstalled && OPInstallOriginalBluetoothClient(&error)) {
-                OPSetTargetOrientation(orientation);originalReady=OPStartOriginalUI(&error);
+                OPSetTargetOrientation(orientation);originalReady=OPStartOriginalUIWithInput(!OPPhoneModeSelected(),&error);
             }
         }
     }

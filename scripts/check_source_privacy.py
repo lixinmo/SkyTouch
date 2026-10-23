@@ -162,6 +162,7 @@ def allowed_source_path(path):
     if path.startswith("app/Icons/"):
         return re.fullmatch(r"app/Icons/AppIcon(20x20|29x29|40x40|60x60)@[23]x\.png", path) is not None
     if path in {"app/Info.plist", "packaging/preinst", "packaging/postinst", "packaging/prerm", "packaging/postrm",
+                "packaging/SkyTouchButtons.plist", "springboard/OPPhoneButtonCapture.mm", "springboard/OPPhoneButtonTransport.hpp",
                 "packaging/MappingService-Info.plist", "packaging/BluetoothService-Info.plist",
                 "packaging/host-entitlements.plist", "packaging/bluetooth-entitlements.plist", "packaging/storage-entitlements.plist"}:
         return True

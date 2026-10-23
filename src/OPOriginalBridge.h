@@ -11,6 +11,8 @@ BOOL OPInstallOriginalBridge(OPSubmitOriginalFrame submit, dispatch_block_t canc
                              NSString * _Nullable * _Nullable error);
 void OPSetTargetOrientation(UIInterfaceOrientation orientation);
 BOOL OPStartOriginalUI(NSString * _Nullable * _Nullable error);
+// Phone sessions create the same editor/mapper without starting a BLE scan.
+BOOL OPStartOriginalUIWithInput(BOOL scanBluetooth, NSString * _Nullable * _Nullable error);
 // Invoke the verified vendor method once after controller creation for a
 // hidden engine session, without relying on a visible viewDidAppear callback.
 BOOL OPReloadOriginalConfiguration(NSString * _Nullable * _Nullable error);

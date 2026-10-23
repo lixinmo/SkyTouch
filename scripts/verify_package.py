@@ -21,6 +21,9 @@ import tempfile
 
 ROOT = Path(__file__).resolve().parents[1]
 APP = "Applications/SkyTouch.app/"
+TWEAK_DIRECTORY = "Library/MobileSubstrate/DynamicLibraries/"
+TWEAK_BINARY = TWEAK_DIRECTORY + "SkyTouchButtons.dylib"
+TWEAK_FILTER = TWEAK_DIRECTORY + "SkyTouchButtons.plist"
 OWN_BINARIES = ("SkyTouch", "SkyTouchControl", "SkyTouchStorage", "SystemMapping.bundle/SkyTouchMapping", "SystemBluetooth.bundle/SkyTouchBLE")
 SCRIPTS = ("preinst", "postinst", "prerm", "postrm")
 MAX_ARCHIVE = 128 * 1024 * 1024
@@ -62,7 +65,7 @@ def version_for(info):
 def control_for(info):
     return ("Package: com.lixinmo.skytouch\nName: 凌触 SkyTouch\n"
             f"Version: {version_for(info)}\nArchitecture: iphoneos-arm64e\n"
-            "Description: 飞智手柄系统级触屏映射，支持方案编辑、截图背景和飞智云方案下载。\n"
+            "Description: 手柄与手机按键系统级触屏映射，支持共用方案、手机体感和飞智云方案。\n"
             "Maintainer: SkyTouch Local Build\nAuthor: SkyTouch Local Build\nSection: Utilities\n").encode()
 
 
@@ -89,6 +92,28 @@ def verify_ios_deployment(data):
     require(all(0 < value <= 0x000F0000 for value in versions), "Own binary still imposes a deployment target above iOS 15.0")
 
 
+def verify_button_binary(data):
+    verify_ios_deployment(data)
+    magic, cpu, subtype, kind = struct.unpack_from("<4I", data)
+    require((magic, cpu, subtype & 0x00FFFFFF, kind) == (0xFEEDFACF, 0x0100000C, 2, 6),
+            "Button capture must be a thin arm64e iOS dylib")
+    allowed = {"/usr/lib/libobjc.A.dylib", "/usr/lib/libSystem.B.dylib", "/usr/lib/libc++.1.dylib",
+               "/System/Library/Frameworks/Foundation.framework/Foundation",
+               "/System/Library/Frameworks/UIKit.framework/UIKit",
+               "/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation"}
+    offset = 32
+    for _ in range(struct.unpack_from("<I", data, 16)[0]):
+        command, size = struct.unpack_from("<II", data, offset)
+        if command in (0xC, 0x80000018, 0x8000001F, 0xD):
+            require(size >= 24, "Truncated button dylib dependency")
+            name_offset = struct.unpack_from("<I", data, offset + 8)[0]
+            require(24 <= name_offset < size, "Invalid button dylib dependency name")
+            name = data[offset + name_offset:offset + size].split(b"\0", 1)[0].decode("utf-8")
+            require(name == "/" + TWEAK_BINARY if command == 0xD else name in allowed,
+                    "Unexpected button dylib identity/dependency: " + name)
+        offset += size
+
+
 def verify_scripts(control):
     require(set(control) == {"control", *SCRIPTS}, "Unexpected maintainer script or control payload")
     for name in SCRIPTS:
@@ -97,6 +122,7 @@ def verify_scripts(control):
         subprocess.run(["/bin/sh", "-n"], input=script, check=True)  # Syntax only.
         active = "\n".join(line for line in script.decode().splitlines() if not line.lstrip().startswith("#"))
         scoped = active.replace("/Applications/SkyTouch.app/Original/flydigi.dylib", "OWN_VENDOR_LIBRARY")
+        scoped = scoped.replace("/" + TWEAK_BINARY, "OWN_BUTTON_LIBRARY")
         forbidden_operations = ("flydigi", "MobileSubstrate", "DynamicLibraries", "dpkg", "apt", "launchctl", "mv ", "cp ", "respring", "uicache -a")
         if name != "postrm":
             forbidden_operations += ("rm ",)
@@ -111,8 +137,17 @@ def verify_scripts(control):
                 'if task_output=$(/usr/bin/killall -0 "$task_program" 2>&1); then'], "Only exact own-name signal-0 checks are permitted")
             require("for task_program in SkyTouch SkyTouchMapping SkyTouchBLE; do" in active, "Process checks must stay within this package")
             require("No matching processes were found" in active and '"$task_result" -ne 1' in active, "Missing fail-closed process result check")
+            helper_lines = [line.strip() for line in active.splitlines()
+                            if "/Applications/SkyTouch.app/SkyTouchControl" in line and " -x " not in line]
+            require(helper_lines == [
+                "if ! /Applications/SkyTouch.app/SkyTouchControl --package-maintenance; then",
+                "/Applications/SkyTouch.app/SkyTouchControl || true"],
+                "Package maintenance must release button capture with the own helper, retaining only the 1.0 fallback")
+            require("notifyutil -p com.lixinmo.skytouch.buttons.maintenance || true" in active,
+                    "Missing exact button-capture maintenance notification")
         else:
             require(not kill_lines, "Unexpected process operation")
+            require("--package-maintenance" not in active, "Package-only control flag used outside preinst/prerm")
         for line in active.splitlines():
             if "notifyutil -p" in line:
                 require(re.fullmatch(r"\s*notifyutil -p com\.lixinmo\.skytouch(?:\.[a-z-]+)* \|\| true", line), "Notification outside this package")
@@ -120,7 +155,7 @@ def verify_scripts(control):
 
 def verify_control(control, info):
     verify_scripts(control)
-    require(control["control"] == (control_for(info), 0o644), "Unreviewed control fields/version/dependencies; external package relationships are forbidden")
+    require(control["control"] == (control_for(info), 0o644), "Unreviewed control fields/version/dependencies")
 
 
 def read_ar(data):
@@ -153,7 +188,9 @@ def read_tar(data, app_only=False):
             require(entry.uid == entry.gid == 0 and not entry.mode & 0o7022, "Privileged/writable package mode")
             require(entry.isdir() or entry.isfile(), "Links or special entries in package")
             if entry.isdir():
-                require(app_only and (name == "Applications" or name == APP.rstrip("/") or name.startswith(APP)), "Directory outside this package's application")
+                require(app_only and (name == "Applications" or name == APP.rstrip("/") or name.startswith(APP) or
+                        name in {"Library", "Library/MobileSubstrate", TWEAK_DIRECTORY.rstrip("/")}),
+                        "Directory outside this package's exact application/tweak scope")
             if entry.isfile():
                 files[name] = (archive.extractfile(entry).read(), entry.mode)
     return files
@@ -174,12 +211,19 @@ def verify_payload(files, manifest, originals):
     expected = {APP + name for name in resources | licenses | icons} | {
         APP + "SkyTouch", APP + "SkyTouchControl", APP + "SkyTouchStorage", APP + "Info.plist", APP + "Original/flydigi.dylib", APP + "_CodeSignature/CodeResources",
         APP + "SystemMapping.bundle/Info.plist", APP + "SystemMapping.bundle/SkyTouchMapping", APP + "SystemMapping.bundle/_CodeSignature/CodeResources",
-        APP + "SystemBluetooth.bundle/Info.plist", APP + "SystemBluetooth.bundle/SkyTouchBLE", APP + "SystemBluetooth.bundle/_CodeSignature/CodeResources"}
-    require(set(files) == expected, "Payload differs from exact App-only allowlist (no injected tweak, Probe, profiles, credentials or validation helpers)")
+        APP + "SystemBluetooth.bundle/Info.plist", APP + "SystemBluetooth.bundle/SkyTouchBLE", APP + "SystemBluetooth.bundle/_CodeSignature/CodeResources",
+        TWEAK_BINARY, TWEAK_FILTER}
+    require(set(files) == expected, "Payload differs from exact App plus two button-tweak files (no probes, profiles, credentials or validation helpers)")
     for name, data in (resources | licenses | icons).items():
         require(files[APP + name][0] == data, f"Resource/license changed: {name}")
     for name, (_, mode) in files.items():
-        require(mode == (0o755 if name.removeprefix(APP) in (*OWN_BINARIES, "Original/flydigi.dylib") else 0o644), f"Unexpected file mode: {name}")
+        require(mode == (0o755 if name == TWEAK_BINARY or name.removeprefix(APP) in (*OWN_BINARIES, "Original/flydigi.dylib") else 0o644), f"Unexpected file mode: {name}")
+    require(files[TWEAK_FILTER][0] == (ROOT / "packaging/SkyTouchButtons.plist").read_bytes(), "Button filter differs from reviewed source")
+    filter_data = subprocess.run(["plutil", "-convert", "xml1", "-o", "-", "-"],
+                                 input=files[TWEAK_FILTER][0], check=True, capture_output=True).stdout
+    require(plistlib.loads(filter_data) == {"Filter": {"Bundles": ["com.apple.springboard"]}},
+            "Button capture must inject only into SpringBoard")
+    verify_button_binary(files[TWEAK_BINARY][0])
     source_info = (ROOT / "app/Info.plist").read_bytes()
     require(files[APP + "Info.plist"][0] == source_info, "Candidate Info.plist differs from current source; rebuild before packaging")
     info = plistlib.loads(source_info)
@@ -213,6 +257,13 @@ def verify_payload(files, manifest, originals):
             destination = root / name; destination.parent.mkdir(parents=True, exist_ok=True)
             destination.write_bytes(data); destination.chmod(mode)
         app = root / "Applications/SkyTouch.app"
+        buttons = root / TWEAK_BINARY
+        subprocess.run(["codesign", "--verify", "--strict", str(buttons)], check=True, capture_output=True)
+        buttons_signature = subprocess.run(["codesign", "-d", "-v", str(buttons)], check=True, capture_output=True)
+        require(b"Identifier=com.lixinmo.skytouch.buttons\n" in buttons_signature.stderr, "Wrong signed button-capture identity")
+        buttons_entitlements = subprocess.run(["codesign", "-d", "--entitlements", ":-", str(buttons)], check=True, capture_output=True)
+        require(not buttons_entitlements.stdout.strip() or plistlib.loads(buttons_entitlements.stdout) == {},
+                "Button capture must not introduce its own entitlements")
         subprocess.run(["codesign", "--verify", "--strict", str(app)], check=True, capture_output=True)
         subprocess.run(["codesign", "--verify", "--strict", str(app / "Original/flydigi.dylib")], check=True, capture_output=True)
         subprocess.run(["codesign", "--verify", "--strict", str(app / "SkyTouchControl")], check=True, capture_output=True)
@@ -239,7 +290,7 @@ def verify_payload(files, manifest, originals):
     return info
 
 
-def candidate_files(path):
+def candidate_files(path, tweaks=None):
     require(path.is_dir() and not path.is_symlink(), "Candidate must be a real app directory")
     files = {}
     for entry in path.rglob("*"):
@@ -250,6 +301,14 @@ def candidate_files(path):
         relative = entry.relative_to(path).as_posix()
         mode = 0o755 if relative in (*OWN_BINARIES, "Original/flydigi.dylib") else 0o644
         files[APP + relative] = (entry.read_bytes(), mode)
+    tweaks = tweaks if tweaks is not None else path.parent / TWEAK_DIRECTORY
+    require(tweaks.is_dir() and not tweaks.is_symlink(), "Button-tweak candidate directory is missing or linked")
+    require({entry.name for entry in tweaks.iterdir()} == {"SkyTouchButtons.dylib", "SkyTouchButtons.plist"},
+            "Button-tweak candidate contains unexpected files")
+    for name in ("SkyTouchButtons.dylib", "SkyTouchButtons.plist"):
+        entry = tweaks / name
+        require(entry.is_file() and not entry.is_symlink(), "Button-tweak candidate must contain only ordinary files")
+        files[TWEAK_DIRECTORY + name] = (entry.read_bytes(), 0o755 if name.endswith(".dylib") else 0o644)
     return files
 
 
@@ -261,7 +320,8 @@ def verify(path):
     info = verify_payload(files, manifest, originals)
     verify_control(control, info)
     return {"package": str(path), "sha256": hashlib.sha256(path.read_bytes()).hexdigest(), "version": version_for(info),
-            "app_only": True, "external_packages_managed": False, "candidate_acceptance": "pending", "device_install_verified": False}
+            "app_only": False, "button_capture_filter": "com.apple.springboard", "external_packages_managed": False,
+            "candidate_acceptance": "pending", "device_install_verified": False}
 
 
 def main():

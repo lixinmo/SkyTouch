@@ -6,6 +6,7 @@
 #import "OPGlobalProfile.h"
 #import "OPServicePaths.h"
 #import "OPRuntimeControl.h"
+#import "OPInputSettings.h"
 #include <notify.h>
 #include <spawn.h>
 #include <sys/file.h>
@@ -261,6 +262,7 @@ static double OPMonotonicSeconds(void) {
 @property(nonatomic) BOOL observerStopped;
 @property(nonatomic,copy) NSString *activeProfileTarget;
 @property(nonatomic,copy) NSString *activeRevision;
+@property(nonatomic,copy) NSString *inputRevision;
 @property(nonatomic,copy) NSString *activePlanName;
 @property(nonatomic,copy) NSString *configurationError;
 @property(nonatomic) double lastConfigurationRead;
@@ -325,9 +327,13 @@ static double OPMonotonicSeconds(void) {
     NSString *error=nil;
     NSDictionary *document=OPReadGlobalProfile(&error);
     NSString *previous=self.activeRevision;
+    NSString *previousInput=self.inputRevision;
+    self.inputRevision=OPInputSettingsRevision();
     self.activeProfileTarget=document ? op_supervisor::activeProfileTarget(document,&error) : @"";
     self.activeRevision=document[@"revision"] ?: @"";self.activePlanName=document[@"planName"] ?: @"";
     if(previous.length && self.activeRevision.length && ![previous isEqual:self.activeRevision])
+        lifecycle.profileUpdated(OPMonotonicSeconds());
+    if(previousInput.length && ![previousInput isEqual:self.inputRevision])
         lifecycle.profileUpdated(OPMonotonicSeconds());
     self.configurationError=error ?: @"";
 }
@@ -373,6 +379,12 @@ static double OPMonotonicSeconds(void) {
         lifecycle.foreground("",OPMonotonicSeconds()); return;
     }
     self.configurationLeaseStatus=@"";
+    if(!OPPhoneModeSelected()) {
+        NSString *error=nil;
+        if(!OPEnsureBluetoothBrokerRunning(&error)) {
+            lifecycle.fail(error.UTF8String ?: "system Bluetooth service unavailable");return;
+        }
+    }
     [self closeAcknowledgement];
     self.session=NSUUID.UUID.UUIDString;
     NSString *ackName=OPManagedSessionDrainedNotification(self.session);
@@ -395,7 +407,14 @@ static double OPMonotonicSeconds(void) {
     // descriptors (especially the supervisor singleton lock) into the HUD.
     result=posix_spawnattr_setflags(&attributes,POSIX_SPAWN_CLOEXEC_DEFAULT);
     pid_t child=0;
-    if (!result) result=posix_spawn(&child,values[0],nullptr,&attributes,arguments,environ);
+    NSMutableDictionary *environment=[NSProcessInfo.processInfo.environment mutableCopy];
+    environment[@"SKYTOUCH_INPUT_REVISION"]=self.inputRevision ?: @"legacy-default";
+    NSMutableArray<NSString *> *entries=[NSMutableArray array];
+    for(NSString *key in environment)[entries addObject:[NSString stringWithFormat:@"%@=%@",key,environment[key]]];
+    std::vector<char *> env;
+    for(NSString *entry in entries)env.push_back(const_cast<char *>(entry.UTF8String));
+    env.push_back(nullptr);
+    if (!result) result=posix_spawn(&child,values[0],nullptr,&attributes,arguments,env.data());
     posix_spawnattr_destroy(&attributes);
     if (result) lifecycle.fail(std::string("could not launch managed HUD: ")+std::strerror(result));
     else { lifecycle.spawned(child); self.lastStopPost=0; }
@@ -412,6 +431,7 @@ static double OPMonotonicSeconds(void) {
         @"childExitConfirmed":@(lifecycle.reaped),@"stopRequested":@(lifecycle.stopRequested),
         @"fault":@(lifecycle.fault.c_str()),@"foregroundReason":self.foregroundReason ?: @"",
         @"activeProfileTarget":self.activeProfileTarget ?: @"",@"activeRevision":self.activeRevision ?: @"",@"activePlanName":self.activePlanName ?: @"",
+        @"inputRevision":self.inputRevision ?: @"",@"inputMode":OPReadInputSettings()[@"mode"] ?: @"controller",
         @"scope":@"global-unlocked-display",@"configurationStatus":self.configurationError ?: @"",
         @"configurationLeaseStatus":self.configurationLeaseStatus ?: @"",
         @"displayOutputAllowed":@(self.displayOutputAllowed),@"displayPausePreservesChild":@(self.preservingChildForDisplayPause),
@@ -457,6 +477,7 @@ static double OPMonotonicSeconds(void) {
         int status=0; pid_t result=waitpid(lifecycle.pid,&status,WNOHANG);
         if (result==lifecycle.pid) {
             NSString *completedTarget=@(lifecycle.target.c_str());
+            OPRemoveOriginalPhoneContext(self.session);
             lifecycle.childExited(WIFEXITED(status) && WEXITSTATUS(status)==0,now);
             // Reap is the definitive barrier against late writes on any
             // original worker queue. Repair ownership before another session
@@ -525,7 +546,7 @@ int OPRunSessionSupervisor(NSString *launchAttempt) {
         if(![intent[@"enabled"] boolValue] || !OPManagedSessionIdentifierIsValid(intent[@"generation"])) {close(lock);return 0;}
         runtime.runtimeGeneration=intent[@"generation"];
         NSString *bluetoothError=nil;
-        if(!OPEnsureBluetoothBrokerRunning(&bluetoothError)) {
+        if(!OPPhoneModeSelected() && !OPEnsureBluetoothBrokerRunning(&bluetoothError)) {
             runtime->lifecycle.fail(bluetoothError.UTF8String ?: "system Bluetooth service unavailable");
             [runtime advance];close(lock);return 69;
         }
@@ -534,7 +555,7 @@ int OPRunSessionSupervisor(NSString *launchAttempt) {
         struct sigaction childAction{}; childAction.sa_handler=SIG_DFL;
         sigemptyset(&childAction.sa_mask);
         if (sigaction(SIGCHLD,&childAction,nullptr)!=0) { close(lock); return 69; }
-        int stopToken=-1,lockToken=-1,profileToken=-1,intentToken=-1,maintenanceToken=-1;
+        int stopToken=-1,lockToken=-1,profileToken=-1,intentToken=-1,maintenanceToken=-1,inputToken=-1;
         uint32_t registration=notify_register_dispatch(OPSupervisorStopNotification,&stopToken,dispatch_get_main_queue(),^(__unused int token) {
             // A delayed notification from an older off/on cycle must not stop
             // the newly enabled generation. The persisted intent is decisive.
@@ -543,6 +564,9 @@ int OPRunSessionSupervisor(NSString *launchAttempt) {
         });
         if (registration!=NOTIFY_STATUS_OK) { close(lock); return 69; }
         notify_register_dispatch(OPRuntimeIntentChangedNotification,&intentToken,dispatch_get_main_queue(),^(__unused int token){[runtime advance];});
+        notify_register_dispatch(OPInputSettingsChangedNotification,&inputToken,dispatch_get_main_queue(),^(__unused int token){
+            [runtime reloadConfiguration];[runtime acceptForeground:OPForegroundContextSnapshot()];
+        });
         registration=notify_register_dispatch("com.lixinmo.skytouch.runtime.maintenance-stop",&maintenanceToken,dispatch_get_main_queue(),^(__unused int token){
             runtime->lifecycle.stop(OPMonotonicSeconds());[runtime advance];
         });
@@ -586,6 +610,7 @@ int OPRunSessionSupervisor(NSString *launchAttempt) {
         OPSetForegroundContextChangeHandler(nil); OPStopForegroundContext();
         [runtime advance]; notify_cancel(stopToken); notify_cancel(lockToken); notify_cancel(profileToken);
         if(intentToken>=0)notify_cancel(intentToken);if(maintenanceToken>=0)notify_cancel(maintenanceToken);
+        if(inputToken>=0)notify_cancel(inputToken);
         close(lock);
         return runtime->lifecycle.fault.empty() ? 0 : 70;
     }

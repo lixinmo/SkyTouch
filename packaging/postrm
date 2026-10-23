@@ -60,6 +60,7 @@ task_remove_object() {
     case "$1" in directory) rm -rf -- "$3" ;; file) rm -f -- "$3" ;; esac
 }
 for task_path in \
+    /tmp/skytouch-buttons \
     /var/mobile \
     /var/mobile/Library \
     /var/mobile/Library/Caches \
@@ -105,6 +106,9 @@ done
 # The maintenance executable has already been removed at this point. Finish
 # transient cleanup without touching any user data or migration receipts.
 rm -rf -- /var/mobile/Library/Caches/com.lixinmo.skytouch/Runtime
+# prerm confirmed the mapping process exited and released its socket. This
+# directory contains only our transient button socket and stable lock.
+rm -rf -- /tmp/skytouch-buttons
 
 # Remove an empty runtime cache parent, never a business-data scaffold. The
 # explicit Clear Configuration action removes the business root itself.

@@ -122,6 +122,8 @@ static BOOL OPLauncherHomeURL(NSURL *url) {
 #import "../src/OPConfigurationManager.h"
 #import "../src/OPFloatingControl.h"
 #import "../src/OPRuntimeControl.h"
+#import "../src/OPInputSettings.h"
+#import "../src/OPInputSettingsUI.h"
 #import "../src/OPPanelCalibration.h"
 #import "../src/OPBluetoothBroker.h"
 #import "../src/OPGlobalProfile.h"
@@ -189,6 +191,7 @@ static NSString *OPSupervisorLaunchDescription(NSDictionary *supervisor) {
 @property(nonatomic) UILabel *profileStatus;
 @property(nonatomic) UILabel *controllerStatus;
 @property(nonatomic) UILabel *floatingStatus;
+@property(nonatomic) UIButton *inputSettingsButton;
 @property(nonatomic) BOOL startPending;
 @property(nonatomic) NSUInteger startGeneration;
 @property(nonatomic) UIButton *mappingButton;
@@ -204,6 +207,7 @@ static NSString *OPSupervisorLaunchDescription(NSDictionary *supervisor) {
 - (void)showFloatingConfiguration;
 - (void)configure;
 - (void)manageConfiguration;
+- (void)inputSettings;
 - (void)refreshRuntimeStatus;
 - (void)runtimeIntentChanged;
 - (void)ensureSupervisorRunning;
@@ -226,6 +230,10 @@ static NSString *OPSupervisorLaunchDescription(NSDictionary *supervisor) {
     UILabel *intro=[UILabel new]; intro.numberOfLines=0;
     intro.text=@"在凌触内选择游戏、登录飞智云方案、下载和编辑映射，也可加载截图辅助配置。进入配置页面后使用横屏。\n\n开启映射后显示浮标，可在任意 App 切换本地方案。关闭映射会同时退出浮标；划掉凌触不会关闭已开启的映射和浮标。";
     [stack addArrangedSubview:intro];
+    self.inputSettingsButton=[UIButton buttonWithType:UIButtonTypeSystem];
+    self.inputSettingsButton.configuration=[UIButtonConfiguration borderedButtonConfiguration];
+    [self.inputSettingsButton addTarget:self action:@selector(inputSettings) forControlEvents:UIControlEventTouchUpInside];
+    [stack addArrangedSubview:self.inputSettingsButton];
     self.profileStatus=[UILabel new];self.profileStatus.numberOfLines=0;[stack addArrangedSubview:self.profileStatus];[self updateProfileStatus];
     UIButton *configure=[UIButton buttonWithType:UIButtonTypeSystem];configure.configuration=[UIButtonConfiguration borderedButtonConfiguration];
     [configure setTitle:@"配置当前游戏方案" forState:UIControlStateNormal];[configure addTarget:self action:@selector(configure) forControlEvents:UIControlEventTouchUpInside];
@@ -290,6 +298,10 @@ static NSString *OPSupervisorLaunchDescription(NSDictionary *supervisor) {
 - (void)manageConfiguration {
     if(self.navigationController.presentedViewController || self.presentedViewController || OPConfigurationManagementUIIsBusy())return;
     [self.navigationController pushViewController:OPMakeConfigurationManager() animated:YES];
+}
+- (void)inputSettings {
+    if(self.navigationController.presentedViewController || self.presentedViewController || OPConfigurationManagementUIIsBusy())return;
+    [self.navigationController pushViewController:OPMakeInputSettingsController() animated:YES];
 }
 - (void)showFloatingConfiguration {
     if(!OPMappingRuntimeEnabled()) {
@@ -509,6 +521,9 @@ static NSString *OPSupervisorLaunchDescription(NSDictionary *supervisor) {
     [self refreshRuntimeStatus];
 }
 - (void)refreshRuntimeStatus {
+    NSDictionary *inputSettings=OPReadInputSettings();
+    BOOL phoneMode=[inputSettings[@"mode"] isEqual:@"phone"];
+    [self.inputSettingsButton setTitle:phoneMode ? @"输入模式：手机 · 按键与体感设置" : @"输入模式：手柄 · 按键与体感设置" forState:UIControlStateNormal];
     NSDictionary *intent=OPMappingRuntimeIntent();
     const BOOL enabled=[intent[@"enabled"] boolValue];
     // Notifications can be coalesced while UIKit is suspended. Reading the
@@ -532,14 +547,42 @@ static NSString *OPSupervisorLaunchDescription(NSDictionary *supervisor) {
             @"正在显示本地方案列表；再次点击浮标收起。" : @"可在桌面和任意 App 点击浮标切换本地方案。";
     } else self.floatingStatus.text=OPFloatingConfigurationLaunchProblem() ?: @"正在等待映射服务启动浮标。";
     NSDictionary *bluetooth=OPBluetoothBrokerStatus();
-    if(OPFreshProcessState(bluetooth,@"time",@"pid")) {
+    if(phoneMode) {
+        NSDictionary *bindings=inputSettings[@"phoneBindings"];
+        self.controllerStatus.text=[NSString stringWithFormat:@"手机输入（开发预览）：操作按钮 → %@，音量 + → %@，音量 − → %@，侧边按钮 → %@。\n转动手机控制体感视野；映射生效期间，四键执行方案动作，原系统功能暂停。方案中的摇杆设置会保留。",bindings[@"action"],bindings[@"volumeUp"],bindings[@"volumeDown"],bindings[@"side"]];
+    } else if(OPFreshProcessState(bluetooth,@"time",@"pid")) {
         self.controllerStatus.text=[bluetooth[@"connected"] boolValue] ?
             ([bluetooth[@"receivedThisConnection"] unsignedLongLongValue] ? @"系统后台已收到手柄数据。" : @"手柄链路已连接，等待输入。") :
             [bluetooth[@"scanning"] boolValue] ? @"系统后台正在寻找手柄。" : @"系统后台等待手柄连接。";
     } else self.controllerStatus.text=@"手柄连接服务尚未启动。";
+    if(!phoneMode) {
+        NSString *motionSource=[inputSettings[@"controllerMotion"] isEqual:@"phone"] ?
+            @"体感来源：手机（开发预览），跟随手机转动；手柄按键与摇杆继续使用。" : @"体感来源：手柄原体感。";
+        self.controllerStatus.text=[self.controllerStatus.text stringByAppendingFormat:@"\n%@",motionSource];
+    }
     NSDictionary *currentSupervisor=OPRuntimeRecordMatchesIntent(supervisor,intent) ? supervisor : nil;
     NSString *runtimeStatus=OPMappingRuntimeStatusDescription(enabled,enabled ? currentSupervisor : supervisor,
         engine,engineFresh,floating!=nil,OPCurrentGlobalProfile()[@"revision"]);
+    if(enabled && phoneMode && engineFresh && [engine[@"inputMode"] isEqual:@"phone"] &&
+       ![engine[@"inputReady"] boolValue] && [engine[@"running"] boolValue]) {
+        NSDictionary *phone=engine[@"phoneInput"],*buttons=phone[@"buttons"],*motion=phone[@"motion"];
+        NSString *buttonStage=buttons[@"stage"],*motionError=motion[@"error"];
+        if([buttonStage isEqual:@"unsupported-button-abi"])
+            runtimeStatus=@"当前系统的实体键接口不兼容，手机按键保持原功能。";
+        else if([buttonStage isEqual:@"waiting-for-SpringBoard"])
+            runtimeStatus=@"正在连接手机按键组件；首次安装或更新后需重新加载桌面。";
+        else if(motionError.length)runtimeStatus=[@"手机体感暂不可用：" stringByAppendingString:motionError];
+        else if(![phone[@"active"] boolValue])runtimeStatus=@"手机映射已暂停，退出编辑或解锁后恢复。";
+        else runtimeStatus=@"正在准备手机按键和体感输入，系统按键暂未接管。";
+    }
+    if(enabled && !phoneMode && [inputSettings[@"controllerMotion"] isEqual:@"phone"] && engineFresh &&
+       [engine[@"inputMode"] isEqual:@"controller"] && ![engine[@"inputReady"] boolValue] && [engine[@"running"] boolValue]) {
+        NSDictionary *phone=engine[@"phoneInput"];
+        NSString *motionError=phone[@"motion"][@"error"];
+        if(motionError.length)runtimeStatus=[@"手机体感暂不可用：" stringByAppendingString:motionError];
+        else if(![phone[@"active"] boolValue])runtimeStatus=@"手柄与手机体感映射已暂停，退出编辑或解锁后恢复。";
+        else runtimeStatus=@"正在等待手柄连接和手机体感输入。";
+    }
     if(!enabled || currentSupervisor) {self.status.text=runtimeStatus;return;}
     if(supervisor) {self.status.text=@"正在等待上次映射和浮标退出。";return;}
     if(self.startPending) return;

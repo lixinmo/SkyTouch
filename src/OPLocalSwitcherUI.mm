@@ -4,12 +4,14 @@
 #import "OPBluetoothBroker.h"
 #import "OPControllerIdentity.h"
 #import "OPLocalSwitcherFilter.h"
+#import "OPInputSettings.h"
 #include <cmath>
 #include <signal.h>
 #include <cerrno>
 #include <climits>
 
 static NSDictionary *OPCurrentSwitcherFilter(void) {
+    if(OPPhoneModeSelected())return @{@"mode":@"phone",@"deviceType":@-1,@"deviceID":@""};
     NSDictionary *broker=OPBluetoothBrokerStatus();
     long long pid=[broker[@"pid"] longLongValue];
     BOOL alive=pid>1 && pid<=INT_MAX && (kill((pid_t)pid,0)==0 || errno==EPERM);
@@ -173,6 +175,8 @@ typedef NS_ENUM(NSInteger, OPLocalSwitcherAction) {
         NSInteger type=[self.filterState[@"deviceType"] integerValue];
         NSString *typeName=type>=0 && type<=2 ? @[@"手柄",@"键鼠",@"半柄"][(NSUInteger)type] : @"";
         self.statusLabel.text=self.lastError.length ? self.lastError : self.catalogError.length ? self.catalogError :
+            [mode isEqual:@"phone"] ? (self.rows.count ? [NSString stringWithFormat:@"%@ · 手机模式（轮盘暂停）",self.sourceName] :
+                @"没有可用的手柄／半柄方案，请在凌触 App 中保存。") :
             [mode isEqual:@"identifying"] ? @"已连接，正在识别手柄类型…" :
             [mode isEqual:@"type"] ? (self.rows.count ? [NSString stringWithFormat:@"%@ · 仅显示%@方案",self.sourceName,typeName] :
                 [NSString stringWithFormat:@"暂无%@本地方案，请在凌触 App 中导入或保存。",typeName]) :
@@ -212,7 +216,7 @@ typedef NS_ENUM(NSInteger, OPLocalSwitcherAction) {
     dispatch_async(dispatch_get_global_queue(QOS_CLASS_USER_INITIATED,0),^{
         NSString *error=nil;BOOL applied=NO;
         if(OPLocalSwitcherRowAllowed(row,OPCurrentSwitcherFilter()))applied=OPApplyLocalConfiguration(target,identifier,name,&error);
-        else error=@"手柄类型已变化，请重新选择方案。";
+        else error=@"输入模式或方案类型已变化，请重新选择方案。";
         dispatch_async(dispatch_get_main_queue(),^{
             OPLocalSwitcher *owner=weak;if(!owner)return;
             owner.applying=NO;owner.busy=NO;

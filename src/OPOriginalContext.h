@@ -38,5 +38,11 @@ BOOL OPExportOriginalProfileDefaults(NSString *targetBundleID,
 BOOL OPConfigureOriginalContext(void * _Nullable dlopenHandle, NSString *targetBundleID,
                                 NSString *documentsDirectory,
                                 NSString * _Nullable * _Nullable error);
+// Phone engine projections must never be saved into the editable FDG tree.
+// Creates an exclusive root-owned Documents tree for this managed session.
+BOOL OPConfigureOriginalPhoneContext(void * _Nullable dlopenHandle, NSString *targetBundleID,
+                                     NSString *session, NSString * _Nullable * _Nullable error);
+// Supervisor only, after waitpid proves that no vendor worker remains alive.
+void OPRemoveOriginalPhoneContext(NSString *session);
 
 NS_ASSUME_NONNULL_END

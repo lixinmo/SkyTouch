@@ -358,7 +358,8 @@ void OPSetTargetOrientation(UIInterfaceOrientation orientation) {
     cancel(@"目标方向已变化，旧触点已取消；松开后重新按键",@"orientation");
     if (controller) invoke(controller,@"checkOrientation");
 }
-BOOL OPStartOriginalUI(NSString **error) {
+BOOL OPStartOriginalUI(NSString **error) { return OPStartOriginalUIWithInput(YES,error); }
+BOOL OPStartOriginalUIWithInput(BOOL scanBluetooth,NSString **error) {
     if (error) *error=nil;
     if (![NSThread isMainThread] || !installed) { if (error) *error=@"请先在主线程安装原库桥接"; return NO; }
     @try {
@@ -369,7 +370,7 @@ BOOL OPStartOriginalUI(NSString **error) {
             if (error) *error=@"原界面没有创建 FZCentralViewController"; return NO;
         }
         invoke(controller,@"checkOrientation");
-        invoke(manager,@"doScanBluetooth");
+        if(scanBluetooth)invoke(manager,@"doScanBluetooth");
         return YES;
     } @catch (NSException *exception) { caught(exception); if (error) *error=bridgeStatus; return NO; }
 }

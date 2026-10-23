@@ -7,6 +7,7 @@ task_stage=$(mktemp -d "$task_dir/build/.candidate-build.XXXXXX")
 trap 'rm -rf "$task_stage"' EXIT
 task_app="$task_stage/SkyTouch.app"
 task_destination="$task_dir/build/Candidate/SkyTouch.app"
+task_tweaks="$task_stage/Library/MobileSubstrate/DynamicLibraries"
 task_sdk=$(xcrun --sdk iphoneos --show-sdk-path)
 # RootHide's published deployment range starts at iOS 15. Compile every own
 # binary to that ABI baseline; package metadata does not impose a firmware
@@ -25,6 +26,8 @@ task_mapping_sources=(
     "$task_dir/src/OPLocalSwitcherUI.mm" "$task_dir/src/OPLocalConfiguration.mm"
     "$task_dir/src/OPLocalSwitcherFilter.mm"
     "$task_dir/src/OPRuntimeControl.mm"
+    "$task_dir/src/OPInputSettings.mm" "$task_dir/src/OPPhoneProfile.mm"
+    "$task_dir/src/OPPhoneInput.mm" "$task_dir/src/OPPhoneMotion.mm" "$task_dir/src/OPPhoneButtonClient.mm"
     "$task_dir/src/OPBluetoothLifetime.mm"
     "$task_dir/src/OPControllerIdentity.mm" "$task_dir/src/OPOriginalOfflineEditor.mm"
     "$task_dir/src/OPHUDHost.mm" "$task_dir/src/OPForegroundContext.mm" "$task_dir/src/OPSessionSupervisor.mm"
@@ -38,9 +41,9 @@ task_mapping_sources=(
 )
 xcrun --sdk iphoneos clang++ -target "$task_target" -std=c++17 -fobjc-arc \
     -isysroot "$task_sdk" -Wall -Wextra -Werror -Wno-deprecated-declarations -Os \
-    -framework UIKit -framework Foundation -framework QuartzCore -framework CoreGraphics -framework CoreBluetooth -framework PhotosUI -framework Security \
+    -framework UIKit -framework Foundation -framework QuartzCore -framework CoreGraphics -framework CoreBluetooth -framework CoreMotion -framework PhotosUI -framework Security \
     "$task_dir/app/main.mm" "$task_dir/src/OPFloatingControl.mm" \
-    "$task_dir/src/OPConfigurationManager.mm" "$task_dir/src/OPConfigurationManagerUI.mm" \
+    "$task_dir/src/OPConfigurationManager.mm" "$task_dir/src/OPConfigurationManagerUI.mm" "$task_dir/src/OPInputSettingsUI.mm" \
     "${task_mapping_sources[@]}" "$task_stage/fishhook.o" -o "$task_app/SkyTouch"
 mkdir -p "$task_app/SystemMapping.bundle"
 cp "$task_dir/packaging/MappingService-Info.plist" "$task_app/SystemMapping.bundle/Info.plist"
@@ -49,7 +52,7 @@ cp "$task_dir/packaging/MappingService-Info.plist" "$task_app/SystemMapping.bund
 cp -R "$task_dir/build/OriginalRuntime/FZKeymappingHelper.bundle" "$task_app/SystemMapping.bundle/"
 xcrun --sdk iphoneos clang++ -target "$task_target" -std=c++17 -fobjc-arc \
     -isysroot "$task_sdk" -Wall -Wextra -Werror -Wno-deprecated-declarations -Os \
-    -framework UIKit -framework Foundation -framework QuartzCore -framework CoreGraphics -framework CoreBluetooth -framework PhotosUI -framework Security \
+    -framework UIKit -framework Foundation -framework QuartzCore -framework CoreGraphics -framework CoreBluetooth -framework CoreMotion -framework PhotosUI -framework Security \
     "$task_dir/app/MappingService.mm" "${task_mapping_sources[@]}" "$task_stage/fishhook.o" -o "$task_app/SystemMapping.bundle/SkyTouchMapping"
 codesign --force --sign - --timestamp=none --entitlements "$task_dir/packaging/host-entitlements.plist" "$task_app/SystemMapping.bundle"
 xcrun --sdk iphoneos clang -target "$task_target" -isysroot "$task_sdk" -std=c11 -Os \
@@ -66,18 +69,32 @@ xcrun --sdk iphoneos clang++ -target "$task_target" -std=c++17 -fobjc-arc -isysr
     -Wall -Wextra -Werror -Wno-deprecated-declarations -Os -framework Foundation -framework CoreBluetooth \
     "$task_dir/app/BluetoothService.mm" "$task_dir/src/OPBluetoothBroker.mm" "$task_dir/src/OPControllerIdentity.mm" \
     "$task_dir/src/OPBluetoothLifetime.mm" "$task_dir/src/OPRuntimeControl.mm" \
+    "$task_dir/src/OPInputSettings.mm" "$task_dir/src/OPPhoneProfile.mm" \
     "$task_dir/shared/src/SMBluetooth.mm" "$task_dir/shared/src/SMBluetoothDevice.mm" "$task_dir/shared/core/FlydigiProtocol.cpp" \
     -o "$task_app/SystemBluetooth.bundle/SkyTouchBLE"
 codesign --force --sign - --timestamp=none --entitlements "$task_dir/packaging/bluetooth-entitlements.plist" "$task_app/SystemBluetooth.bundle"
+# SpringBoard capture is a separate, narrowly filtered arm64e tweak. The App
+# and mapping host keep their existing arm64 identities and original assets.
+mkdir -p "$task_tweaks"
+xcrun --sdk iphoneos clang++ -target arm64e-apple-ios15.0 -std=c++17 -fobjc-arc -dynamiclib \
+    -isysroot "$task_sdk" -Wall -Wextra -Werror -Wno-deprecated-declarations -Os \
+    -framework Foundation -framework UIKit \
+    -Wl,-install_name,/Library/MobileSubstrate/DynamicLibraries/SkyTouchButtons.dylib \
+    "$task_dir/springboard/OPPhoneButtonCapture.mm" -o "$task_tweaks/SkyTouchButtons.dylib"
+cp "$task_dir/packaging/SkyTouchButtons.plist" "$task_tweaks/SkyTouchButtons.plist"
+codesign --force --sign - --timestamp=none --identifier com.lixinmo.skytouch.buttons "$task_tweaks/SkyTouchButtons.dylib"
+codesign --verify --strict "$task_tweaks/SkyTouchButtons.dylib"
 # No algorithm, symbol or resource patching of the vendor image.
 codesign --force --sign - --timestamp=none "$task_app/Original/flydigi.dylib"
 /usr/bin/python3 "$task_dir/scripts/verify_original.py" --runtime-dylib "$task_app/Original/flydigi.dylib"
 codesign --force --sign - --timestamp=none --entitlements "$task_dir/packaging/host-entitlements.plist" "$task_app"
 codesign --verify --strict "$task_app"
-# Replace only this local generated candidate after all build checks passed.
-# A fresh staging tree prevents stale resources/diagnostics entering the deb.
-mkdir -p "$task_dir/build/Candidate"
-if [ -L "$task_destination" ]; then echo 'Candidate destination must not be a symlink' >&2; exit 1; fi
-rm -rf "$task_destination"
-mv "$task_app" "$task_destination"
+# Publish the App and its matching capture library as one generated candidate.
+# Only the two reviewed tweak files enter this tree; build objects stay behind.
+mkdir -p "$task_stage/Candidate"
+mv "$task_app" "$task_stage/Candidate/SkyTouch.app"
+mv "$task_stage/Library" "$task_stage/Candidate/Library"
+if [ -L "$task_dir/build/Candidate" ]; then echo 'Candidate destination must not be a symlink' >&2; exit 1; fi
+rm -rf "$task_dir/build/Candidate"
+mv "$task_stage/Candidate" "$task_dir/build/Candidate"
 printf 'Signed build ready for packaging: %s\n' "$task_destination"

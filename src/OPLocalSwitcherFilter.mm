@@ -42,6 +42,12 @@ NSDictionary *OPLocalSwitcherFilterState(NSDictionary *broker, NSDictionary *rem
 BOOL OPLocalSwitcherRowAllowed(NSDictionary *row, NSDictionary *state) {
     if(![row isKindOfClass:NSDictionary.class] || ![state isKindOfClass:NSDictionary.class])return NO;
     if([state[@"mode"] isEqual:@"all"])return YES;
+    if([state[@"mode"] isEqual:@"phone"]) {
+        NSInteger type=-1;
+        // The current phone report adapter supports gamepad and v1 layouts.
+        // Q1 keyboard/mouse has a different wire format, never reinterpret it.
+        return OPLocalSwitcherType(row[@"deviceType"],&type) && (type==0 || type==2);
+    }
     if(![state[@"mode"] isEqual:@"type"])return NO;
     NSInteger wanted=-1,actual=-1;
     return OPLocalSwitcherType(state[@"deviceType"],&wanted) &&
