@@ -103,7 +103,7 @@ void alert(UIViewController *owner,NSString *message) {
     (void)tableView;
     if(section==0)return self.leaseError ?: @"编辑输入设置期间，映射触点与手机按键接管暂停；返回主页面后恢复。两个模式共用原方案，手机模式保留方案中的摇杆设置，但运行时停用摇杆及依赖摇杆的动作。请松开按键后切换。";
     if(section==1)return @"绑定全局生效；所选逻辑键仍执行原方案中的动作。未绑定的逻辑键继续保留。键鼠方案暂不支持手机输入。";
-    return @"基础灵敏度与方案原有灵敏度共同生效，默认 1.0 倍；方案中的反向设置继续保留。手柄模式默认使用手机体感，也可切回手柄原体感。键鼠方案继续使用原体感。手机体感跟随手机转动。";
+    return [NSString stringWithFormat:@"基础灵敏度与方案原有灵敏度共同生效；根据飞智黄蜂 2 Pro 陀螺仪校准，推荐水平 %.4g 倍、垂直 %.4g 倍。方案中的反向设置继续保留。手柄模式默认使用手机体感，也可切回手柄原体感。键鼠方案继续使用原体感。手机体感跟随手机转动。",OPRecommendedPhoneMotionMultiplierX,OPRecommendedPhoneMotionMultiplierY];
 }
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     UITableViewCell *cell=[tableView dequeueReusableCellWithIdentifier:@"setting"] ?: [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:@"setting"];
@@ -127,8 +127,8 @@ void alert(UIViewController *owner,NSString *message) {
     } else {
         NSString *axis=indexPath.row==2 ? @"motionScaleX" : @"motionScaleY";
         cell.textLabel.text=indexPath.row==2 ? @"水平基础灵敏度" : @"垂直基础灵敏度";
-        const double baseline=indexPath.row==2 ? op_phone::defaultMotionScaleX : op_phone::defaultMotionScaleY;
-        cell.detailTextLabel.text=[NSString stringWithFormat:@"%.3g ×",[self.settings[axis] doubleValue]/baseline];
+        const double recommended=indexPath.row==2 ? OPRecommendedPhoneMotionMultiplierX : OPRecommendedPhoneMotionMultiplierY;
+        cell.detailTextLabel.text=[NSString stringWithFormat:@"当前 %.4g 倍 · 推荐 %.4g 倍",[self.settings[axis] doubleValue]/op_phone::motionScalePerMultiplier,recommended];
         cell.accessoryType=UITableViewCellAccessoryDisclosureIndicator;
     }
     if(_configurationLease<0){cell.selectionStyle=UITableViewCellSelectionStyleNone;cell.textLabel.textColor=UIColor.secondaryLabelColor;}
@@ -178,18 +178,32 @@ void alert(UIViewController *owner,NSString *message) {
         [self.navigationController pushViewController:picker animated:YES];
     } else if(indexPath.row>=2) {
         NSString *key=indexPath.row==2 ? @"motionScaleX" : @"motionScaleY";
-        const double baseline=indexPath.row==2 ? op_phone::defaultMotionScaleX : op_phone::defaultMotionScaleY;
-        UIAlertController *editor=[UIAlertController alertControllerWithTitle:indexPath.row==2 ? @"水平基础灵敏度" : @"垂直基础灵敏度" message:@"输入 0.1 至 10 倍，默认 1.0 倍。与方案原有灵敏度共同生效。" preferredStyle:UIAlertControllerStyleAlert];
-        [editor addTextFieldWithConfigurationHandler:^(UITextField *field){field.keyboardType=UIKeyboardTypeDecimalPad;field.text=[NSString stringWithFormat:@"%.3g",[self.settings[key] doubleValue]/baseline];}];
+        const double baseline=op_phone::motionScalePerMultiplier;
+        const double recommended=indexPath.row==2 ? OPRecommendedPhoneMotionMultiplierX : OPRecommendedPhoneMotionMultiplierY;
+        const double maximumMultiplier=op_phone::maximumMotionScale/baseline;
+        NSString *originalText=[NSString stringWithFormat:@"%.15g",[self.settings[key] doubleValue]/baseline];
+        NSString *message=[NSString stringWithFormat:@"输入 0.1 至 %.4g 倍，与方案原有灵敏度共同生效。根据飞智黄蜂 2 Pro 陀螺仪校准，推荐 %.4g 倍。",maximumMultiplier,recommended];
+        UIAlertController *editor=[UIAlertController alertControllerWithTitle:indexPath.row==2 ? @"水平基础灵敏度" : @"垂直基础灵敏度" message:message preferredStyle:UIAlertControllerStyleAlert];
+        [editor addTextFieldWithConfigurationHandler:^(UITextField *field){field.keyboardType=UIKeyboardTypeDecimalPad;field.text=originalText;}];
         [editor addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil]];
         __weak OPInputSettingsController *weak=self;
         __weak UIAlertController *weakEditor=editor;
+        [editor addAction:[UIAlertAction actionWithTitle:@"使用推荐值" style:UIAlertActionStyleDefault handler:^(__unused UIAlertAction *action){
+            OPInputSettingsController *owner=weak;if(!owner)return;
+            const double scale=baseline*recommended;
+            if([owner.settings[key] doubleValue]==scale)return;
+            NSMutableDictionary *changed=[owner.settings mutableCopy];changed[key]=@(scale);[owner save:changed];
+        }]];
         [editor addAction:[UIAlertAction actionWithTitle:@"保存" style:UIAlertActionStyleDefault handler:^(__unused UIAlertAction *action){
             OPInputSettingsController *owner=weak;if(!owner)return;
-            NSString *text=[weakEditor.textFields.firstObject.text stringByTrimmingCharactersInSet:NSCharacterSet.whitespaceAndNewlineCharacterSet];
+            NSString *text=weakEditor.textFields.firstObject.text;
+            if([text isEqualToString:originalText])return;
+            text=[text stringByTrimmingCharactersInSet:NSCharacterSet.whitespaceAndNewlineCharacterSet];
             NSScanner *scanner=[NSScanner scannerWithString:text ?: @""];double value=0;
-            if(![scanner scanDouble:&value] || !scanner.isAtEnd || !std::isfinite(value) || value<.1 || value>10){alert(owner,@"请输入 0.1 至 10 之间的倍率。");return;}
-            NSMutableDictionary *changed=[owner.settings mutableCopy];changed[key]=@(value*baseline);[owner save:changed];
+            if(![scanner scanDouble:&value] || !scanner.isAtEnd || !std::isfinite(value) || value<.1 || value>maximumMultiplier){alert(owner,[NSString stringWithFormat:@"请输入 0.1 至 %.4g 之间的倍率。",maximumMultiplier]);return;}
+            const double scale=value*baseline;
+            if([owner.settings[key] doubleValue]==scale)return;
+            NSMutableDictionary *changed=[owner.settings mutableCopy];changed[key]=@(scale);[owner save:changed];
         }]];
         [self presentViewController:editor animated:YES completion:nil];
     }

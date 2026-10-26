@@ -5,17 +5,11 @@
 #include <cstdint>
 
 namespace op_phone {
-// Vendor relative counts/radian, before the profile's signed senty_x/y gains.
-// 2026-10-26: iPhone 15 Pro Max (iOS 17.1) rigidly mounted to Wasp 2 Pro;
-// 46 one-way strokes compared integrated CoreMotion rotationRate with summed
-// controller deltas before profile gain. Fits 6668.55 / 6877.98 were rounded
-// to 6670 / 6880. Both input modes use this calibration; FDG gains stay intact.
-inline constexpr double defaultMotionScaleX = 6670.0;
-inline constexpr double defaultMotionScaleY = 6880.0;
-inline constexpr double legacyMotionScale = 2048.0;
-// v1 accepted up to 65536 (32x its old baseline). Preserve that entire range
-// when rebasing saved preferences, including values above the UI's 10x limit.
-inline constexpr double maximumMotionScale = defaultMotionScaleY * 32.0;
+// One common counts/radian unit for both user-editable multipliers. Hardware
+// recommendations belong to settings; the runtime consumes saved scales only.
+inline constexpr double motionScalePerMultiplier = 2048.0;
+// Preserve the complete absolute-value range accepted by existing v2 settings.
+inline constexpr double maximumMotionScale = 220160.0;
 inline constexpr double maxSampleAge = 0.10;
 struct Delta { std::int16_t x=0,y=0; };
 class MotionAccumulator {

@@ -11,17 +11,28 @@
 #include <cmath>
 
 const char *const OPInputSettingsChangedNotification="com.lixinmo.skytouch.input-settings.changed";
+// 2026-10-26: iPhone 15 Pro Max (iOS 17.1) fixed to a Flydigi Wasp 2 Pro;
+// 46 one-way strokes compared integrated CoreMotion rates with summed BLE
+// deltas before profile gain. Fits 6668.55 / 6877.98 counts/radian yielded
+// the rounded presets 6670 / 6880, expressed here relative to the common 2048
+// unit. They are user-editable recommendations, not per-axis runtime bases.
+const double OPRecommendedPhoneMotionMultiplierX=3.2568359375;
+const double OPRecommendedPhoneMotionMultiplierY=3.359375;
 namespace {
 constexpr const char *settingsName="com.lixinmo.skytouch.input-settings.plist";
 constexpr const char *lockName="com.lixinmo.skytouch.input-settings.lock";
 constexpr NSUInteger maximumBytes=16384;
+// Freeze the conversion introduced in 2.0.0. Future recommendation changes
+// must not change the effective sensitivity of an unconverted v1 backup.
+constexpr double v1CalibrationMultiplierX=3.2568359375;
+constexpr double v1CalibrationMultiplierY=3.359375;
 struct FD {int value;explicit FD(int fd=-1):value(fd){}~FD(){if(value>=0)close(value);}FD(const FD&)=delete;};
 BOOL fail(NSString **error,NSString *message){if(error)*error=message;return NO;}
 NSDictionary *defaults(NSString *revision) {
     return @{ @"version":@2,@"revision":revision,@"mode":@"controller",
         @"phoneBindings":@{@"action":@"LB",@"volumeUp":@"A",@"volumeDown":@"B",@"side":@"LT"},
-        @"controllerMotion":@"phone",@"motionScaleX":@(op_phone::defaultMotionScaleX),
-        @"motionScaleY":@(op_phone::defaultMotionScaleY) };
+        @"controllerMotion":@"phone",@"motionScaleX":@(op_phone::motionScalePerMultiplier*OPRecommendedPhoneMotionMultiplierX),
+        @"motionScaleY":@(op_phone::motionScalePerMultiplier*OPRecommendedPhoneMotionMultiplierY) };
 }
 BOOL owned(const struct stat &st) {
     return st.st_uid==0 || st.st_uid==501;
@@ -96,8 +107,8 @@ NSDictionary *readAt(int parent) {
         // Restoring an old backup follows the same conversion without touching
         // any profile or applying the calibration twice on subsequent reads.
         NSMutableDictionary *upgraded=[value mutableCopy];upgraded[@"version"]=@2;
-        upgraded[@"motionScaleX"]=@([value[@"motionScaleX"] doubleValue]/op_phone::legacyMotionScale*op_phone::defaultMotionScaleX);
-        upgraded[@"motionScaleY"]=@([value[@"motionScaleY"] doubleValue]/op_phone::legacyMotionScale*op_phone::defaultMotionScaleY);
+        upgraded[@"motionScaleX"]=@([value[@"motionScaleX"] doubleValue]*v1CalibrationMultiplierX);
+        upgraded[@"motionScaleY"]=@([value[@"motionScaleY"] doubleValue]*v1CalibrationMultiplierY);
         return upgraded;
     }
     return value;

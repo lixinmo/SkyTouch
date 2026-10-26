@@ -3,6 +3,10 @@
 
 NS_ASSUME_NONNULL_BEGIN
 FOUNDATION_EXPORT const char *const OPInputSettingsChangedNotification;
+// Editable presets relative to the common phone-motion unit. These are used
+// for new settings or an explicit "use recommended value" action only.
+FOUNDATION_EXPORT const double OPRecommendedPhoneMotionMultiplierX;
+FOUNDATION_EXPORT const double OPRecommendedPhoneMotionMultiplierY;
 // Reads never create files. Missing settings select controller mode with phone
 // motion and the stable revision "legacy-default". Invalid files return
 // conservative defaults with revision "invalid-settings".
