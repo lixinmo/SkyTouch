@@ -15,6 +15,9 @@ namespace {
 NSArray<NSString *> *physicalKeys(){return @[@"action",@"volumeUp",@"volumeDown",@"side"];}
 NSArray<NSString *> *physicalNames(){return @[@"操作按钮",@"音量 +",@"音量 −",@"侧边按钮（锁屏键）"];}
 NSInteger selectedType(){NSDictionary *profile=OPReadGlobalProfile(nil);return profile ? [profile[@"deviceType"] integerValue] : 0;}
+BOOL controllerPhoneMotion(NSDictionary *settings) {
+    return [settings[@"controllerMotion"] isEqual:@"phone"] && OPPhoneBindableKeys(selectedType()).count>0;
+}
 void alert(UIViewController *owner,NSString *message) {
     UIAlertController *notice=[UIAlertController alertControllerWithTitle:@"输入设置" message:message preferredStyle:UIAlertControllerStyleAlert];
     [notice addAction:[UIAlertAction actionWithTitle:@"好" style:UIAlertActionStyleDefault handler:nil]];
@@ -94,13 +97,13 @@ void alert(UIViewController *owner,NSString *message) {
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{(void)tableView;return 3;}
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{(void)tableView;return section==0 ? 2 : section==1 ? 4 : 4;}
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
-    (void)tableView;return @[@"输入模式",@"手机实体键 → 方案逻辑键",@"手机体感（开发预览）"][section];
+    (void)tableView;return @[@"输入模式",@"手机实体键 → 方案逻辑键",@"手机体感"][section];
 }
 - (NSString *)tableView:(UITableView *)tableView titleForFooterInSection:(NSInteger)section {
     (void)tableView;
-    if(section==0)return self.leaseError ?: @"编辑输入设置期间，映射触点与手机按键接管暂停；返回主页面后恢复。两个模式共用原方案，手机模式保留方案中的摇杆设置，但运行时停用摇杆及依赖摇杆的动作。手机模式仍为开发预览，请松开按键后切换。";
+    if(section==0)return self.leaseError ?: @"编辑输入设置期间，映射触点与手机按键接管暂停；返回主页面后恢复。两个模式共用原方案，手机模式保留方案中的摇杆设置，但运行时停用摇杆及依赖摇杆的动作。请松开按键后切换。";
     if(section==1)return @"绑定全局生效；所选逻辑键仍执行原方案中的动作。未绑定的逻辑键继续保留。键鼠方案暂不支持手机输入。";
-    return @"基础灵敏度与方案原有灵敏度共同生效，默认 1.0 倍；方案中的反向设置继续保留。手柄模式默认使用原体感来源，可选手机体感（开发预览，待更多手柄实测）。手机体感跟随手机转动。";
+    return @"基础灵敏度与方案原有灵敏度共同生效，默认 1.0 倍；方案中的反向设置继续保留。手柄模式默认使用手机体感，也可切回手柄原体感。键鼠方案继续使用原体感。手机体感跟随手机转动。";
 }
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     UITableViewCell *cell=[tableView dequeueReusableCellWithIdentifier:@"setting"] ?: [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:@"setting"];
@@ -108,9 +111,9 @@ void alert(UIViewController *owner,NSString *message) {
     cell.textLabel.textColor=UIColor.labelColor;cell.selectionStyle=UITableViewCellSelectionStyleDefault;cell.accessoryType=UITableViewCellAccessoryNone;
     if(indexPath.section==0) {
         NSString *mode=indexPath.row==0 ? @"controller" : @"phone";
-        cell.textLabel.text=indexPath.row==0 ? @"手柄模式" : @"手机模式 · 开发预览";
-        cell.detailTextLabel.text=indexPath.row==0 ? ([self.settings[@"controllerMotion"] isEqual:@"phone"] ?
-            @"手柄按键与摇杆；使用手机体感（开发预览）" : @"保留现有手柄按键、摇杆与体感行为") : @"手机四键 + 手机内置陀螺仪；无需手柄";
+        cell.textLabel.text=indexPath.row==0 ? @"手柄模式" : @"手机模式";
+        cell.detailTextLabel.text=indexPath.row==0 ? (controllerPhoneMotion(self.settings) ?
+            @"手柄按键与摇杆；使用手机体感" : @"保留现有手柄按键、摇杆与体感行为") : @"手机四键 + 手机内置陀螺仪；无需手柄";
         if([self.settings[@"mode"] isEqual:mode])cell.accessoryType=UITableViewCellAccessoryCheckmark;
     } else if(indexPath.section==1) {
         cell.textLabel.text=physicalNames()[indexPath.row];cell.detailTextLabel.text=self.settings[@"phoneBindings"][physicalKeys()[indexPath.row]];
@@ -118,7 +121,7 @@ void alert(UIViewController *owner,NSString *message) {
     } else if(indexPath.row<2) {
         cell.textLabel.text=indexPath.row==0 ? @"手机模式：手机内置陀螺仪" : @"手柄模式体感来源";
         cell.detailTextLabel.text=indexPath.row==0 ? @"转动手机控制方案中的体感视野" :
-            [self.settings[@"controllerMotion"] isEqual:@"phone"] ? @"手机体感 · 开发预览" : @"手柄原体感（默认）";
+            controllerPhoneMotion(self.settings) ? @"手机体感 · 默认" : @"手柄原体感";
         cell.selectionStyle=indexPath.row==0 ? UITableViewCellSelectionStyleNone : UITableViewCellSelectionStyleDefault;
         if(indexPath.row==1)cell.accessoryType=UITableViewCellAccessoryDisclosureIndicator;
     } else {
@@ -160,8 +163,8 @@ void alert(UIViewController *owner,NSString *message) {
         [self.navigationController pushViewController:picker animated:YES];
     } else if(indexPath.row==1) {
         OPLogicalKeyPicker *picker=[[OPLogicalKeyPicker alloc]initWithStyle:UITableViewStyleInsetGrouped];
-        picker.title=@"手柄模式体感来源";picker.keys=@[@"controller",@"phone"];
-        picker.displayNames=@[@"手柄原体感（默认）",@"手机体感（开发预览）"];
+        picker.title=@"手柄模式体感来源";picker.keys=@[@"phone",@"controller"];
+        picker.displayNames=@[@"手机体感（默认）",@"手柄原体感"];
         picker.selectedKey=self.settings[@"controllerMotion"];
         __weak OPInputSettingsController *weak=self;
         picker.choose=^BOOL(NSString *source){

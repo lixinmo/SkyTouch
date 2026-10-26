@@ -187,7 +187,7 @@ static bool workerPeer(int fd,pid_t parent) {
 - (NSDictionary *)status {return @{@"started":@(_started),@"active":@(_active),@"fresh":@(self.fresh),
     @"workerAvailable":@(_available),@"samplingUID":@501,@"transport":@"inherited-socketpair",
     @"samples":@(_samples),@"rejectedSamples":@(_rejected),@"scaleX":@(_scaleX),@"scaleY":@(_scaleY),
-    @"scaleUnit":@"vendor-counts-per-radian",@"experimental":@YES,@"error":_error ?: @""};}
+    @"scaleUnit":@"vendor-counts-per-radian",@"experimental":@NO,@"error":_error ?: @""};}
 @end
 
 int OPRunPhoneMotionWorker(int fd) { @autoreleasepool {

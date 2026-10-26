@@ -82,4 +82,15 @@ inline bool isControlReport(const std::uint8_t *b,std::size_t length) {
 inline std::uint32_t buttonsIn(const std::array<std::uint8_t,20> &b) {
     return b[4]|(std::uint32_t(b[5])<<8)|(std::uint32_t(b[9])<<16)|(std::uint32_t(b[8]&127)<<24);
 }
+inline bool releasedControls(const std::array<std::uint8_t,20> &b) {
+    if(buttonsIn(b))return false;
+    // Real sticks need not settle at exactly 128. This small radial tolerance
+    // gates startup/resume only; it never recenters or filters forwarded axes.
+    constexpr int centerTolerance=16;
+    for(unsigned offset : {0U,2U}) {
+        const int x=int(b[offset])-128,y=int(b[offset+1])-128;
+        if(x*x+y*y>centerTolerance*centerTolerance)return false;
+    }
+    return true;
+}
 }

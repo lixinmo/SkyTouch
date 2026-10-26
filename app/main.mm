@@ -523,6 +523,7 @@ static NSString *OPSupervisorLaunchDescription(NSDictionary *supervisor) {
 - (void)refreshRuntimeStatus {
     NSDictionary *inputSettings=OPReadInputSettings();
     BOOL phoneMode=[inputSettings[@"mode"] isEqual:@"phone"];
+    BOOL phoneMotion=OPInputUsesPhoneMotion(inputSettings,[OPCurrentGlobalProfile()[@"deviceType"] integerValue]);
     [self.inputSettingsButton setTitle:phoneMode ? @"输入模式：手机 · 按键与体感设置" : @"输入模式：手柄 · 按键与体感设置" forState:UIControlStateNormal];
     NSDictionary *intent=OPMappingRuntimeIntent();
     const BOOL enabled=[intent[@"enabled"] boolValue];
@@ -549,15 +550,16 @@ static NSString *OPSupervisorLaunchDescription(NSDictionary *supervisor) {
     NSDictionary *bluetooth=OPBluetoothBrokerStatus();
     if(phoneMode) {
         NSDictionary *bindings=inputSettings[@"phoneBindings"];
-        self.controllerStatus.text=[NSString stringWithFormat:@"手机输入（开发预览）：操作按钮 → %@，音量 + → %@，音量 − → %@，侧边按钮 → %@。\n转动手机控制体感视野；映射生效期间，四键执行方案动作，原系统功能暂停。方案中的摇杆设置会保留。",bindings[@"action"],bindings[@"volumeUp"],bindings[@"volumeDown"],bindings[@"side"]];
+        self.controllerStatus.text=[NSString stringWithFormat:@"手机输入：操作按钮 → %@，音量 + → %@，音量 − → %@，侧边按钮 → %@。\n转动手机控制体感视野；映射生效期间，四键执行方案动作，原系统功能暂停。方案中的摇杆设置会保留。",bindings[@"action"],bindings[@"volumeUp"],bindings[@"volumeDown"],bindings[@"side"]];
     } else if(OPFreshProcessState(bluetooth,@"time",@"pid")) {
         self.controllerStatus.text=[bluetooth[@"connected"] boolValue] ?
             ([bluetooth[@"receivedThisConnection"] unsignedLongLongValue] ? @"系统后台已收到手柄数据。" : @"手柄链路已连接，等待输入。") :
             [bluetooth[@"scanning"] boolValue] ? @"系统后台正在寻找手柄。" : @"系统后台等待手柄连接。";
     } else self.controllerStatus.text=@"手柄连接服务尚未启动。";
     if(!phoneMode) {
-        NSString *motionSource=[inputSettings[@"controllerMotion"] isEqual:@"phone"] ?
-            @"体感来源：手机（开发预览），跟随手机转动；手柄按键与摇杆继续使用。" : @"体感来源：手柄原体感。";
+        NSString *motionSource=phoneMotion ?
+            @"体感来源：手机，跟随手机转动；手柄按键与摇杆继续使用。" :
+            [inputSettings[@"controllerMotion"] isEqual:@"phone"] ? @"体感来源：手柄原体感（当前键鼠方案）。" : @"体感来源：手柄原体感。";
         self.controllerStatus.text=[self.controllerStatus.text stringByAppendingFormat:@"\n%@",motionSource];
     }
     NSDictionary *currentSupervisor=OPRuntimeRecordMatchesIntent(supervisor,intent) ? supervisor : nil;
@@ -575,7 +577,7 @@ static NSString *OPSupervisorLaunchDescription(NSDictionary *supervisor) {
         else if(![phone[@"active"] boolValue])runtimeStatus=@"手机映射已暂停，退出编辑或解锁后恢复。";
         else runtimeStatus=@"正在准备手机按键和体感输入，系统按键暂未接管。";
     }
-    if(enabled && !phoneMode && [inputSettings[@"controllerMotion"] isEqual:@"phone"] && engineFresh &&
+    if(enabled && !phoneMode && phoneMotion && engineFresh &&
        [engine[@"inputMode"] isEqual:@"controller"] && ![engine[@"inputReady"] boolValue] && [engine[@"running"] boolValue]) {
         NSDictionary *phone=engine[@"phoneInput"];
         NSString *motionError=phone[@"motion"][@"error"];

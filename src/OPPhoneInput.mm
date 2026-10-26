@@ -84,6 +84,8 @@ static void cancel(NSString *reason,BOOL fatal=NO) {
     if(armed){armed=NO;OPSetPhoneButtonClientArmed(NO);}
 }
 static BOOL neutralControls(const Report &report) {
+    // Inactive/disconnected cleanup remains exact: even a small forwarded
+    // stick displacement may own a vendor touch and must be cancelled.
     return !op_phone::buttonsIn(report)&&report[0]==128&&report[1]==128&&report[2]==128&&report[3]==128;
 }
 static void updateControls(Report next) {
@@ -92,8 +94,8 @@ static void updateControls(Report next) {
     if(!active||faulted){controls=next;return;}
     if(waitingRelease) {
         controls=next;
-        if(!neutralControls(next))return;
-        waitingRelease=NO;[motion discardPending];stage=@"ready-experimental";
+        if(!op_phone::releasedControls(next))return;
+        waitingRelease=NO;[motion discardPending];stage=@"ready";
     }
     if(next!=controls) {
         // Axes are held state: coalesce their newest value at the engine tick.
@@ -143,7 +145,7 @@ static void tick() {
     // A controller may emit only changes. Its held state remains valid while
     // the authenticated BLE lease is live; gyro samples never renew that lease.
     if(waitingRelease){stage=@"awaiting-buttons-release";[motion discardPending];return;}
-    stage=@"ready-experimental";
+    stage=@"ready";
     // One owner of cadence. BLE and CoreMotion callbacks only update state.
     // Preserve fast down/up boundaries. The final edge IS this tick's frame;
     // it includes the latest axes and consumes motion once. No duplicate held
@@ -234,7 +236,7 @@ void OPSetPhoneInputActive(BOOL value) {
     else {
         // The button bridge independently refuses to arm across a held key.
         // A received zero baseline must not make the first real down disappear.
-        waitingRelease=lastControlTime<=0 || !neutralControls(controls);
+        waitingRelease=lastControlTime<=0 || !op_phone::releasedControls(controls);
         [motion clear];tick();
     }
 }
@@ -255,7 +257,7 @@ NSDictionary *OPPhoneInputStatus(void) {
     if(!NSThread.isMainThread)return @{@"ready":@NO,@"stage":@"requires-main-thread"};
     return @{@"started":@(started),@"ready":@(OPPhoneInputReady()),@"active":@(active),@"stage":stage,
         @"controlSource":controllerMode ? @"controller" : @"phone",@"motionSource":@"phone",
-        @"waitingRelease":@(waitingRelease),@"faulted":@(faulted),@"experimental":@YES,
+        @"waitingRelease":@(waitingRelease),@"faulted":@(faulted),@"experimental":@NO,
         @"frames":@(frames),@"boundaryFrames":@(boundaryFrames),@"cancellations":@(cancellations),
         @"rejectedReports":@(rejectedReports),@"requestedTickHz":@100,
         @"motion":motion.status ?: @{},@"buttons":controllerMode ? @{} : OPPhoneButtonClientStatus()};

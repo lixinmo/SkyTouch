@@ -14,7 +14,7 @@ BOOL OPOriginalBluetoothClientReady(void);
 NSDictionary *OPOriginalBluetoothClientStatus(void);
 // Used by the native editor to verify the one permitted observer chain.
 BOOL OPOriginalBluetoothClientWrapsPeripheralType(IMP implementation);
-// Optional experimental input-source adapter. Set only for controller+phone
+// Optional phone-motion input-source adapter. Set only for controller+phone
 // motion; nil preserves the original raw callback byte-for-byte. Return YES
 // only when the notification was consumed or deliberately rejected. Metadata
 // may return NO to retain the vendor's normal identity/version handling.

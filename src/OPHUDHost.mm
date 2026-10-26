@@ -107,7 +107,8 @@ static NSDictionary *OPSessionInputSettings;
 static BOOL OPInputRevisionAccepted=YES;
 static BOOL OPUsesPhoneControls(void) { return [OPSessionInputSettings[@"mode"] isEqual:@"phone"]; }
 static BOOL OPUsesPhoneMotion(void) {
-    return OPUsesPhoneControls() || [OPSessionInputSettings[@"controllerMotion"] isEqual:@"phone"];
+    return OPInputUsesPhoneMotion(OPSessionInputSettings,
+        OPActiveGlobalProfile ? [OPActiveGlobalProfile[@"deviceType"] integerValue] : -1);
 }
 static BOOL OPCurrentInputReady(void) {
     // Both modes using phone motion share its source/worker readiness. A live

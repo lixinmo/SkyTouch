@@ -20,7 +20,7 @@ BOOL fail(NSString **error,NSString *message){if(error)*error=message;return NO;
 NSDictionary *defaults(NSString *revision) {
     return @{ @"version":@2,@"revision":revision,@"mode":@"controller",
         @"phoneBindings":@{@"action":@"LB",@"volumeUp":@"A",@"volumeDown":@"B",@"side":@"LT"},
-        @"controllerMotion":@"controller",@"motionScaleX":@(op_phone::defaultMotionScaleX),
+        @"controllerMotion":@"phone",@"motionScaleX":@(op_phone::defaultMotionScaleX),
         @"motionScaleY":@(op_phone::defaultMotionScaleY) };
 }
 BOOL owned(const struct stat &st) {
@@ -112,6 +112,12 @@ NSDictionary *OPReadInputSettings(void) {
     FD parent(directory(NO));return parent.value<0 ? defaults(@"invalid-settings") : readAt(parent.value);
 }
 BOOL OPPhoneModeSelected(void){return [OPReadInputSettings()[@"mode"] isEqual:@"phone"];}
+BOOL OPInputUsesPhoneMotion(NSDictionary *settings,NSInteger deviceType) {
+    // The adapter understands gamepad/half-controller packets only. Keep the
+    // original keyboard/mouse route usable when the global default is phone.
+    return [settings[@"mode"] isEqual:@"phone"] ||
+        ([settings[@"controllerMotion"] isEqual:@"phone"] && (deviceType==0 || deviceType==2));
+}
 NSString *OPInputSettingsRevision(void){return OPReadInputSettings()[@"revision"];}
 BOOL OPWriteInputSettings(NSDictionary *settings,NSString **error) {
     if(error)*error=nil;
