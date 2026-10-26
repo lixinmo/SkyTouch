@@ -101,7 +101,7 @@ static bool workerPeer(int fd,pid_t parent) {
 - (BOOL)startWithScaleX:(double)x scaleY:(double)y error:(NSString **)error {
     using namespace op_phone_motion;
     if(error)*error=nil;
-    if(!NSThread.isMainThread||geteuid()!=0||!ownServiceBundle()||!std::isfinite(x)||!std::isfinite(y)||x<1||y<1||x>65536||y>65536) {
+    if(!NSThread.isMainThread||geteuid()!=0||!ownServiceBundle()||!std::isfinite(x)||!std::isfinite(y)||x<1||y<1||x>op_phone::maximumMotionScale||y>op_phone::maximumMotionScale) {
         if(error)*error=@"手机体感需要专用映射宿主及有效定标参数";return NO;
     }
     [self stop];_scaleX=x;_scaleY=y;_error=nil;_reader={};_sequence=0;_generation=1;

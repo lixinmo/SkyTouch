@@ -1,6 +1,7 @@
 #import "OPInputSettings.h"
 #import "OPPhoneProfile.h"
 #import "OPStoragePaths.h"
+#include "OPPhoneMotionMath.hpp"
 #import <notify.h>
 #include <sys/stat.h>
 #include <sys/file.h>
@@ -17,9 +18,10 @@ constexpr NSUInteger maximumBytes=16384;
 struct FD {int value;explicit FD(int fd=-1):value(fd){}~FD(){if(value>=0)close(value);}FD(const FD&)=delete;};
 BOOL fail(NSString **error,NSString *message){if(error)*error=message;return NO;}
 NSDictionary *defaults(NSString *revision) {
-    return @{ @"version":@1,@"revision":revision,@"mode":@"controller",
+    return @{ @"version":@2,@"revision":revision,@"mode":@"controller",
         @"phoneBindings":@{@"action":@"LB",@"volumeUp":@"A",@"volumeDown":@"B",@"side":@"LT"},
-        @"controllerMotion":@"controller",@"motionScaleX":@2048.0,@"motionScaleY":@2048.0 };
+        @"controllerMotion":@"controller",@"motionScaleX":@(op_phone::defaultMotionScaleX),
+        @"motionScaleY":@(op_phone::defaultMotionScaleY) };
 }
 BOOL owned(const struct stat &st) {
     return st.st_uid==0 || st.st_uid==501;
@@ -45,7 +47,8 @@ BOOL valid(NSDictionary *value,BOOL write,NSString **error) {
     if(![value isKindOfClass:NSDictionary.class] || ![[NSSet setWithArray:value.allKeys] isEqual:keys])
         return fail(error,@"输入设置包含缺失或未知字段。");
     id revision=value[@"revision"],version=value[@"version"];
-    if(!number(version) || CFNumberIsFloatType((__bridge CFNumberRef)version) || ![version isEqual:@1] ||
+    if(!number(version) || CFNumberIsFloatType((__bridge CFNumberRef)version) ||
+       !([version isEqual:@2] || (!write && [version isEqual:@1])) ||
        ![revision isKindOfClass:NSString.class] ||
        (![[NSUUID alloc]initWithUUIDString:revision] && !(write && [@[@"legacy-default",@"invalid-settings"] containsObject:revision])))
         return fail(error,@"输入设置版本或修订号无效。");
@@ -63,8 +66,9 @@ BOOL valid(NSDictionary *value,BOOL write,NSString **error) {
     }
     for(NSString *key in @[@"motionScaleX",@"motionScaleY"]) {
         id scale=value[key];
-        if(!number(scale) || [scale doubleValue]<1 || [scale doubleValue]>65536)
-            return fail(error,@"手机体感定标必须是 1 至 65536 之间的有限数值。");
+        const double maximum=[version isEqual:@1] ? 65536.0 : op_phone::maximumMotionScale;
+        if(!number(scale) || [scale doubleValue]<1 || [scale doubleValue]>maximum)
+            return fail(error,@"手机体感定标超出有效范围。");
     }
     return YES;
 }
@@ -85,7 +89,18 @@ NSDictionary *readAt(int parent) {
        before.st_mtimespec.tv_sec!=after.st_mtimespec.tv_sec || before.st_mtimespec.tv_nsec!=after.st_mtimespec.tv_nsec)
         return defaults(@"invalid-settings");
     id value=[NSPropertyListSerialization propertyListWithData:bytes options:NSPropertyListImmutable format:nil error:nil];
-    return valid(value,NO,nullptr) ? value : defaults(@"invalid-settings");
+    if(!valid(value,NO,nullptr))return defaults(@"invalid-settings");
+    if([value[@"version"] isEqual:@1]) {
+        // Preserve each user's relative multiplier, bindings, source choice and
+        // revision. Reads never write; the next explicit save persists v2 once.
+        // Restoring an old backup follows the same conversion without touching
+        // any profile or applying the calibration twice on subsequent reads.
+        NSMutableDictionary *upgraded=[value mutableCopy];upgraded[@"version"]=@2;
+        upgraded[@"motionScaleX"]=@([value[@"motionScaleX"] doubleValue]/op_phone::legacyMotionScale*op_phone::defaultMotionScaleX);
+        upgraded[@"motionScaleY"]=@([value[@"motionScaleY"] doubleValue]/op_phone::legacyMotionScale*op_phone::defaultMotionScaleY);
+        return upgraded;
+    }
+    return value;
 }
 BOOL normalize(int fd) {
     if(geteuid()==0 && fchown(fd,501,501))return NO;

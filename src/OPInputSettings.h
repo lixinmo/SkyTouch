@@ -6,6 +6,8 @@ FOUNDATION_EXPORT const char *const OPInputSettingsChangedNotification;
 // Reads never create files. Missing settings preserve the original controller
 // mode and return the stable revision "legacy-default". Invalid files return
 // conservative defaults with revision "invalid-settings".
+// v1 scales are rebased in memory to v2, retaining the user's multipliers and
+// revision. An explicit save persists v2; reading never rewrites a backup.
 NSDictionary *OPReadInputSettings(void);
 // Pass a complete record read above, with changed values. revision is an
 // optimistic concurrency token; a successful write assigns a fresh UUID.

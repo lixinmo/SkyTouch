@@ -3,6 +3,7 @@
 #import "OPPhoneProfile.h"
 #import "OPGlobalProfile.h"
 #import "OPSessionSupervisor.h"
+#include "OPPhoneMotionMath.hpp"
 #include <fcntl.h>
 #include <sys/file.h>
 #include <sys/stat.h>
@@ -123,7 +124,8 @@ void alert(UIViewController *owner,NSString *message) {
     } else {
         NSString *axis=indexPath.row==2 ? @"motionScaleX" : @"motionScaleY";
         cell.textLabel.text=indexPath.row==2 ? @"水平基础灵敏度" : @"垂直基础灵敏度";
-        cell.detailTextLabel.text=[NSString stringWithFormat:@"%.3g ×",[self.settings[axis] doubleValue]/2048.0];
+        const double baseline=indexPath.row==2 ? op_phone::defaultMotionScaleX : op_phone::defaultMotionScaleY;
+        cell.detailTextLabel.text=[NSString stringWithFormat:@"%.3g ×",[self.settings[axis] doubleValue]/baseline];
         cell.accessoryType=UITableViewCellAccessoryDisclosureIndicator;
     }
     if(_configurationLease<0){cell.selectionStyle=UITableViewCellSelectionStyleNone;cell.textLabel.textColor=UIColor.secondaryLabelColor;}
@@ -173,8 +175,9 @@ void alert(UIViewController *owner,NSString *message) {
         [self.navigationController pushViewController:picker animated:YES];
     } else if(indexPath.row>=2) {
         NSString *key=indexPath.row==2 ? @"motionScaleX" : @"motionScaleY";
+        const double baseline=indexPath.row==2 ? op_phone::defaultMotionScaleX : op_phone::defaultMotionScaleY;
         UIAlertController *editor=[UIAlertController alertControllerWithTitle:indexPath.row==2 ? @"水平基础灵敏度" : @"垂直基础灵敏度" message:@"输入 0.1 至 10 倍，默认 1.0 倍。与方案原有灵敏度共同生效。" preferredStyle:UIAlertControllerStyleAlert];
-        [editor addTextFieldWithConfigurationHandler:^(UITextField *field){field.keyboardType=UIKeyboardTypeDecimalPad;field.text=[NSString stringWithFormat:@"%.3g",[self.settings[key] doubleValue]/2048.0];}];
+        [editor addTextFieldWithConfigurationHandler:^(UITextField *field){field.keyboardType=UIKeyboardTypeDecimalPad;field.text=[NSString stringWithFormat:@"%.3g",[self.settings[key] doubleValue]/baseline];}];
         [editor addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil]];
         __weak OPInputSettingsController *weak=self;
         __weak UIAlertController *weakEditor=editor;
@@ -183,7 +186,7 @@ void alert(UIViewController *owner,NSString *message) {
             NSString *text=[weakEditor.textFields.firstObject.text stringByTrimmingCharactersInSet:NSCharacterSet.whitespaceAndNewlineCharacterSet];
             NSScanner *scanner=[NSScanner scannerWithString:text ?: @""];double value=0;
             if(![scanner scanDouble:&value] || !scanner.isAtEnd || !std::isfinite(value) || value<.1 || value>10){alert(owner,@"请输入 0.1 至 10 之间的倍率。");return;}
-            NSMutableDictionary *changed=[owner.settings mutableCopy];changed[key]=@(value*2048.0);[owner save:changed];
+            NSMutableDictionary *changed=[owner.settings mutableCopy];changed[key]=@(value*baseline);[owner save:changed];
         }]];
         [self presentViewController:editor animated:YES completion:nil];
     }

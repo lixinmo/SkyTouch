@@ -5,9 +5,17 @@
 #include <cstdint>
 
 namespace op_phone {
-// Units are vendor relative counts per radian, before the profile's signed
-// senty_x/y gains. The initial scale is experimental, not a hardware calibration.
-inline constexpr double defaultMotionScale = 2048.0;
+// Vendor relative counts/radian, before the profile's signed senty_x/y gains.
+// 2026-10-26: iPhone 15 Pro Max (iOS 17.1) rigidly mounted to Wasp 2 Pro;
+// 46 one-way strokes compared integrated CoreMotion rotationRate with summed
+// controller deltas before profile gain. Fits 6668.55 / 6877.98 were rounded
+// to 6670 / 6880. Both input modes use this calibration; FDG gains stay intact.
+inline constexpr double defaultMotionScaleX = 6670.0;
+inline constexpr double defaultMotionScaleY = 6880.0;
+inline constexpr double legacyMotionScale = 2048.0;
+// v1 accepted up to 65536 (32x its old baseline). Preserve that entire range
+// when rebasing saved preferences, including values above the UI's 10x limit.
+inline constexpr double maximumMotionScale = defaultMotionScaleY * 32.0;
 inline constexpr double maxSampleAge = 0.10;
 struct Delta { std::int16_t x=0,y=0; };
 class MotionAccumulator {
@@ -21,7 +29,7 @@ public:
     bool fresh(double now) const {return last_>0 && now>=last_ && now-last_<=maxSampleAge;}
     bool sample(double timestamp,double now,double rx,double ry,double rz,double sx,double sy) {
         if(!std::isfinite(timestamp)||!std::isfinite(now)||!std::isfinite(rx)||!std::isfinite(ry)||!std::isfinite(rz)||
-           !std::isfinite(sx)||!std::isfinite(sy)||sx<1||sy<1||sx>65536||sy>65536||
+           !std::isfinite(sx)||!std::isfinite(sy)||sx<1||sy<1||sx>maximumMotionScale||sy>maximumMotionScale||
            timestamp<=0||timestamp>now+.002||now-timestamp>maxSampleAge||(orientation_!=3&&orientation_!=4)) {
             reset();return false;
         }
