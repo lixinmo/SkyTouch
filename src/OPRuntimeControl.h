@@ -7,6 +7,8 @@ extern const char *const OPRuntimeIntentChangedNotification;
 // A missing or invalid record is disabled and has no generation. Merely
 // reading runtime intent never creates files or starts a service.
 NSDictionary *OPMappingRuntimeIntent(void);
+// The SpringBoard plug-in resolves this root from its own validated dylib image.
+NSDictionary *OPMappingRuntimeIntentForInstallation(NSString *validatedRoot);
 BOOL OPMappingRuntimeEnabled(void);
 // Every explicit action commits a new generation. Success means the durable
 // intent was replaced; notifications are hints and consumers re-read intent.

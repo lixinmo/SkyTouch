@@ -53,6 +53,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--candidate", type=Path, default=ROOT / "build/Candidate/SkyTouch.app")
     parser.add_argument("--tweaks", type=Path, help="Reviewed button-tweak directory; defaults beside the candidate App")
+    parser.add_argument("--output-dir", type=Path, default=ROOT / "dist", help="Destination for the verified package and its report")
     args = parser.parse_args()
     files = verifier.candidate_files(args.candidate.absolute(), args.tweaks.absolute() if args.tweaks else None)
     manifest, originals = verifier.source_resources()
@@ -60,7 +61,7 @@ def main():
     control = {"control": (verifier.control_for(info), 0o644)}
     control.update({name: ((ROOT / "packaging" / name).read_bytes(), 0o755) for name in verifier.SCRIPTS})
     verifier.verify_scripts(control)
-    destination = ROOT / "dist"; destination.mkdir(exist_ok=True)
+    destination = args.output_dir.resolve(); destination.mkdir(parents=True, exist_ok=True)
     name = f"com.lixinmo.skytouch_{verifier.version_for(info)}_iphoneos-arm64e.deb"
     with tempfile.TemporaryDirectory(prefix=".candidate-package-", dir=destination) as directory:
         staged = Path(directory) / name

@@ -50,22 +50,12 @@ static BOOL normalize(int descriptor,NSString **error) {
     if(fchmod(descriptor,0600))return ioError(error,@"设置权限");
     return metadata(descriptor,NO,nullptr,error);
 }
-static int openDirectory(NSString **error) {
-    NSString *path=OPSettingsDirectory();
+static int openDirectory(NSString *path,NSString **error) {
     if(!path.isAbsolutePath){fail(error,@"映射开关固定目录不可用");return -1;}
-    // /var is an OS-owned symlink on iOS; the fixed Preferences directory and
-    // every file opened relative to it must not themselves be symlinks.
+    // RootHide's /var may be a symlink. Require the final Settings or Runtime
+    // directory and each file opened relative to it to be direct entries.
     int descriptor=open(path.fileSystemRepresentation,O_RDONLY|O_DIRECTORY|O_NOFOLLOW|O_CLOEXEC|O_NONBLOCK);
     if(descriptor<0){ioError(error,@"打开目录");return -1;}
-    if(!metadata(descriptor,YES,nullptr,error)){close(descriptor);return -1;}
-    return descriptor;
-}
-static int openLockDirectory(int settings,NSString **error) {
-    (void)settings;
-    NSString *path=OPRuntimeDirectory();
-    if(!path.isAbsolutePath){fail(error,@"映射运行目录不可用");return -1;}
-    int descriptor=open(path.fileSystemRepresentation,O_RDONLY|O_DIRECTORY|O_NOFOLLOW|O_CLOEXEC|O_NONBLOCK);
-    if(descriptor<0){ioError(error,@"打开运行目录");return -1;}
     if(!metadata(descriptor,YES,nullptr,error)){close(descriptor);return -1;}
     return descriptor;
 }
@@ -77,19 +67,21 @@ static BOOL sameEntry(int directory,const char *name,const struct stat &expected
         fail(error,@"映射开关文件已变化，请重试");
 }
 static NSDictionary *disabled(void) {return @{@"version":@1,@"enabled":@NO};}
-static NSDictionary *readIntent(int directory) {
+static NSDictionary *readIntent(NSString *settingsPath,NSString *runtimePath) {
+    FD directory(openDirectory(settingsPath,nullptr));
+    if(directory.value<0)return disabled();
     // Share the writer's stable inode while inspecting the record. Without
     // this, a reader can open the old record just before rename, then see its
     // now-zero link count and incorrectly report a transient disabled state.
     // Reads never create the lock or migrate a legacy service record.
-    FD locks(openLockDirectory(directory,nullptr));
+    FD locks(openDirectory(runtimePath,nullptr));
     if(locks.value<0)return disabled();
     FD lock(openat(locks.value,lockName,O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_NONBLOCK));
     struct stat lockState{};
     if(lock.value<0 || !metadata(lock.value,NO,nullptr,nullptr))return disabled();
     int locked;do{locked=flock(lock.value,LOCK_SH);}while(locked<0&&errno==EINTR);
     if(locked<0 || !metadata(lock.value,NO,&lockState,nullptr) || !sameEntry(locks.value,lockName,lockState,nullptr))return disabled();
-    FD input(openat(directory,intentName,O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_NONBLOCK));
+    FD input(openat(directory.value,intentName,O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_NONBLOCK));
     struct stat before{},after{};
     if(input.value<0 || !metadata(input.value,NO,&before,nullptr) || before.st_size<=0 ||
        (uint64_t)before.st_size>maximumBytes)return disabled();
@@ -119,8 +111,8 @@ static NSDictionary *readIntent(int directory) {
 }
 static BOOL writeIntent(BOOL enabled,NSString **error) {
     if(error)*error=nil;
-    FD directory(openDirectory(error));if(directory.value<0)return NO;
-    FD locks(openLockDirectory(directory.value,error));if(locks.value<0)return NO;
+    FD directory(openDirectory(OPSettingsDirectory(),error));if(directory.value<0)return NO;
+    FD locks(openDirectory(OPRuntimeDirectory(),error));if(locks.value<0)return NO;
     FD lock(openat(locks.value,lockName,O_RDWR|O_CREAT|O_NOFOLLOW|O_CLOEXEC|O_NONBLOCK,0600));
     struct stat lockState{};
     if(lock.value<0)return ioError(error,@"打开写入锁");
@@ -175,8 +167,13 @@ static void post(const char *name) {
 }
 
 NSDictionary *OPMappingRuntimeIntent(void) {
-    op_runtime_control::FD directory(op_runtime_control::openDirectory(nullptr));
-    return directory.value<0 ? op_runtime_control::disabled() : op_runtime_control::readIntent(directory.value);
+    return op_runtime_control::readIntent(OPSettingsDirectory(),OPRuntimeDirectory());
+}
+NSDictionary *OPMappingRuntimeIntentForInstallation(NSString *validatedRoot) {
+    if(!validatedRoot.isAbsolutePath)return op_runtime_control::disabled();
+    NSString *data=[validatedRoot stringByAppendingPathComponent:[OPStorageDataRootPath substringFromIndex:1]];
+    NSString *runtime=[validatedRoot stringByAppendingPathComponent:[OPStorageRuntimeDirectoryPath substringFromIndex:1]];
+    return op_runtime_control::readIntent([data stringByAppendingPathComponent:@"Settings"],runtime);
 }
 BOOL OPMappingRuntimeEnabled(void) {return [OPMappingRuntimeIntent()[@"enabled"] boolValue];}
 BOOL OPSetMappingRuntimeEnabled(BOOL enabled,NSString **error) {

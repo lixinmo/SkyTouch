@@ -39,9 +39,15 @@ inline bool peerIs(int fd,uid_t requiredUID,const std::string &executable,PeerFa
     if(getpeereid(fd,&uid,&gid) || uid!=requiredUID)return reject(PeerFailure::Credentials);
     if(getsockopt(fd,SOL_LOCAL,LOCAL_PEERPID,&pid,&size) || size!=sizeof(pid) || pid<=1)return reject(PeerFailure::PeerPID);
     using ProcPath=int(*)(int,void *,uint32_t);
-    static const ProcPath processPath=[] {
+    // Pin the fallback provider once, so reconnecting never loads and unloads
+    // a library. Normally libSystem already exports proc_pidpath.
+    static const ProcPath processPath=[]() -> ProcPath {
         auto fn=(ProcPath)dlsym(RTLD_DEFAULT,"proc_pidpath");
-        if(!fn){void *lib=dlopen("/usr/lib/libproc.dylib",RTLD_NOW|RTLD_LOCAL);if(lib)fn=(ProcPath)dlsym(lib,"proc_pidpath");}
+        if(fn)return fn;
+        void *library=dlopen("/usr/lib/libproc.dylib",RTLD_NOW|RTLD_LOCAL);
+        if(!library)return nullptr;
+        fn=(ProcPath)dlsym(library,"proc_pidpath");
+        if(!fn)dlclose(library);
         return fn;
     }();
     char actual[4096]{},resolved[PATH_MAX]{},expected[PATH_MAX]{};

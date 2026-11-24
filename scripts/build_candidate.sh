@@ -2,11 +2,20 @@
 set -euo pipefail
 export LC_ALL=C LANG=C
 task_dir=$(cd "$(dirname "$0")/.." && pwd)
+task_output="$task_dir/build"
+if [ "$#" -ne 0 ]; then
+    if [ "$#" -ne 2 ] || [ "$1" != --output-dir ] || [ -z "$2" ]; then
+        echo 'Usage: build_candidate.sh [--output-dir directory]' >&2
+        exit 2
+    fi
+    mkdir -p "$2"
+    task_output=$(cd "$2" && pwd)
+fi
 /usr/bin/python3 "$task_dir/scripts/prepare_original.py"
-task_stage=$(mktemp -d "$task_dir/build/.candidate-build.XXXXXX")
+task_stage=$(mktemp -d "$task_output/.candidate-build.XXXXXX")
 trap 'rm -rf "$task_stage"' EXIT
 task_app="$task_stage/SkyTouch.app"
-task_destination="$task_dir/build/Candidate/SkyTouch.app"
+task_destination="$task_output/Candidate"
 task_tweaks="$task_stage/Library/MobileSubstrate/DynamicLibraries"
 task_sdk=$(xcrun --sdk iphoneos --show-sdk-path)
 # RootHide's published deployment range starts at iOS 15. Compile every own
@@ -77,10 +86,12 @@ codesign --force --sign - --timestamp=none --entitlements "$task_dir/packaging/b
 # and mapping host keep their existing arm64 identities and original assets.
 mkdir -p "$task_tweaks"
 xcrun --sdk iphoneos clang++ -target arm64e-apple-ios15.0 -std=c++17 -fobjc-arc -dynamiclib \
-    -isysroot "$task_sdk" -Wall -Wextra -Werror -Wno-deprecated-declarations -Os \
-    -framework Foundation -framework UIKit \
+    -isysroot "$task_sdk" -Wall -Wextra -Werror -Wno-deprecated-declarations -Oz \
+    -framework Foundation -framework UIKit -fvisibility=hidden -Wl,-x,-dead_strip \
     -Wl,-install_name,/Library/MobileSubstrate/DynamicLibraries/SkyTouchButtons.dylib \
-    "$task_dir/springboard/OPPhoneButtonCapture.mm" -o "$task_tweaks/SkyTouchButtons.dylib"
+    "$task_dir/springboard/OPPhoneButtonCapture.mm" "$task_dir/src/OPRuntimeControl.mm" \
+    "$task_dir/springboard/OPPhoneButtonSession.cpp" "$task_dir/springboard/OPPhoneButtonHookSetup.cpp" \
+    -o "$task_tweaks/SkyTouchButtons.dylib"
 cp "$task_dir/packaging/SkyTouchButtons.plist" "$task_tweaks/SkyTouchButtons.plist"
 codesign --force --sign - --timestamp=none --identifier com.lixinmo.skytouch.buttons "$task_tweaks/SkyTouchButtons.dylib"
 codesign --verify --strict "$task_tweaks/SkyTouchButtons.dylib"
@@ -89,12 +100,11 @@ codesign --force --sign - --timestamp=none "$task_app/Original/flydigi.dylib"
 /usr/bin/python3 "$task_dir/scripts/verify_original.py" --runtime-dylib "$task_app/Original/flydigi.dylib"
 codesign --force --sign - --timestamp=none --entitlements "$task_dir/packaging/host-entitlements.plist" "$task_app"
 codesign --verify --strict "$task_app"
-# Publish the App and its matching capture library as one generated candidate.
-# Only the two reviewed tweak files enter this tree; build objects stay behind.
+# Publish the App and its SpringBoard capture library from the same build.
 mkdir -p "$task_stage/Candidate"
 mv "$task_app" "$task_stage/Candidate/SkyTouch.app"
 mv "$task_stage/Library" "$task_stage/Candidate/Library"
-if [ -L "$task_dir/build/Candidate" ]; then echo 'Candidate destination must not be a symlink' >&2; exit 1; fi
-rm -rf "$task_dir/build/Candidate"
-mv "$task_stage/Candidate" "$task_dir/build/Candidate"
-printf 'Signed build ready for packaging: %s\n' "$task_destination"
+if [ -L "$task_destination" ]; then echo 'Candidate destination must not be a symlink' >&2; exit 1; fi
+rm -rf "$task_destination"
+mv "$task_stage/Candidate" "$task_destination"
+printf 'Signed build ready for packaging: %s\n' "$task_destination/SkyTouch.app"

@@ -94,6 +94,7 @@ def verify_ios_deployment(data):
 
 def verify_button_binary(data):
     verify_ios_deployment(data)
+    require(b"SkyTouchButtonSession.dylib" not in data, "Button capture still references a separate session image")
     magic, cpu, subtype, kind = struct.unpack_from("<4I", data)
     require((magic, cpu, subtype & 0x00FFFFFF, kind) == (0xFEEDFACF, 0x0100000C, 2, 6),
             "Button capture must be a thin arm64e iOS dylib")
@@ -104,7 +105,7 @@ def verify_button_binary(data):
     offset = 32
     for _ in range(struct.unpack_from("<I", data, 16)[0]):
         command, size = struct.unpack_from("<II", data, offset)
-        if command in (0xC, 0x80000018, 0x8000001F, 0xD):
+        if command in (0xC, 0xD, 0x80000018, 0x8000001F, 0x20, 0x80000023):
             require(size >= 24, "Truncated button dylib dependency")
             name_offset = struct.unpack_from("<I", data, offset + 8)[0]
             require(24 <= name_offset < size, "Invalid button dylib dependency name")

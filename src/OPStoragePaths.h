@@ -83,9 +83,9 @@ static inline NSString * _Nullable OPStorageRootedPath(NSString *nativePath) {
         return converted;
     }
 }
-static inline NSString * _Nullable OPDataRoot(void) {
-    return OPStorageRootedPath(@"/var/mobile/Library/Application Support/com.lixinmo.skytouch");
-}
+static NSString *const OPStorageDataRootPath=@"/var/mobile/Library/Application Support/com.lixinmo.skytouch";
+static NSString *const OPStorageRuntimeDirectoryPath=@"/var/mobile/Library/Caches/com.lixinmo.skytouch/Runtime";
+static inline NSString * _Nullable OPDataRoot(void) {return OPStorageRootedPath(OPStorageDataRootPath);}
 static inline NSString * _Nullable OPSettingsDirectory(void) {return [OPDataRoot() stringByAppendingPathComponent:@"Settings"];}
 static inline BOOL OPStorageFilenameIsSafe(NSString *name) {
     return [name isKindOfClass:NSString.class] && name.length && name.length<=255 &&
@@ -96,7 +96,7 @@ static inline NSString * _Nullable OPSettingPath(NSString *filename) {
     return OPStorageFilenameIsSafe(filename) ? [OPSettingsDirectory() stringByAppendingPathComponent:filename] : nil;
 }
 static inline NSString * _Nullable OPRuntimeDirectory(void) {
-    return OPStorageRootedPath(@"/var/mobile/Library/Caches/com.lixinmo.skytouch/Runtime");
+    return OPStorageRootedPath(OPStorageRuntimeDirectoryPath);
 }
 static inline NSString * _Nullable OPRuntimePath(NSString *filename) {
     return OPStorageFilenameIsSafe(filename) ? [OPRuntimeDirectory() stringByAppendingPathComponent:filename] : nil;

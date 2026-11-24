@@ -4,6 +4,7 @@
 #include <cstdint>
 #include <cstring>
 #include <deque>
+#include <vector>
 #include <limits>
 #include <cmath>
 
@@ -25,7 +26,7 @@ enum class Diagnostic:uint8_t {
     Unseen=0, Starting, ResolvingRoot, ImagePathRejected, RootLibraryRejected,
     RootMismatch, EndpointTooLong, WaitingClasses, ABIMismatch, WaitingEndpoint,
     EndpointRejected, Connecting, PeerRejected, Handshaking, ReadyDisarmed,
-    Armed, Maintenance, TransportLost, HookConflict
+    Armed, Maintenance, TransportLost, HookConflict, MappingDisabled, SessionUnavailable
 };
 inline const char *diagnosticName(Diagnostic value) {
     switch(value) {
@@ -48,6 +49,8 @@ inline const char *diagnosticName(Diagnostic value) {
         case Diagnostic::Maintenance:return "package-maintenance-reload-required";
         case Diagnostic::TransportLost:return "transport-or-lease-lost";
         case Diagnostic::HookConflict:return "button-hook-conflict";
+        case Diagnostic::MappingDisabled:return "mapping-disabled";
+        case Diagnostic::SessionUnavailable:return "button-session-unavailable";
     }
     return "unknown";
 }
@@ -121,10 +124,19 @@ struct PressRecord {
 };
 struct PressHistory {
     static constexpr size_t depth=64;
-    std::array<std::array<PressRecord,depth>,4> records{};
+    std::array<std::vector<PressRecord>,4> records;
     std::array<size_t,4> next{};
     std::array<uint64_t,4> active{};
     uint64_t sequence=0;
+    // Released, wholly native presses can collapse into a timestamp boundary
+    // while mapping is off. A delayed duplicate cannot become a new press.
+    std::array<double,4> nativeThrough{};
+    PressRecord &newRecord(size_t i) {
+        auto &items=records[i];
+        const size_t slot=next[i]++%depth;
+        if(slot==items.size())items.emplace_back();
+        return items[slot];
+    }
     PressRecord *byToken(uint32_t bit,uint64_t token) {
         const int i=index(bit);if(i<0 || !token)return nullptr;
         for(auto &record:records[(size_t)i])if(record.token==token)return &record;
@@ -151,7 +163,7 @@ struct PressHistory {
         for(auto &item:items)if(item.token && item.token==active[(size_t)i]){record=&item;break;}
         if(down) {
             if(!record) {
-                record=&items[next[(size_t)i]++%depth];
+                record=&newRecord((size_t)i);
                 *record={++sequence,timestamp,0,timestamp,owned,false};active[(size_t)i]=record->token;
             }
             record->last=timestamp;return *record;
@@ -168,7 +180,7 @@ struct NativeClaim {
     double timestamp=0;
 };
 struct NativeClaims {
-    std::array<std::deque<NativeClaim>,4> pending;
+    std::array<std::vector<NativeClaim>,4> pending;
     bool overflow=false;
     PressRecord completed(PressHistory &history,uint32_t bit,double timestamp) {
         const int index=PressHistory::index(bit);if(index<0 || !std::isfinite(timestamp) || timestamp<=0)return {};
@@ -218,6 +230,7 @@ struct NativeClaims {
         const int index=PressHistory::index(bit);if(index<0 || !std::isfinite(timestamp) || timestamp<=0)return {};
         const size_t i=(size_t)index;const bool down=phase!=3 && phase!=4;
         PressRecord existing=history.find(bit,timestamp);
+        if(!existing.token && timestamp<=history.nativeThrough[i])return {};
         if(down && phase!=0) {
             for(const auto &claim:pending[i])if(claim.bound && claim.ended && timestamp>=claim.timestamp &&
                 (!existing.token || existing.token==claim.token)) {
@@ -232,10 +245,10 @@ struct NativeClaims {
                     // publishes any timestamp. Its first timestamped up still
                     // belongs to that FIFO claim. Bound the missing begin by
                     // the previous observed release, not a guessed duration.
-                    double previousUp=0;
+                    double previousUp=history.nativeThrough[i];
                     for(const auto &record:history.records[i])if(record.token<iterator->token && record.released && record.up<timestamp)
                         previousUp=std::max(previousUp,record.up);
-                    auto &record=history.records[i][history.next[i]++%PressHistory::depth];
+                    auto &record=history.newRecord(i);
                     record={iterator->token,previousUp,timestamp,timestamp,iterator->owned,true,true};
                     if(history.active[i]==iterator->token){(void)state.event(bit,false,false);history.active[i]=0;}
                     const PressRecord result=record;pending[i].erase(iterator);return result;
@@ -254,7 +267,7 @@ struct NativeClaims {
         if(down && !existing.token) {
             for(auto &claim:pending[i])if(!claim.bound) {
                 claim.bound=true;claim.timestamp=timestamp;
-                auto &record=history.records[i][history.next[i]++%PressHistory::depth];
+                auto &record=history.newRecord(i);
                 record={claim.token,timestamp,claim.ended ? timestamp : 0,timestamp,claim.owned,claim.ended};
                 if(!claim.ended)history.active[i]=claim.token;
                 return record; // Native down already emitted its one edge.

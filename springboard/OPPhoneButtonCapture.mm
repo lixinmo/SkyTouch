@@ -3,8 +3,13 @@
 #import <objc/runtime.h>
 #import <objc/message.h>
 #import <notify.h>
+#import "../src/OPRuntimeControl.h"
 #include "OPPhoneButtonTransport.hpp"
+#include "OPPhoneButtonSession.h"
+#include "OPPhoneButtonHookSetup.h"
 #include <atomic>
+#include <algorithm>
+#include <memory>
 
 // ABI references (interfaces only; implementation below is independent):
 // MTACS/iOS-17-Runtime-Headers, PrivateFrameworks/SpringBoard.framework/
@@ -16,38 +21,92 @@ using namespace op_phone_buttons;
 namespace {
 using ButtonIMP=void(*)(id,SEL,id);
 using PhysicalIMP=bool(*)(id,SEL,id);
-static ButtonIMP originalActionDown,originalActionUp,originalActionLong;
-static PhysicalIMP originalPhysical;
+static OPButtonHookTable buttonHooks{};
+static void originalAction(OPButtonHookKind which,id object,SEL selector,id event) {
+    ((ButtonIMP)buttonHooks.entries[which].original)(object,selector,event);
+}
+static bool originalPhysical(id object,SEL selector,id event) {
+    return ((PhysicalIMP)buttonHooks.entries[OPPhysicalEvent].original)(object,selector,event);
+}
 static Ownership ownership;
-static PressHistory pressHistory;
-static NativeClaims nativeClaims;
+struct ButtonPressSession {
+    PressHistory history;
+    NativeClaims claims;
+};
+// Main-thread only. Keep a monotonic token across discarded sessions because
+// outstanding native action objects may still carry the preceding binding.
+static std::unique_ptr<ButtonPressSession> buttonPresses;
+static uint64_t lastPressToken=0;
+static std::array<double,4> nativeThrough{};
+static bool buttonCaptureEnabled=false;
+static ButtonPressSession &pressSession(void) {
+    if(!buttonPresses) {
+        buttonPresses=std::make_unique<ButtonPressSession>();
+        buttonPresses->history.sequence=lastPressToken;
+        buttonPresses->history.nativeThrough=nativeThrough;
+    }
+    return *buttonPresses;
+}
 static std::atomic<uint32_t> blockedGestures{0},blockedNativeActions{0};
 static std::atomic<uint64_t> armedUntil{0},connectionEpoch{0},latestCommand{0},latestLeaseSequence{0};
 static std::atomic<bool> requestedArmed{false};
 static std::atomic<uint32_t> capabilities{0};
 static std::atomic<uint32_t> pendingMainCallbacks{0};
 static uint64_t mainCommand=0,mainEpoch=0;
-static bool maintenance=false;
+static std::atomic<bool> maintenance{false};
 static std::atomic<bool> runtimeInvalid{false};
 static std::atomic<bool> hooksAttempted{false};
 static std::atomic<bool> hooksInstalled{false};
 static std::atomic<uint32_t> diagnosticValue{(uint32_t)Diagnostic::Starting};
 static int diagnosticToken=-1;
-static int suppressionToken=-1;
+static int suppressionToken=-1,stopToken=-1;
 static uint64_t lastDiagnosticWrite=0;
 static uint32_t lastDiagnosticValue=UINT32_MAX;
 static uint64_t lastSuppressionCounts=UINT64_MAX;
-static NSString *installationRoot,*endpoint;
+static NSString *installationRoot,*enabledGeneration;
 static dispatch_queue_t transportQueue;
 static dispatch_source_t transportTimer;
-static Stream connection;
-static Packet session;
-static Sequence incoming;
-static uint64_t outgoing=0,lastSeen=0,lastAttempt=0;
-static bool connecting=false,welcomed=false;
-static void disconnect(void);
+// The serial queue owns the session from enable through teardown.
+static OPButtonSession *buttonSession=nullptr;
+static uint64_t lastHookAttempt=0;
+static unsigned hookAttempt=0;
+static constexpr unsigned maxHookAttempts=31;
+static bool hookCheckPending=false;
 static void publish(void);
 static void revoke(void) {armedUntil=0;ownership.setArmed(false);}
+static void trimInactivePresses(void) {
+    if(buttonCaptureEnabled || !buttonPresses)return;
+    auto &history=buttonPresses->history;
+    auto &claims=buttonPresses->claims;
+    bool retained=false;
+    for(size_t i=0;i<history.records.size();++i) {
+        auto &records=history.records[i];
+        auto &pending=claims.pending[i];
+        // A completed owned press can still receive a delayed gesture. Keep
+        // its original bounded timestamp history, including newer native
+        // records which take precedence at overlapping interval boundaries.
+        if(history.active[i] || !pending.empty() ||
+           std::any_of(records.begin(),records.end(),[](const PressRecord &r){return r.owned || !r.released;})) {
+            retained=true;continue;
+        }
+        for(const auto &record:records)
+            history.nativeThrough[i]=std::max(history.nativeThrough[i],record.up);
+        std::vector<PressRecord>().swap(records);
+        std::vector<NativeClaim>().swap(pending);
+        history.next[i]=0;
+    }
+    if(!retained) {
+        lastPressToken=history.sequence;
+        nativeThrough=history.nativeThrough;
+        buttonPresses.reset();
+    }
+}
+static void enableButtonCaptureSession(void) {buttonCaptureEnabled=true;}
+static void disableButtonCaptureSession(void) {
+    buttonCaptureEnabled=false;
+    revoke();
+    trimInactivePresses();
+}
 static void diagnose(Diagnostic stage,uint8_t detail=0) {
     diagnosticValue=(uint32_t)stage|((uint32_t)detail<<8);
 }
@@ -67,92 +126,40 @@ static void flushDiagnostic(void) {
     if(suppressionToken>=0 && notify_set_state(suppressionToken,counts)==NOTIFY_STATUS_OK)lastSuppressionCounts=counts;
 }
 
-static bool methodABI(Class cls,const char *name,const char *result,NSArray<NSString *> *arguments) {
-    Method method=class_getInstanceMethod(cls,sel_registerName(name));
-    NSMethodSignature *signature=method ? [NSMethodSignature signatureWithObjCTypes:method_getTypeEncoding(method)] : nil;
-    if(!signature || strcmp(signature.methodReturnType,result) || signature.numberOfArguments!=arguments.count+2)return false;
-    for(NSUInteger i=0;i<arguments.count;++i) {
-        const char *actual=[signature getArgumentTypeAtIndex:i+2],*expected=arguments[i].UTF8String;
-        if(expected[0]=='@' ? actual[0]!='@' : strcmp(actual,expected))return false;
-    }
-    return true;
-}
 static bool captureAllowed(void) {
     const uint64_t deadline=armedUntil.load();
-    const bool allowed=!maintenance && requestedArmed.load() && capabilities.load()==all && deadline && nowNs()<deadline;
+    const bool allowed=buttonCaptureEnabled && !maintenance && requestedArmed.load() && mainEpoch==connectionEpoch.load() &&
+        capabilities.load()==all && deadline && nowNs()<deadline;
     if(!allowed && ownership.armed)revoke();
     return allowed;
 }
 static void changed(const Ownership &before) {
-    if(before.physical!=ownership.physical || before.mapped!=ownership.mapped ||
-       before.armed!=ownership.armed || before.waitingRelease!=ownership.waitingRelease)publish();
+    if(buttonCaptureEnabled && (before.physical!=ownership.physical || before.mapped!=ownership.mapped ||
+       before.armed!=ownership.armed || before.waitingRelease!=ownership.waitingRelease))publish();
 }
 static void actionDown(id object,SEL selector,id event) {
-    if(!NSThread.isMainThread){runtimeInvalid=true;capabilities=0;armedUntil=0;originalActionDown(object,selector,event);return;}
+    if(!NSThread.isMainThread){runtimeInvalid=true;capabilities=0;armedUntil=0;originalAction(OPActionDown,object,selector,event);return;}
     const Ownership before=ownership;
     const bool swallow=ownership.event(action,true,captureAllowed());changed(before);
-    if(!swallow)originalActionDown(object,selector,event);
+    if(!swallow)originalAction(OPActionDown,object,selector,event);
 }
 static void actionUp(id object,SEL selector,id event) {
-    if(!NSThread.isMainThread){runtimeInvalid=true;capabilities=0;armedUntil=0;originalActionUp(object,selector,event);return;}
+    if(!NSThread.isMainThread){runtimeInvalid=true;capabilities=0;armedUntil=0;originalAction(OPActionUp,object,selector,event);return;}
     const Ownership before=ownership;(void)captureAllowed();
     const bool swallow=ownership.event(action,false,false);changed(before);
-    if(!swallow)originalActionUp(object,selector,event);
+    if(!swallow)originalAction(OPActionUp,object,selector,event);
 }
 static void actionLong(id object,SEL selector,id event) {
-    if(!NSThread.isMainThread){runtimeInvalid=true;capabilities=0;armedUntil=0;originalActionLong(object,selector,event);return;}
+    if(!NSThread.isMainThread){runtimeInvalid=true;capabilities=0;armedUntil=0;originalAction(OPActionLong,object,selector,event);return;}
     const Ownership before=ownership;(void)captureAllowed();changed(before);
-    if(!(ownership.owned&action))originalActionLong(object,selector,event);
+    if(!(ownership.owned&action))originalAction(OPActionLong,object,selector,event);
 }
 static uint32_t bitForPress(NSInteger type) {
     switch(type){case 102:return volumeUp;case 103:return volumeDown;case 104:return side;default:return 0;}
 }
-static void nativeGesture(id,SEL,id);
-static void volumeDownAction(id,SEL,long long);
-static void sideDownAction(id,SEL);
-static void nativeAction(id,SEL);
-static bool nativeBoolAction(id,SEL);
-struct NativeHook {
-    const char *className,*name,*result,*argument;
-    IMP replacement;
-    uint32_t bit;
-    bool primary;
-    SEL selector=nullptr;
-    IMP original=nullptr;
-    bool installed=false;
-};
-// ABI diagnostic.detail 32 + index identifies this stable list. Primary
-// gesture + ordinary down/up/single action routes are mandatory. Additional
-// gesture outcomes are hooked when present; an absent outcome cannot execute.
-static NativeHook nativeHooks[]={
-    {"SBVolumeHardwareButton","volumeIncreasePress:","v","@",(IMP)nativeGesture,volumeUp,true},
-    {"SBVolumeHardwareButton","volumeDecreasePress:","v","@",(IMP)nativeGesture,volumeDown,true},
-    {"SBLockHardwareButton","buttonDown:","v","@",(IMP)nativeGesture,side,true},
-    {"SBLockHardwareButton","singlePress:","v","@",(IMP)nativeGesture,side,false},
-    {"SBLockHardwareButton","doublePress:","v","@",(IMP)nativeGesture,side,false},
-    {"SBLockHardwareButton","triplePress:","v","@",(IMP)nativeGesture,side,false},
-    {"SBLockHardwareButton","quadruplePress:","v","@",(IMP)nativeGesture,side,false},
-    {"SBLockHardwareButton","longPress:","v","@",(IMP)nativeGesture,side,false},
-    {"SBLockHardwareButton","terminalLockLongPress:","v","@",(IMP)nativeGesture,side,false},
-    {"SBVolumeHardwareButtonActions","volumeIncreasePressDownWithModifiers:","v","q",(IMP)volumeDownAction,volumeUp,false},
-    {"SBVolumeHardwareButtonActions","volumeDecreasePressDownWithModifiers:","v","q",(IMP)volumeDownAction,volumeDown,false},
-    {"SBVolumeHardwareButtonActions","volumeIncreasePressUp","v",nullptr,(IMP)nativeAction,volumeUp,false},
-    {"SBVolumeHardwareButtonActions","volumeDecreasePressUp","v",nullptr,(IMP)nativeAction,volumeDown,false},
-    {"SBLockHardwareButtonActions","performInitialButtonDownActions","v",nullptr,(IMP)sideDownAction,side,false},
-    {"SBLockHardwareButtonActions","performSecondButtonDownActions","v",nullptr,(IMP)sideDownAction,side,false},
-    {"SBLockHardwareButtonActions","performInitialButtonUpActions","v",nullptr,(IMP)nativeAction,side,false},
-    {"SBLockHardwareButtonActions","performFinalButtonUpActions","v",nullptr,(IMP)nativeAction,side,false},
-    {"SBLockHardwareButtonActions","performSinglePressAction","v",nullptr,(IMP)nativeAction,side,false},
-    {"SBLockHardwareButtonActions","performSinglePressDidFailActions","v",nullptr,(IMP)nativeAction,side,false},
-    {"SBLockHardwareButtonActions","performDoublePressActions","v",nullptr,(IMP)nativeAction,side,false},
-    {"SBLockHardwareButtonActions","performTriplePressActions","v",nullptr,(IMP)nativeAction,side,false},
-    {"SBLockHardwareButtonActions","performLongPressActions","v",nullptr,(IMP)nativeAction,side,false},
-    {"SBLockHardwareButtonActions","performLongPressCancelledActions","v",nullptr,(IMP)nativeAction,side,false},
-    {"SBLockHardwareButtonActions","performTerminalLockLongPressActions","v",nullptr,(IMP)nativeAction,side,false},
-    {"SBLockHardwareButtonActions","performButtonUpPreActions","B",nullptr,(IMP)nativeBoolAction,side,false},
-};
-static NativeHook *nativeHook(SEL selector) {
-    for(auto &hook:nativeHooks)if(hook.selector==selector)return &hook;
+static OPInstalledButtonHook *nativeHook(SEL selector) {
+    for(size_t i=OPButtonCoreHooks;i<std::size(buttonHooks.entries);++i)
+        if(buttonHooks.entries[i].selector==selector)return &buttonHooks.entries[i];
     return nullptr;
 }
 static char actionBindingKeys[4];
@@ -179,12 +186,13 @@ static bool beginNativeAction(id object,uint32_t bit) {
     // A new native down replaces the preceding action token immediately. The
     // preceding up/action may have been delayed, but cannot own this new press.
     const Ownership before=ownership;
-    const PressRecord record=nativeClaims.begin(ownership,pressHistory,bit,captureAllowed());
-    if(nativeClaims.overflow){runtimeInvalid=true;capabilities=0;revoke();}
+    auto &presses=pressSession();
+    const PressRecord record=presses.claims.begin(ownership,presses.history,bit,captureAllowed());
+    if(presses.claims.overflow){runtimeInvalid=true;capabilities=0;revoke();}
     changed(before);bindActions(object,bit,record,true);return record.owned;
 }
 static void nativeGesture(id object,SEL selector,id recognizer) {
-    NativeHook *hook=nativeHook(selector);if(!hook || !hook->original)return;
+    OPInstalledButtonHook *hook=nativeHook(selector);if(!hook || !hook->original)return;
     if(!NSThread.isMainThread){runtimeInvalid=true;capabilities=0;armedUntil=0;((ButtonIMP)hook->original)(object,selector,recognizer);return;}
     PressRecord record{};
     Class pressClass=objc_getClass("SBPressGestureRecognizer");
@@ -193,11 +201,14 @@ static void nativeGesture(id object,SEL selector,id recognizer) {
         const long long phase=((long long(*)(id,SEL))objc_msgSend)(recognizer,sel_registerName("latestPressPhase"));
         const double timestamp=((double(*)(id,SEL))objc_msgSend)(recognizer,sel_registerName("latestPressTimestamp"));
         if(bitForPress(type)==hook->bit && phase>=0 && phase<=4 && std::isfinite(timestamp) && timestamp>0) {
-            record=pressHistory.find(hook->bit,timestamp);
             if(hook->primary) {
                 const Ownership before=ownership;const bool allowed=captureAllowed();
-                record=nativeClaims.transition(ownership,pressHistory,hook->bit,(int)phase,timestamp,allowed);changed(before);
-            } else if(!record.token)record=nativeClaims.completed(pressHistory,hook->bit,timestamp);
+                auto &presses=pressSession();
+                record=presses.claims.transition(ownership,presses.history,hook->bit,(int)phase,timestamp,allowed);
+                changed(before);trimInactivePresses();
+            } else if(buttonPresses) {
+                record=buttonPresses->claims.completed(buttonPresses->history,hook->bit,timestamp);
+            }
         }
     }
     id actions=((id(*)(id,SEL))objc_msgSend)(object,sel_registerName("buttonActions"));
@@ -209,35 +220,36 @@ static void nativeGesture(id object,SEL selector,id recognizer) {
     @finally {nativeScope=previous;}
 }
 static void volumeDownAction(id object,SEL selector,long long modifiers) {
-    NativeHook *hook=nativeHook(selector);if(!hook || !hook->original)return;
+    OPInstalledButtonHook *hook=nativeHook(selector);if(!hook || !hook->original)return;
     if(NSThread.isMainThread && beginNativeAction(object,hook->bit)){++blockedNativeActions;return;}
     ((void(*)(id,SEL,long long))hook->original)(object,selector,modifiers);
 }
 static void sideDownAction(id object,SEL selector) {
-    NativeHook *hook=nativeHook(selector);if(!hook || !hook->original)return;
+    OPInstalledButtonHook *hook=nativeHook(selector);if(!hook || !hook->original)return;
     if(NSThread.isMainThread && beginNativeAction(object,hook->bit)){++blockedNativeActions;return;}
     ((void(*)(id,SEL))hook->original)(object,selector);
 }
 static void nativeAction(id object,SEL selector) {
-    NativeHook *hook=nativeHook(selector);if(!hook || !hook->original)return;
+    OPInstalledButtonHook *hook=nativeHook(selector);if(!hook || !hook->original)return;
     // Keep this action token after final-up. Deferred click callbacks still
     // belong to it; the next down/identified gesture replaces it, not a timer.
     if(NSThread.isMainThread) {
         const bool owned=actionOwned(object,hook->bit);
-        if(!nativeScope.known &&
+        if(buttonPresses && !nativeScope.known &&
            (selector==sel_registerName("volumeIncreasePressUp") || selector==sel_registerName("volumeDecreasePressUp") ||
             selector==sel_registerName("performInitialButtonUpActions"))) {
             const int index=PressHistory::index(hook->bit);
             NSDictionary *binding=index>=0 ? objc_getAssociatedObject(object,&actionBindingKeys[index]) : nil;
             const Ownership before=ownership;
-            nativeClaims.end(ownership,pressHistory,hook->bit,[binding[@"token"] unsignedLongLongValue]);changed(before);
+            buttonPresses->claims.end(ownership,buttonPresses->history,hook->bit,[binding[@"token"] unsignedLongLongValue]);
+            changed(before);trimInactivePresses();
         }
         if(owned){++blockedNativeActions;return;}
     }
     ((void(*)(id,SEL))hook->original)(object,selector);
 }
 static bool nativeBoolAction(id object,SEL selector) {
-    NativeHook *hook=nativeHook(selector);if(!hook || !hook->original)return false;
+    OPInstalledButtonHook *hook=nativeHook(selector);if(!hook || !hook->original)return false;
     if(NSThread.isMainThread && actionOwned(object,hook->bit)){++blockedNativeActions;return true;}
     return ((bool(*)(id,SEL))hook->original)(object,selector);
 }
@@ -248,13 +260,16 @@ static bool physicalEvent(id object,SEL selector,id event) {
     if(![event isKindOfClass:UIPressesEvent.class]){changed(before);return originalPhysical(object,selector,event);}
     NSSet *presses=[event allPresses];
     if(![presses isKindOfClass:NSSet.class] || presses.count>16){changed(before);return originalPhysical(object,selector,event);}
-    Ownership next=ownership;
-    PressHistory nextHistory=pressHistory;
-    NativeClaims nextClaims=nativeClaims;
-    NSMutableArray *consumed=[NSMutableArray arrayWithCapacity:presses.count];
+    bool hasButton=false;
     for(id press in presses) {
         if(![press isKindOfClass:UIPress.class]){runtimeInvalid=true;capabilities=0;revoke();changed(before);return originalPhysical(object,selector,event);}
+        if(bitForPress(((UIPress *)press).type))hasButton=true;
     }
+    if(!hasButton){changed(before);return originalPhysical(object,selector,event);}
+    Ownership next=ownership;
+    auto &session=pressSession();
+    ButtonPressSession nextPresses=session;
+    NSMutableArray *consumed=[NSMutableArray arrayWithCapacity:presses.count];
     // Processing the complete set preserves simultaneous button transitions.
     // Stable order also makes same-timestamp input deterministic.
     NSArray *ordered=[presses.allObjects sortedArrayUsingComparator:^NSComparisonResult(UIPress *a,UIPress *b) {
@@ -267,7 +282,7 @@ static bool physicalEvent(id object,SEL selector,id event) {
         if(phase<UIPressPhaseBegan || phase>UIPressPhaseCancelled || !std::isfinite(timestamp) || timestamp<=0) {
             runtimeInvalid=true;capabilities=0;revoke();changed(before);return originalPhysical(object,selector,event);
         }
-        const PressRecord record=nextClaims.transition(next,nextHistory,bit,(int)phase,timestamp,allowed);
+        const PressRecord record=nextPresses.claims.transition(next,nextPresses.history,bit,(int)phase,timestamp,allowed);
         if(record.owned)[consumed addObject:press];
     }
     id nativeEvent=event;
@@ -281,94 +296,31 @@ static bool physicalEvent(id object,SEL selector,id event) {
             runtimeInvalid=true;capabilities=0;revoke();changed(before);return originalPhysical(object,selector,event);
         }
     }
-    ownership=next;pressHistory=nextHistory;nativeClaims=nextClaims;changed(before);
+    ownership=next;session=std::move(nextPresses);changed(before);trimInactivePresses();
     return consumed.count==presses.count && consumed.count ? true : originalPhysical(object,selector,nativeEvent);
-}
-static bool replace(Class cls,const char *name,IMP replacement,IMP *old) {
-    const SEL selector=sel_registerName(name);Method method=class_getInstanceMethod(cls,selector);
-    if(!method)return false;
-    *old=method_getImplementation(method);
-    if(!*old || *old==replacement)return false;
-    // Never mutate a superclass method while intending to hook one class.
-    if(!class_addMethod(cls,selector,replacement,method_getTypeEncoding(method))) {
-        Method own=class_getInstanceMethod(cls,selector);method_setImplementation(own,replacement);
-    }
-    return class_getMethodImplementation(cls,selector)==replacement;
 }
 static uint32_t activeCapabilities(void) {
     if(runtimeInvalid || maintenance || !hooksInstalled.load())return 0;
-    Class actionClass=objc_getClass("SBRingerHardwareButton"),springboard=objc_getClass("SpringBoard");
-    uint32_t result=0;
-    if(class_getMethodImplementation(actionClass,sel_registerName("performActionsForButtonDown:"))==(IMP)actionDown &&
-       class_getMethodImplementation(actionClass,sel_registerName("performActionsForButtonUp:"))==(IMP)actionUp &&
-       class_getMethodImplementation(actionClass,sel_registerName("performActionsForButtonLongPress:"))==(IMP)actionLong)result|=action;
-    if(class_getMethodImplementation(springboard,sel_registerName("_handlePhysicalButtonEvent:"))==(IMP)physicalEvent) {
-        uint32_t native=volumeUp|volumeDown|side;
-        for(const auto &hook:nativeHooks)if(hook.installed &&
-            class_getMethodImplementation(objc_getClass(hook.className),hook.selector)!=hook.replacement)native&=~hook.bit;
-        result|=native;
-    }
+    uint32_t result=all;
+    for(const auto &hook:buttonHooks.entries)
+        if(hook.target && class_getMethodImplementation(hook.target,hook.selector)!=hook.replacement)result&=~hook.bit;
     return result;
 }
-static void installHooks(void) {
-    Class actionClass=objc_getClass("SBRingerHardwareButton"),springboard=objc_getClass("SpringBoard");
-    // The all-or-nothing preflight leaves unsupported systems entirely native.
-    struct Check {Class cls;const char *name,*result,*argument;};
-    // Stable ABI diagnostic.detail 1..15, in this order.
-    const Check checks[]={
-        {actionClass,"performActionsForButtonDown:","v","@"},
-        {actionClass,"performActionsForButtonUp:","v","@"},
-        {actionClass,"performActionsForButtonLongPress:","v","@"},
-        {springboard,"_handlePhysicalButtonEvent:","B","@"},
-        {UIPressesEvent.class,"allPresses","@",nullptr},
-        {UIPressesEvent.class,"_cloneEvent","@",nullptr},
-        {UIPressesEvent.class,"_removePress:","v","@"},
-        {UIPress.class,"type","q",nullptr},{UIPress.class,"phase","q",nullptr},{UIPress.class,"timestamp","d",nullptr},
-        {objc_getClass("SBPressGestureRecognizer"),"latestPressType","q",nullptr},
-        {objc_getClass("SBPressGestureRecognizer"),"latestPressPhase","q",nullptr},
-        {objc_getClass("SBPressGestureRecognizer"),"latestPressTimestamp","d",nullptr},
-        {objc_getClass("SBVolumeHardwareButton"),"buttonActions","@",nullptr},
-        {objc_getClass("SBLockHardwareButton"),"buttonActions","@",nullptr},
-    };
-    for(size_t i=0;i<std::size(checks);++i) {
-        const auto &check=checks[i];
-        if(!methodABI(check.cls,check.name,check.result,check.argument ? @[@(check.argument)] : @[])) {
-            diagnose(Diagnostic::ABIMismatch,(uint8_t)(i+1));return;
-        }
-    }
-    for(size_t i=0;i<std::size(nativeHooks);++i) {
-        auto &hook=nativeHooks[i];hook.selector=sel_registerName(hook.name);
-        Class cls=objc_getClass(hook.className);Method method=class_getInstanceMethod(cls,hook.selector);
-        const bool required=hook.primary || i==3 || (i>=9 && i<=17);
-        if(!method && !required)continue;
-        if(!methodABI(cls,hook.name,hook.result,hook.argument ? @[@(hook.argument)] : @[])) {
-            diagnose(Diagnostic::ABIMismatch,(uint8_t)(32+i));return;
-        }
-    }
-    bool ok=replace(actionClass,"performActionsForButtonDown:",(IMP)actionDown,(IMP *)&originalActionDown) &&
-        replace(actionClass,"performActionsForButtonUp:",(IMP)actionUp,(IMP *)&originalActionUp) &&
-        replace(actionClass,"performActionsForButtonLongPress:",(IMP)actionLong,(IMP *)&originalActionLong) &&
-        replace(springboard,"_handlePhysicalButtonEvent:",(IMP)physicalEvent,(IMP *)&originalPhysical);
-    for(auto &hook:nativeHooks) {
-        Class cls=objc_getClass(hook.className);
-        if(class_getInstanceMethod(cls,hook.selector)) {
-            hook.installed=replace(cls,hook.name,hook.replacement,&hook.original);ok=ok && hook.installed;
-        }
-    }
-    hooksInstalled=ok;
-    capabilities=ok ? activeCapabilities() : 0;
-    diagnose(ok ? Diagnostic::WaitingEndpoint : Diagnostic::HookConflict);
-}
 static void prepareHooks(unsigned attempt) {
-    if(!objc_getClass("SpringBoard") || !objc_getClass("SBRingerHardwareButton") ||
-       !objc_getClass("SBVolumeHardwareButton") || !objc_getClass("SBLockHardwareButton") ||
-       !objc_getClass("SBVolumeHardwareButtonActions") || !objc_getClass("SBLockHardwareButtonActions")) {
-        diagnose(Diagnostic::WaitingClasses);
-        if(attempt<30)dispatch_after(dispatch_time(DISPATCH_TIME_NOW,NSEC_PER_SEC),dispatch_get_main_queue(),^{prepareHooks(attempt+1);});
-        else {hooksAttempted=true;diagnose(Diagnostic::ABIMismatch,255);}
+    const OPButtonHookReplacements replacements={{(IMP)actionDown,(IMP)actionUp,(IMP)actionLong,(IMP)physicalEvent,
+        (IMP)nativeGesture,(IMP)volumeDownAction,(IMP)sideDownAction,(IMP)nativeAction,(IMP)nativeBoolAction}};
+    uint8_t detail=0;
+    const auto result=OPPrepareButtonHooks(&buttonHooks,&replacements,&detail);
+    if(result==OPButtonWaitingForClasses) {
+        if(attempt+1==maxHookAttempts)diagnose(Diagnostic::ABIMismatch,255);
+        else diagnose(Diagnostic::WaitingClasses);
         return;
     }
-    installHooks();hooksAttempted=true;
+    hooksInstalled=result==OPButtonHooksReady;
+    capabilities=activeCapabilities();
+    diagnose(result==OPButtonWrongABI ? Diagnostic::ABIMismatch :
+             hooksInstalled.load() ? Diagnostic::WaitingEndpoint : Diagnostic::HookConflict,detail);
+    hooksAttempted=true;
 }
 static NSString *resolveInstallation(void) {
     Dl_info image{};char resolved[PATH_MAX]{};
@@ -385,103 +337,85 @@ static NSString *resolveInstallation(void) {
         if([path hasSuffix:candidate]){suffix=candidate;break;}
     if(!suffix || !regularRootFile(resolved)){diagnose(Diagnostic::ImagePathRejected,2);return nil;}
     NSString *root=[path substringToIndex:path.length-suffix.length];
-    NSString *leaf=root.lastPathComponent;
-    if(!leaf.length || [leaf rangeOfString:@"^\\.jbroot-[0-9A-Fa-f]+$" options:NSRegularExpressionSearch].length!=leaf.length) {
+    const char *leaf=root.lastPathComponent.UTF8String;
+    const char prefix[]=".jbroot-";
+    if(!leaf || strncmp(leaf,prefix,sizeof(prefix)-1)){diagnose(Diagnostic::ImagePathRejected,3);return nil;}
+    const char *identifier=leaf+sizeof(prefix)-1;
+    if(!*identifier || identifier[strspn(identifier,"0123456789abcdefABCDEF")]){
         diagnose(Diagnostic::ImagePathRejected,3);return nil;
     }
     NSString *library=[root stringByAppendingPathComponent:@"usr/lib/libroothide.dylib"];
     if(!regularRootFile(library.fileSystemRepresentation)){diagnose(Diagnostic::RootLibraryRejected,1);return nil;}
     void *handle=dlopen(library.fileSystemRepresentation,RTLD_NOW|RTLD_LOCAL);
+    if(!handle){diagnose(Diagnostic::RootLibraryRejected,2);return nil;}
     using RootPath=const char *(*)(const char *);
-    RootPath convert=handle ? (RootPath)dlsym(handle,"jbroot") : nullptr;
+    RootPath convert=(RootPath)dlsym(handle,"jbroot");
     const char *converted=convert ? convert("/") : nullptr;char convertedRoot[PATH_MAX]{};
     if(!converted || !realpath(converted,convertedRoot) || strcmp(root.fileSystemRepresentation,convertedRoot)) {
-        diagnose(Diagnostic::RootMismatch,1);return nil;
+        dlclose(handle);diagnose(Diagnostic::RootMismatch,1);return nil;
     }
     NSString *expectedParent=[root stringByAppendingPathComponent:@"tmp"];
     const char *parent=convert("/tmp");char actualParent[PATH_MAX]{},trustedParent[PATH_MAX]{};
-    if(!parent || !realpath(parent,actualParent) || !realpath(expectedParent.fileSystemRepresentation,trustedParent) ||
-       strcmp(actualParent,trustedParent)){diagnose(Diagnostic::RootMismatch,2);return nil;}
-    endpoint=[root stringByAppendingPathComponent:@"tmp/skytouch-buttons/s"];
-    sockaddr_un check{};if(!address(endpoint.fileSystemRepresentation,check)){diagnose(Diagnostic::EndpointTooLong);return nil;}
+    const bool matches=parent && realpath(parent,actualParent) &&
+        realpath(expectedParent.fileSystemRepresentation,trustedParent) && !strcmp(actualParent,trustedParent);
+    dlclose(handle);
+    if(!matches){diagnose(Diagnostic::RootMismatch,2);return nil;}
     return root;
 }
-static bool endpointTrusted(void) {
-    struct stat directory{},socket{};
-    NSString *parent=endpoint.stringByDeletingLastPathComponent;
-    int fd=open(parent.fileSystemRepresentation,O_RDONLY|O_DIRECTORY|O_NOFOLLOW|O_CLOEXEC);
-    if(fd<0){if(capabilities.load()==all)diagnose(errno==ENOENT ? Diagnostic::WaitingEndpoint : Diagnostic::EndpointRejected,1);return false;}
-    const bool ok=!fstat(fd,&directory) && directory.st_uid==0 && (directory.st_mode&0777)==0755 &&
-        !fstatat(fd,socketName,&socket,AT_SYMLINK_NOFOLLOW) && S_ISSOCK(socket.st_mode) &&
-        socket.st_uid==501 && (socket.st_mode&0777)==0600;
-    close(fd);if(!ok && capabilities.load()==all)diagnose(Diagnostic::EndpointRejected,2);return ok;
-}
-static void disconnect(void) {
-    armedUntil=0;requestedArmed=false;latestCommand=0;latestLeaseSequence=0;
-    connection.close();connecting=welcomed=false;incoming={};outgoing=lastSeen=0;
-    if(transportTimer)dispatch_source_set_timer(transportTimer,dispatch_time(DISPATCH_TIME_NOW,500*NSEC_PER_MSEC),500*NSEC_PER_MSEC,50*NSEC_PER_MSEC);
+static void connectionChanged(bool connected) {
     const uint64_t epoch=++connectionEpoch;
+    armedUntil=0;requestedArmed=false;latestCommand=0;latestLeaseSequence=0;
+    if(transportTimer) {
+        const uint64_t interval=(connected ? 4 : 500)*NSEC_PER_MSEC;
+        dispatch_source_set_timer(transportTimer,connected ? DISPATCH_TIME_NOW : dispatch_time(DISPATCH_TIME_NOW,interval),
+                                  interval,(connected ? 1 : 50)*NSEC_PER_MSEC);
+    }
     dispatch_async(dispatch_get_main_queue(),^{
         if(connectionEpoch.load()!=epoch)return;
-        mainEpoch=epoch;mainCommand=0;revoke();
+        mainEpoch=epoch;mainCommand=0;disableButtonCaptureSession();
     });
 }
-static bool sendPacket(Kind kind,uint64_t epoch,uint64_t commandValue,uint32_t physical,uint32_t mapped,uint32_t flags,uint64_t timestamp) {
-    if(connection.fd<0 || !welcomed || connectionEpoch.load()!=epoch)return false;
-    Packet packet=session;packet.kind=kind;packet.sequence=++outgoing;packet.timestamp=timestamp;
-    packet.command=commandValue;packet.capabilities=capabilities.load();packet.physical=physical;packet.mapped=mapped;packet.flags=flags;
-    return connection.queue(packet) && connection.flush();
+static void sendPacket(Kind kind,uint64_t epoch,uint64_t command,uint32_t physical,uint32_t mapped,uint32_t flags,uint64_t timestamp) {
+    if(!buttonSession || connectionEpoch.load()!=epoch)return;
+    if(!OPSendButtonPacket(buttonSession,(uint16_t)kind,command,capabilities.load(),physical,mapped,flags,timestamp))
+        OPDisconnectButtonSession(buttonSession);
 }
 static void publish(void) {
-    if(!transportQueue || !mainEpoch)return;
+    if(!mainCommand || mainEpoch!=connectionEpoch.load())return;
     const uint64_t epoch=mainEpoch,commandValue=mainCommand,timestamp=nowNs();
     const uint32_t physical=ownership.physical,mapped=ownership.mapped;
     const uint32_t flags=(ownership.armed ? 1u : 0u)|(ownership.waitingRelease ? 2u : 0u);
     dispatch_async(transportQueue,^{
-        if(connectionEpoch.load()!=epoch || !welcomed || !commandValue)return;
-        if(!sendPacket(Kind::State,epoch,commandValue,physical,mapped,flags,timestamp))disconnect();
+        sendPacket(Kind::State,epoch,commandValue,physical,mapped,flags,timestamp);
     });
 }
-static bool receive(const Packet &packet) {
-    const uint64_t now=nowNs();
-    if(!valid(packet,now) || !incoming.accept(packet.sequence))return false;
-    if(!welcomed) {
-        if(packet.kind!=Kind::Welcome || packet.capabilities || packet.flags || packet.mapped || packet.physical)return false;
-        if(pendingMainCallbacks.fetch_add(1)>=maximumPending){pendingMainCallbacks.fetch_sub(1);return false;}
-        session=packet;welcomed=true;lastSeen=now;
-        const uint64_t epoch=connectionEpoch.load();
-        dispatch_async(dispatch_get_main_queue(),^{
-            pendingMainCallbacks.fetch_sub(1);
-            if(connectionEpoch.load()!=epoch)return;
-            mainEpoch=epoch;mainCommand=0;revoke();capabilities=activeCapabilities();
-            diagnose(capabilities.load()==all ? Diagnostic::Handshaking : Diagnostic::ABIMismatch);
-            const uint32_t physical=ownership.physical;const uint64_t timestamp=nowNs();
-            dispatch_async(transportQueue,^{
-                if(connectionEpoch.load()!=epoch)return;
-                if(!sendPacket(Kind::Hello,epoch,0,physical,0,0,timestamp))disconnect();
-            });
-        });
-        return true;
-    }
-    if(!sameGeneration(packet,session) || packet.kind!=Kind::Lease || !packet.command ||
-       packet.command<latestCommand.load() || packet.capabilities || packet.mapped || packet.physical || (packet.flags&~1u))return false;
-    latestCommand=packet.command;
-    latestLeaseSequence=packet.sequence;requestedArmed=(packet.flags&1)!=0;
+static bool receiveWelcome(void) {
+    if(pendingMainCallbacks.fetch_add(1)>=maximumPending){--pendingMainCallbacks;return false;}
+    const uint64_t epoch=connectionEpoch.load();
+    dispatch_async(dispatch_get_main_queue(),^{
+        --pendingMainCallbacks;
+        if(connectionEpoch.load()!=epoch)return;
+        mainEpoch=epoch;mainCommand=0;revoke();enableButtonCaptureSession();
+        capabilities=activeCapabilities();
+        diagnose(capabilities.load()==all ? Diagnostic::Handshaking : Diagnostic::ABIMismatch);
+        const uint32_t physical=ownership.physical;const uint64_t timestamp=nowNs();
+        dispatch_async(transportQueue,^{sendPacket(Kind::Hello,epoch,0,physical,0,0,timestamp);});
+    });
+    return true;
+}
+static bool receiveLease(uint64_t command,uint64_t sequence,uint64_t deadline,bool armed) {
+    latestCommand=command;latestLeaseSequence=sequence;requestedArmed=armed;
     if(pendingMainCallbacks.fetch_add(1)>=maximumPending){pendingMainCallbacks.fetch_sub(1);return false;}
-    lastSeen=now;
-    const uint64_t epoch=connectionEpoch.load(),deadline=packet.timestamp+leaseNs;
-    // The atomic deadline is read directly by the hook: a stalled main queue
-    // cannot keep a stale lease armed. Commands themselves apply on main.
-    if(!(packet.flags&1))armedUntil=0;
-    const Packet copy=packet;
+    const uint64_t epoch=connectionEpoch.load();
+    if(!armed)armedUntil=0;
     dispatch_async(dispatch_get_main_queue(),^{
         pendingMainCallbacks.fetch_sub(1);
-        if(connectionEpoch.load()!=epoch || copy.command!=latestCommand.load() || copy.sequence!=latestLeaseSequence.load())return;
+        if(connectionEpoch.load()!=epoch || command!=latestCommand.load() || sequence!=latestLeaseSequence.load())return;
         mainEpoch=epoch;
-        if(copy.command<mainCommand){armedUntil=0;return;}
+        if(command<mainCommand){armedUntil=0;return;}
         capabilities=activeCapabilities();
-        if(copy.command!=mainCommand){ownership.setArmed(false);mainCommand=copy.command;}
-        const bool allow=(copy.flags&1) && !maintenance && capabilities.load()==all && nowNs()<deadline;
+        if(command!=mainCommand){ownership.setArmed(false);mainCommand=command;}
+        const bool allow=armed && !maintenance && capabilities.load()==all && nowNs()<deadline;
         armedUntil=allow ? deadline : 0;ownership.setArmed(allow);publish();
         diagnose(maintenance ? Diagnostic::Maintenance : capabilities.load()!=all ?
             (hooksInstalled.load() ? Diagnostic::HookConflict : Diagnostic::ABIMismatch) :
@@ -491,32 +425,71 @@ static bool receive(const Packet &packet) {
 }
 static void tick(void) {
     flushDiagnostic();
-    if(!installationRoot || !hooksAttempted.load())return;
     const uint64_t now=nowNs();
-    if(connection.fd<0) {
-        if(now-lastAttempt<500*NSEC_PER_MSEC)return;
-        lastAttempt=now;if(!endpointTrusted())return;
-        sockaddr_un destination{};if(!address(endpoint.fileSystemRepresentation,destination))return;
-        int fd=socket(AF_UNIX,SOCK_STREAM,0);
-        if(fd<0)return;
-        if(!configureSocket(fd)){close(fd);return;}
-        const int result=connect(fd,(sockaddr *)&destination,sizeof(destination));
-        if(result && errno!=EINPROGRESS){close(fd);return;}
-        connection.fd=fd;connecting=true;lastSeen=now;welcomed=false;incoming={};outgoing=0;++connectionEpoch;
-        diagnose(Diagnostic::Connecting);
-        dispatch_source_set_timer(transportTimer,DISPATCH_TIME_NOW,4*NSEC_PER_MSEC,NSEC_PER_MSEC);
+    if(hookCheckPending)return;
+    if(!hooksAttempted.load() && hookAttempt<maxHookAttempts) {
+        // Use the enabled transport timer for class discovery too. Turning
+        // mapping off leaves no delayed retry on the SpringBoard main queue.
+        if(now-lastHookAttempt<NSEC_PER_SEC)return;
+        lastHookAttempt=now;
+        hookCheckPending=true;
+        const uint64_t epoch=connectionEpoch.load();
+        const unsigned attempt=hookAttempt++;
+        dispatch_async(dispatch_get_main_queue(),^{
+            if(connectionEpoch.load()==epoch)prepareHooks(attempt);
+            dispatch_async(transportQueue,^{hookCheckPending=false;});
+        });
+        return;
     }
-    if(connecting) {
-        int code=0;socklen_t length=sizeof(code);
-        if(getsockopt(connection.fd,SOL_SOCKET,SO_ERROR,&code,&length) || code){diagnose(Diagnostic::TransportLost,1);disconnect();return;}
-        const std::string expected=[[installationRoot stringByAppendingPathComponent:@"Applications/SkyTouch.app/SystemMapping.bundle/SkyTouchMapping"] fileSystemRepresentation];
-        PeerFailure failure=PeerFailure::None;
-        if(!peerIs(connection.fd,0,expected,&failure)){diagnose(Diagnostic::PeerRejected,(uint8_t)failure);disconnect();return;}
-        connecting=false;
-        diagnose(Diagnostic::Handshaking);
+    OPTickButtonSession(buttonSession,capabilities.load());
+}
+static bool openButtonSession(void) {
+    const OPButtonSessionCallbacks callbacks={connectionChanged,[](uint8_t stage,uint8_t detail){
+        diagnose((Diagnostic)stage,detail);
+    },receiveWelcome,receiveLease};
+    NSString *endpoint=[installationRoot stringByAppendingPathComponent:@"tmp/skytouch-buttons/s"];
+    NSString *peer=[installationRoot stringByAppendingPathComponent:@"Applications/SkyTouch.app/SystemMapping.bundle/SkyTouchMapping"];
+    buttonSession=OPCreateButtonSession(endpoint.fileSystemRepresentation,peer.fileSystemRepresentation,callbacks);
+    return buttonSession!=nullptr;
+}
+static void closeButtonSession(void) {
+    if(!buttonSession)return;
+    dispatch_source_cancel(transportTimer);
+    transportTimer=nil;
+    if(stopToken>=0){notify_cancel(stopToken);stopToken=-1;}
+    if(suppressionToken>=0){notify_cancel(suppressionToken);suppressionToken=-1;}
+    connectionChanged(false);
+    OPDestroyButtonSession(buttonSession);
+    buttonSession=nullptr;
+    enabledGeneration=nil;
+}
+// Subscribe before reading at startup. A coalesced off/on still has a new
+// durable generation, so it retires every callback from the previous session.
+static void refreshMappingIntent(void) {
+    if(maintenance)return;
+    NSDictionary *intent=OPMappingRuntimeIntentForInstallation(installationRoot);
+    NSString *generation=[intent[@"enabled"] boolValue] ? intent[@"generation"] : nil;
+    if(buttonSession && [enabledGeneration isEqualToString:generation])return;
+    closeButtonSession();
+    enabledGeneration=generation;
+    if(!generation) {
+        diagnose(Diagnostic::MappingDisabled);flushDiagnostic();return;
     }
-    if(!connection.read([](const Packet &packet){return receive(packet);}) || !connection.flush()) {diagnose(Diagnostic::TransportLost,2);disconnect();return;}
-    if(nowNs()-lastSeen>staleNs){diagnose(Diagnostic::TransportLost,3);disconnect();return;}
+    if(!openButtonSession()){diagnose(Diagnostic::SessionUnavailable);flushDiagnostic();return;}
+    if(notify_register_check(suppressionNotification,&suppressionToken)==NOTIFY_STATUS_OK)
+        lastSuppressionCounts=UINT64_MAX;
+    else suppressionToken=-1;
+    if(notify_register_dispatch("com.lixinmo.skytouch.runtime.maintenance-stop",&stopToken,transportQueue,^(int token){
+        if(token==stopToken && buttonSession && enabledGeneration==generation)OPDisconnectButtonSession(buttonSession);
+    })!=NOTIFY_STATUS_OK)stopToken=-1;
+    lastHookAttempt=0;hookAttempt=0;
+    diagnose(Diagnostic::WaitingEndpoint);
+    transportTimer=dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER,0,0,transportQueue);
+    dispatch_source_set_event_handler(transportTimer,^{@autoreleasepool {
+        if(enabledGeneration==generation)tick();
+    }});
+    dispatch_source_set_timer(transportTimer,DISPATCH_TIME_NOW,500*NSEC_PER_MSEC,50*NSEC_PER_MSEC);
+    dispatch_resume(transportTimer);
 }
 }
 
@@ -527,23 +500,16 @@ __attribute__((constructor)) static void OPInitializePhoneButtonCapture(void) {
         transportQueue=dispatch_queue_create("com.lixinmo.skytouch.phone-buttons.bridge",DISPATCH_QUEUE_SERIAL);
         dispatch_async(transportQueue,^{@autoreleasepool {
             if(notify_register_check(diagnosticNotification,&diagnosticToken)!=NOTIFY_STATUS_OK)diagnosticToken=-1;
-            if(notify_register_check(suppressionNotification,&suppressionToken)!=NOTIFY_STATUS_OK)suppressionToken=-1;
             flushDiagnostic();
-            transportTimer=dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER,0,0,transportQueue);
-            dispatch_source_set_timer(transportTimer,DISPATCH_TIME_NOW,500*NSEC_PER_MSEC,50*NSEC_PER_MSEC);
-            dispatch_source_set_event_handler(transportTimer,^{@autoreleasepool {tick();}});
-            dispatch_resume(transportTimer);
-            installationRoot=resolveInstallation();if(!installationRoot)return;
-            dispatch_async(dispatch_get_main_queue(),^{
-                prepareHooks(0);
-                int token=-1,ordinaryToken=-1;
-                notify_register_dispatch("com.lixinmo.skytouch.buttons.maintenance",&token,dispatch_get_main_queue(),^(__unused int value){
-                    maintenance=true;revoke();publish();diagnose(Diagnostic::Maintenance);
-                });
-                notify_register_dispatch("com.lixinmo.skytouch.runtime.maintenance-stop",&ordinaryToken,dispatch_get_main_queue(),^(__unused int value){
-                    revoke();publish();dispatch_async(transportQueue,^{disconnect();});
-                });
+            installationRoot=resolveInstallation();if(!installationRoot){flushDiagnostic();return;}
+            int token=-1,intentToken=-1;
+            notify_register_dispatch("com.lixinmo.skytouch.buttons.maintenance",&token,transportQueue,^(__unused int value){
+                maintenance=true;closeButtonSession();diagnose(Diagnostic::Maintenance);flushDiagnostic();
             });
+            // Subscribe before sampling to cover changes during SpringBoard startup.
+            if(notify_register_dispatch(OPRuntimeIntentChangedNotification,&intentToken,transportQueue,^(__unused int value){
+                @autoreleasepool {refreshMappingIntent();}
+            })==NOTIFY_STATUS_OK)refreshMappingIntent();
         }});
     }
 }
